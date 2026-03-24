@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(pip freeze *)",
+      "Bash(python -m pytest *)",
+      "Bash(python -m alembic *)",
+      "Bash(uvicorn *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(flutter *)",
+      "Bash(dart *)",
+      "Bash(docker compose *)",
+      "Bash(docker-compose *)",
+      "Bash(docker build *)",
+      "Bash(docker exec *)",
+      "Bash(docker logs *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git merge *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git status *)",
+      "Bash(git stash *)",
+      "Bash(git init *)",
+      "Bash(redis-cli *)",
+      "Bash(psql *)",
+      "Bash(alembic *)",
+      "Bash(celery *)",
+      "Bash(pytest *)",
+      "Bash(python *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(echo *)",
+      "Bash(cd *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force *)",
+      "Bash(docker system prune *)"
+    ]
+  }
+}
