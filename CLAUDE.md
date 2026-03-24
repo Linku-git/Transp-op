@@ -50,6 +50,27 @@ Format: `[Session-XX] <type>: <short description>`
 Types: feat, fix, refactor, test, docs, chore
 Branch: `feature/session-XX-short-description`
 
+## Agent Routing
+When working on a task, delegate to the appropriate specialist agent rather than handling it in the main context:
+
+| Task Type | Agent | Trigger Keywords |
+|-----------|-------|-----------------|
+| Database models, migrations, SQL | @db-engineer | models, schema, migration, query, index, PostGIS |
+| Backend API endpoints, services | @backend-dev | endpoint, route, service, FastAPI, Celery |
+| React pages, components, stores | @frontend-dev | page, component, dashboard, Zustand, Leaflet |
+| Flutter screens, providers | @mobile-dev | screen, widget, provider, Flutter, offline |
+| Architecture decisions | @architect | architecture, design, trade-off, ADR |
+| Code review | @reviewer | review, audit, checklist, quality |
+| Documentation updates | @docs-manager | docs, changelog, progress, wikilink |
+| Docker, CI/CD, deployment | @devops | Docker, pipeline, deploy, GitHub Actions |
+| Test planning, QA strategy | @qa-engineer | test plan, regression, coverage, QA |
+| Security review, RGPD | @security-auditor | security, OWASP, RGPD, vulnerability, auth |
+| Performance optimization | @performance-engineer | performance, profiling, caching, N+1, load test |
+| SIRH/ERP integrations | @integration-engineer | integration, SAP, Workday, SIRH, connector, sync |
+| Routing/clustering algorithms | @optimizer | optimization, CVRP, clustering, DBSCAN, OR-Tools |
+
+Always delegate rather than handling specialist tasks in the main context. Use `@agent-name` to explicitly invoke an agent.
+
 ## Rules
 - Always read the session file before starting work
 - Write tests BEFORE or ALONGSIDE implementation
