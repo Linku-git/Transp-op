@@ -106,6 +106,22 @@ Desktop.ini
 .claude/plans/
 
 # =====================
+# Dev Documentation (local only)
+# =====================
+# Internal session files (92 dev planning sessions)
+Docs/sessions/
+
+# Internal project management docs
+Docs/PROGRESS.md
+Docs/ROADMAP.md
+Docs/INDEX.md
+Docs/knowledge/
+
+# Internal coding conventions and PRD
+agents.md
+Employee_Transport_Optimization_PRD_v3.md
+
+# =====================
 # Build artifacts
 # =====================
 *.log
