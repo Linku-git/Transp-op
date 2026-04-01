@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-13] — 2026-04-01
+### Added
+- ExcelImportService — multi-sheet parser for 6-sheet template (SITES, EFFECTIF, USAGES, CONTRAINTES, PARC, ABSENCES) with upsert, validation, preview mode (`backend/app/services/excel_parser.py`)
+- Response schemas for import results (`backend/app/schemas/excel_import.py`)
+- 3 API endpoints: full import, preview, single-sheet import (`backend/app/api/v1/excel_import.py`)
+- 13 test cases with programmatic Excel fixture generation
+
+---
+
 ## [Session-12] — 2026-04-01
 ### Added
 - EmployeeLeave SQLAlchemy model with employee FK (CASCADE), date indexes (`backend/app/models/leave.py`)
