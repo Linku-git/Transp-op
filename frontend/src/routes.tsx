@@ -36,6 +36,30 @@ const SiteEditPage = lazy(() =>
   }))
 );
 
+const EmployeeListPage = lazy(() =>
+  import('@/pages/employees/EmployeeListPage').then((m) => ({
+    default: m.EmployeeListPage,
+  }))
+);
+
+const EmployeeCreatePage = lazy(() =>
+  import('@/pages/employees/EmployeeCreatePage').then((m) => ({
+    default: m.EmployeeCreatePage,
+  }))
+);
+
+const EmployeeDetailPage = lazy(() =>
+  import('@/pages/employees/EmployeeDetailPage').then((m) => ({
+    default: m.EmployeeDetailPage,
+  }))
+);
+
+const EmployeeEditPage = lazy(() =>
+  import('@/pages/employees/EmployeeEditPage').then((m) => ({
+    default: m.EmployeeEditPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -115,6 +139,38 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <SiteEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'employees',
+        element: (
+          <SuspenseWrapper>
+            <EmployeeListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'employees/new',
+        element: (
+          <SuspenseWrapper>
+            <EmployeeCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'employees/:id',
+        element: (
+          <SuspenseWrapper>
+            <EmployeeDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'employees/:id/edit',
+        element: (
+          <SuspenseWrapper>
+            <EmployeeEditPage />
           </SuspenseWrapper>
         ),
       },

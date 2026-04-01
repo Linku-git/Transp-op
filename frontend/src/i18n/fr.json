@@ -26,7 +26,9 @@
     "error": "Une erreur est survenue",
     "view": "Voir",
     "previous": "Precedent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "yes": "Oui",
+    "no": "Non"
   },
   "auth": {
     "login": "Connexion",
@@ -98,7 +100,82 @@
       "shifts": "Horaires des equipes",
       "employee_count": "Employes",
       "vehicle_count": "Vehicules",
-      "pmr_count": "PMR"
+      "pmr_count": "PMR",
+      "view_employees": "Voir les employes",
+      "view_vehicles": "Voir les vehicules"
+    }
+  },
+  "employees": {
+    "add": "Ajouter un employe",
+    "create_title": "Nouvel employe",
+    "edit_title": "Modifier l'employe",
+    "not_found": "Employe introuvable",
+    "back_to_list": "Retour a la liste",
+    "empty": "Aucun employe",
+    "delete_confirm": "Supprimer l'employe \"{{name}}\" ?",
+    "search_placeholder": "Rechercher par nom ou matricule...",
+    "filter_site": "Tous les sites",
+    "filter_shift": "Toutes les equipes",
+    "filter_department": "Departement...",
+    "filter_pmr": "PMR",
+    "filter_active": "Actifs uniquement",
+    "pagination_info": "Page {{page}} sur {{pages}} ({{total}} employes)",
+    "columns": {
+      "matricule": "Matricule",
+      "name": "Nom",
+      "site": "Site",
+      "shift_time": "Equipe",
+      "pmr": "PMR",
+      "transport_mode": "Mode transport",
+      "opt_in": "Opt-in"
+    },
+    "badges": {
+      "pmr": "PMR",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "opt_in_label": "Opt-in"
+    },
+    "form": {
+      "section_identity": "Identite",
+      "section_assignment": "Affectation",
+      "section_location": "Localisation",
+      "section_mobility": "Mobilite",
+      "matricule": "Matricule",
+      "first_name": "Prenom",
+      "last_name": "Nom",
+      "phone": "Telephone",
+      "function_role": "Fonction",
+      "department": "Departement",
+      "site": "Site",
+      "site_placeholder": "Selectionner un site...",
+      "shift_time": "Equipe",
+      "shift_placeholder": "Selectionner une equipe...",
+      "address": "Adresse",
+      "quartier": "Quartier",
+      "city": "Ville",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "is_pmr": "Personne a mobilite reduite (PMR)",
+      "transport_required": "Transport requis",
+      "current_transport_mode": "Mode de transport actuel",
+      "transport_mode_placeholder": "Selectionner un mode...",
+      "opt_in_company_transport": "Opt-in transport entreprise",
+      "has_private_car": "Possede un vehicule personnel",
+      "volunteer_driver": "Conducteur volontaire (covoiturage)",
+      "carpool_seats": "Places de covoiturage disponibles",
+      "error_required": "Ce champ est requis",
+      "error_lat": "Latitude entre -90 et 90",
+      "error_lng": "Longitude entre -180 et 180"
+    },
+    "detail": {
+      "info": "Informations",
+      "site": "Site",
+      "location_map": "Carte",
+      "home": "Domicile",
+      "site_marker": "Site",
+      "no_location": "Aucune coordonnee disponible",
+      "transport_profile": "Profil de transport",
+      "address_info": "Adresse"
     }
   }
 }

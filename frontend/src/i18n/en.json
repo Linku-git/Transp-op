@@ -26,7 +26,9 @@
     "error": "An error occurred",
     "view": "View",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "yes": "Yes",
+    "no": "No"
   },
   "auth": {
     "login": "Login",
@@ -98,7 +100,82 @@
       "shifts": "Shift schedule",
       "employee_count": "Employees",
       "vehicle_count": "Vehicles",
-      "pmr_count": "PMR"
+      "pmr_count": "PMR",
+      "view_employees": "View employees",
+      "view_vehicles": "View vehicles"
+    }
+  },
+  "employees": {
+    "add": "Add employee",
+    "create_title": "New employee",
+    "edit_title": "Edit employee",
+    "not_found": "Employee not found",
+    "back_to_list": "Back to list",
+    "empty": "No employees",
+    "delete_confirm": "Delete employee \"{{name}}\"?",
+    "search_placeholder": "Search by name or ID...",
+    "filter_site": "All sites",
+    "filter_shift": "All shifts",
+    "filter_department": "Department...",
+    "filter_pmr": "PMR",
+    "filter_active": "Active only",
+    "pagination_info": "Page {{page}} of {{pages}} ({{total}} employees)",
+    "columns": {
+      "matricule": "Employee ID",
+      "name": "Name",
+      "site": "Site",
+      "shift_time": "Shift",
+      "pmr": "PMR",
+      "transport_mode": "Transport mode",
+      "opt_in": "Opt-in"
+    },
+    "badges": {
+      "pmr": "PMR",
+      "active": "Active",
+      "inactive": "Inactive",
+      "opt_in_label": "Opt-in"
+    },
+    "form": {
+      "section_identity": "Identity",
+      "section_assignment": "Assignment",
+      "section_location": "Location",
+      "section_mobility": "Mobility",
+      "matricule": "Employee ID",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "phone": "Phone",
+      "function_role": "Function",
+      "department": "Department",
+      "site": "Site",
+      "site_placeholder": "Select a site...",
+      "shift_time": "Shift",
+      "shift_placeholder": "Select a shift...",
+      "address": "Address",
+      "quartier": "District",
+      "city": "City",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "is_pmr": "Person with reduced mobility (PMR)",
+      "transport_required": "Transport required",
+      "current_transport_mode": "Current transport mode",
+      "transport_mode_placeholder": "Select a mode...",
+      "opt_in_company_transport": "Company transport opt-in",
+      "has_private_car": "Owns a private vehicle",
+      "volunteer_driver": "Volunteer driver (carpool)",
+      "carpool_seats": "Available carpool seats",
+      "error_required": "This field is required",
+      "error_lat": "Latitude must be between -90 and 90",
+      "error_lng": "Longitude must be between -180 and 180"
+    },
+    "detail": {
+      "info": "Information",
+      "site": "Site",
+      "location_map": "Map",
+      "home": "Home",
+      "site_marker": "Site",
+      "no_location": "No coordinates available",
+      "transport_profile": "Transport profile",
+      "address_info": "Address"
     }
   }
 }
