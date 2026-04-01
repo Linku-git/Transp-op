@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-12] — 2026-04-01
+### Added
+- EmployeeLeave SQLAlchemy model with employee FK (CASCADE), date indexes (`backend/app/models/leave.py`)
+- Alembic migration for employee_leave table
+- Pydantic schemas with leave_type enum and date range validation (`backend/app/schemas/leave.py`)
+- 5 CRUD endpoints with date range filtering, site_id filter via join, overlap detection (`backend/app/api/v1/leaves.py`)
+- 8 test cases covering CRUD, validation, date filtering, and overlap conflict detection
+
+---
+
 ## [Session-11] — 2026-04-01
 ### Added
 - EmployeeMapPage — Full-screen Leaflet map with site-colored employee markers, glassmorphism filter panel, legend
