@@ -9,14 +9,14 @@
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 5/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 6/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **10/92** |
+| **Total** | **92** | | **11/92** |
 
 ---
 
@@ -39,7 +39,7 @@
 | 08 | [[sessions/session-08|Site Dashboard & Shifts UI]] | COMPLETE | 2026-04-01 | Badge, SiteSummaryCards, ShiftConfigPanel, enhanced detail page, 3 tests |
 | 09 | [[sessions/session-09|Employee Model & CRUD API]] | COMPLETE | 2026-04-01 | 30+ field model, 8 endpoints, CSV upload, geocoding, 13 tests |
 | 10 | [[sessions/session-10|Employee Frontend Pages]] | COMPLETE | 2026-04-01 | List/create/edit/detail pages, dual-marker map, 6 filters, 3 tests |
-| 11 | [[sessions/session-11|Employee Map View & Bulk Actions]] | NOT STARTED | | |
+| 11 | [[sessions/session-11|Employee Map View & Bulk Actions]] | COMPLETE | 2026-04-01 | Full-screen map, site-colored markers, bulk CSV export/delete, 2 tests |
 | 12 | [[sessions/session-12|Employee Leave Model & API]] | NOT STARTED | | |
 | 13 | [[sessions/session-13|Excel Import Engine]] | NOT STARTED | | |
 | 14 | [[sessions/session-14|Excel Import Frontend]] | NOT STARTED | | |

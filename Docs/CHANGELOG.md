@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-11] — 2026-04-01
+### Added
+- EmployeeMapPage — Full-screen Leaflet map with site-colored employee markers, glassmorphism filter panel, legend
+- MapView, EmployeeMarker, SiteMarker — Reusable map components
+- Bulk actions on EmployeeListPage: checkbox selection, CSV export, bulk soft-delete
+- 2 component tests (MapView, EmployeeMapPage)
+
+### Changed
+- EmployeeListPage — Added selection state, bulk action bar, map view button
+
+---
+
 ## [Session-10] — 2026-04-01
 ### Added
 - Employee TypeScript types, API client (8 functions), Zustand store (`frontend/src/types/employee.ts`, `api/employees.ts`, `stores/employeeStore.ts`)
