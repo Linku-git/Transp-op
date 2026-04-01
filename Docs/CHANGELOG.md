@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-21] — 2026-04-01
+### Added
+- Vehicle assignment service with best-fit decreasing bin-packing algorithm (`backend/app/services/vehicle_assignment.py`)
+- PMR-aware matching: clusters with PMR employees get PMR-accessible vehicles
+- ZFE compliance enforcement for low-emission zone sites
+- Cluster split (geographic bisection by latitude) for oversized clusters
+- Cluster merge (greedy nearest-neighbor with haversine distance) for small clusters
+- Volunteer driver integration as supplemental capacity
+- Vehicle recommendations for unassigned clusters
+- Pydantic v2 schemas for assignment request/response (`backend/app/schemas/vehicle_assignment.py`)
+- 3 API endpoints: POST `/vehicle-assignments/assign`, `/vehicle-assignments/split-cluster/{id}`, `/vehicle-assignments/merge-clusters`
+- 9 unit tests in `test_vehicle_assignment.py`
+
+---
+
 ## [Mini-Changes] — 2026-04-01
 ### Added
 - Frontend dev container in `docker-compose.yml` (node:20-alpine, Vite dev server with hot reload)
