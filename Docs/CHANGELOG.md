@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-23] — 2026-04-01
+### Added
+- Full optimization pipeline orchestrator (`backend/app/services/optimization_pipeline.py`)
+  - 7-step pipeline: filter → cluster → meeting zones → assign → route → metrics → save
+  - Leave-aware employee filtering for target date
+  - Metrics calculation: fuel (L), cost (MAD), CO2 (kg), time saved (hrs), occupancy rate
+- Celery task wrapper with Redis progress tracking (`backend/app/tasks/optimization_tasks.py`)
+  - 6-step progress updates (0%→100%) stored in Redis with 1h TTL
+  - Graceful sync fallback when Celery broker unavailable
+- 5 optimization pipeline schemas: RunRequest, MetricsResponse, StatusResponse, FullResponse, HistoryItem
+- 5 API endpoints: POST `/optimize`, GET `/optimize/{id}`, GET `/optimize/{id}/status`, GET `/optimize/latest/result`, GET `/optimize/history/list`
+- 8 unit tests in `test_optimization_pipeline.py`
+
+---
+
 ## [Session-22] — 2026-04-01
 ### Added
 - Route SQLAlchemy model with polyline, ordered stops JSONB, distance/time metrics (`backend/app/models/optimization.py`)
