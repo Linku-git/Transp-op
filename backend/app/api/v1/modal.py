@@ -14,12 +14,27 @@ from app.models.auth import User
 from app.models.employee import Employee
 from app.models.modal import EmployeeModal
 from app.schemas.modal import (
+    CarpoolPotential,
     ModalCreate,
     ModalDistribution,
     ModalResponse,
     ModalStats,
     ModalUpdate,
     MobilityScore,
+    MobilityScoresResponse,
+    ShadowZoneEmployee,
+    ShiftAnalysisResponse,
+)
+from app.services.mobility_scoring import (
+    calculate_employee_score,
+    calculate_group_scores,
+    calculate_timeslot_scores,
+    identify_shadow_zones,
+)
+from app.services.modal_analytics import (
+    analyze_carpool_potential,
+    analyze_disruption_vulnerability,
+    analyze_weather_impact,
 )
 
 logger = logging.getLogger(__name__)
@@ -47,36 +62,6 @@ def _modal_to_response(modal: EmployeeModal) -> ModalResponse:
         data.employee_name = f"{modal.employee.first_name} {modal.employee.last_name}"
     return data
 
-
-def _calculate_mobility_score(modal: EmployeeModal) -> tuple[float, dict]:
-    """Calculate a simple mobility score (0-100) with factor breakdown."""
-    score = 50.0
-    factors: dict[str, float] = {"base": 50.0}
-
-    if modal.interest_company_transport == "Oui":
-        score += 20.0
-        factors["company_transport_interest"] = 20.0
-
-    if modal.accepts_common_pickup:
-        score += 10.0
-        factors["accepts_common_pickup"] = 10.0
-
-    if modal.volunteer_driver:
-        score += 15.0
-        factors["volunteer_driver"] = 15.0
-
-    if modal.distance_km is not None:
-        distance = float(modal.distance_km)
-        if distance < 10:
-            score += 5.0
-            factors["distance_bonus"] = 5.0
-        elif distance > 30:
-            score -= 10.0
-            factors["distance_penalty"] = -10.0
-
-    # Clamp 0-100
-    score = max(0.0, min(100.0, score))
-    return score, factors
 
 
 # ---------------------------------------------------------------------------
@@ -295,15 +280,17 @@ async def get_modal_stats(
 # ---------------------------------------------------------------------------
 
 
-@modal_stats_router.get("/shift-analysis")
+@modal_stats_router.get("/shift-analysis", response_model=ShiftAnalysisResponse)
 async def get_shift_analysis(
+    site_id: uuid.UUID | None = Query(default=None, description="Filter by site"),
     current_user: User = Depends(require_role("admin", "drh")),
     db: AsyncSession = Depends(get_db),
-) -> dict:
-    """Return modal distribution grouped by employee shift_time.
+) -> ShiftAnalysisResponse:
+    """Return modal distribution grouped by shift, with disruption and weather data."""
+    conditions = [Employee.tenant_id == current_user.tenant_id]
+    if site_id is not None:
+        conditions.append(Employee.site_id == site_id)
 
-    This is a simplified placeholder: returns count of primary modes per shift.
-    """
     stmt = (
         select(
             Employee.shift_time,
@@ -311,7 +298,7 @@ async def get_shift_analysis(
             func.count().label("cnt"),
         )
         .join(Employee, EmployeeModal.employee_id == Employee.id)
-        .where(Employee.tenant_id == current_user.tenant_id)
+        .where(*conditions)
         .group_by(Employee.shift_time, EmployeeModal.primary_mode)
         .order_by(Employee.shift_time, func.count().desc())
     )
@@ -326,7 +313,17 @@ async def get_shift_analysis(
             shifts[shift_key] = []
         shifts[shift_key].append({"mode": row.primary_mode, "count": row.cnt})
 
-    return {"data": shifts}
+    # Enhanced analytics
+    disruptions = await analyze_disruption_vulnerability(
+        db, current_user.tenant_id, site_id
+    )
+    weather = await analyze_weather_impact(db, current_user.tenant_id, site_id)
+
+    return ShiftAnalysisResponse(
+        data=shifts,
+        disruptions=disruptions,
+        weather_impact=weather,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -334,25 +331,31 @@ async def get_shift_analysis(
 # ---------------------------------------------------------------------------
 
 
-@modal_stats_router.get("/mobility-scores", response_model=list[MobilityScore])
+@modal_stats_router.get("/mobility-scores", response_model=MobilityScoresResponse)
 async def get_mobility_scores(
+    site_id: uuid.UUID | None = Query(default=None, description="Filter by site"),
     current_user: User = Depends(require_role("admin", "drh")),
     db: AsyncSession = Depends(get_db),
-) -> list[MobilityScore]:
-    """Calculate and return mobility scores for all employees with modal data."""
+) -> MobilityScoresResponse:
+    """Calculate mobility scores with group aggregation and timeslot data."""
+    conditions = [Employee.tenant_id == current_user.tenant_id]
+    if site_id is not None:
+        conditions.append(Employee.site_id == site_id)
+
     stmt = (
         select(EmployeeModal)
         .join(Employee, EmployeeModal.employee_id == Employee.id)
         .options(selectinload(EmployeeModal.employee))
-        .where(Employee.tenant_id == current_user.tenant_id)
+        .where(*conditions)
         .order_by(Employee.last_name, Employee.first_name)
     )
     result = await db.execute(stmt)
     modals = list(result.scalars().all())
 
+    # Per-employee scores
     scores: list[MobilityScore] = []
     for modal in modals:
-        score, factors = _calculate_mobility_score(modal)
+        score, factors = calculate_employee_score(modal)
         emp_name = (
             f"{modal.employee.first_name} {modal.employee.last_name}"
             if modal.employee is not None
@@ -367,4 +370,55 @@ async def get_mobility_scores(
             )
         )
 
-    return scores
+    # Group and timeslot aggregations
+    group_scores = await calculate_group_scores(
+        db, current_user.tenant_id, site_id
+    )
+    timeslot_scores = await calculate_timeslot_scores(
+        db, current_user.tenant_id, site_id
+    )
+
+    return MobilityScoresResponse(
+        scores=scores,
+        group_scores=group_scores,
+        timeslot_scores=timeslot_scores,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /modal/shadow-zones — identify employees without transport solutions
+# ---------------------------------------------------------------------------
+
+
+@modal_stats_router.get("/shadow-zones", response_model=list[ShadowZoneEmployee])
+async def get_shadow_zones(
+    site_id: uuid.UUID | None = Query(default=None, description="Filter by site"),
+    distance_threshold: float = Query(
+        default=30.0, description="Distance threshold in km"
+    ),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> list[ShadowZoneEmployee]:
+    """Find employees in shadow zones — no satisfactory transport solution."""
+    results = await identify_shadow_zones(
+        db, current_user.tenant_id, distance_threshold, site_id
+    )
+    return results
+
+
+# ---------------------------------------------------------------------------
+# GET /modal/carpool-potential — carpool supply vs demand per site
+# ---------------------------------------------------------------------------
+
+
+@modal_stats_router.get("/carpool-potential", response_model=list[CarpoolPotential])
+async def get_carpool_potential(
+    site_id: uuid.UUID | None = Query(default=None, description="Filter by site"),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> list[CarpoolPotential]:
+    """Calculate carpool supply vs demand by site."""
+    results = await analyze_carpool_potential(
+        db, current_user.tenant_id, site_id
+    )
+    return results

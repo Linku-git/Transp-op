@@ -204,3 +204,81 @@ class MobilityScore(BaseModel):
     employee_name: str
     score: float
     factors: dict
+
+
+# ---------------------------------------------------------------------------
+# Session 17 — Extended analytics schemas
+# ---------------------------------------------------------------------------
+
+
+class GroupScore(BaseModel):
+    """Average mobility score for a group (site, department, shift)."""
+
+    group_type: str
+    group_key: str
+    group_label: str
+    avg_score: float
+    employee_count: int
+
+
+class TimeSlotScore(BaseModel):
+    """Employee count per departure time bucket."""
+
+    slot: str
+    count: int
+
+
+class ShadowZoneEmployee(BaseModel):
+    """Employee identified as being in a shadow zone (no viable transport)."""
+
+    employee_id: uuid.UUID
+    employee_name: str
+    lat: float | None
+    lng: float | None
+    site_id: uuid.UUID
+    distance_km: float
+    reason: str
+
+
+class MobilityScoresResponse(BaseModel):
+    """Full mobility scores response with individual + group + timeslot data."""
+
+    scores: list[MobilityScore]
+    group_scores: list[GroupScore]
+    timeslot_scores: list[TimeSlotScore]
+
+
+class WeatherImpact(BaseModel):
+    """Weather-dependent modal shift analysis per mode."""
+
+    mode: str
+    employee_count: int
+    switch_probability: float
+    likely_alternative: str
+
+
+class DisruptionVulnerability(BaseModel):
+    """Disruption vulnerability analysis per mode."""
+
+    mode: str
+    employee_count: int
+    vulnerability_score: float
+    disruption_types: list[str]
+
+
+class CarpoolPotential(BaseModel):
+    """Carpool supply vs demand per site."""
+
+    site_id: uuid.UUID
+    site_name: str
+    supply_seats: int
+    demand_count: int
+    coverage_ratio: float
+
+
+class ShiftAnalysisResponse(BaseModel):
+    """Enhanced shift analysis with disruption and weather data."""
+
+    data: dict[str, list[dict]]
+    disruptions: list[DisruptionVulnerability]
+    weather_impact: list[WeatherImpact]

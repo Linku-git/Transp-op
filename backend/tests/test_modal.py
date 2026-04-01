@@ -292,8 +292,8 @@ async def test_mobility_scores(client: AsyncClient) -> None:
         client, token, site_id, first_name="Score", last_name="Tester"
     )
 
-    # Modal: interest=Oui (+20), accepts_pickup (+10), volunteer=True (+15),
-    # distance < 10 (+5) => 50+20+10+15+5 = 100
+    # New scoring: covoiturage(+10 sustainable) + distance<10(+15) + interest=Oui(+20)
+    # + accepts_pickup(+10) + volunteer(+15) = 70
     await _upsert_modal(
         client,
         token,
@@ -307,16 +307,19 @@ async def test_mobility_scores(client: AsyncClient) -> None:
 
     resp = await client.get("/api/v1/modal/mobility-scores", headers=headers)
     assert resp.status_code == 200
-    scores = resp.json()
+    data = resp.json()
+    assert "scores" in data
+    assert "group_scores" in data
+    assert "timeslot_scores" in data
+    scores = data["scores"]
     assert len(scores) >= 1
 
     # Find our employee's score
     emp_score = next((s for s in scores if s["employee_id"] == emp_id), None)
     assert emp_score is not None
     assert emp_score["employee_name"] == "Score Tester"
-    assert emp_score["score"] == 100.0
+    assert emp_score["score"] == 70.0
     assert "factors" in emp_score
-    assert emp_score["factors"]["base"] == 50.0
     assert emp_score["factors"]["company_transport_interest"] == 20.0
 
 
