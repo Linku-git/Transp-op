@@ -60,6 +60,7 @@ When working on a task, delegate to the appropriate specialist agent rather than
 | React pages, components, stores | @frontend-dev | page, component, dashboard, Zustand, Leaflet |
 | Flutter screens, providers | @mobile-dev | screen, widget, provider, Flutter, offline |
 | Architecture decisions | @architect | architecture, design, trade-off, ADR |
+| UI design review, visual polish | @ui-designer | UI, visual, design system, layout, polish, clean |
 | Code review | @reviewer | review, audit, checklist, quality |
 | Documentation updates | @docs-manager | docs, changelog, progress, wikilink |
 | Docker, CI/CD, deployment | @devops | Docker, pipeline, deploy, GitHub Actions |
