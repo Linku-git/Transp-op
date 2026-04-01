@@ -66,6 +66,12 @@ const EmployeeMapPage = lazy(() =>
   }))
 );
 
+const ExcelImportPage = lazy(() =>
+  import('@/pages/import/ExcelImportPage').then((m) => ({
+    default: m.ExcelImportPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -185,6 +191,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <EmployeeEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'import',
+        element: (
+          <SuspenseWrapper>
+            <ExcelImportPage />
           </SuspenseWrapper>
         ),
       },

@@ -12,6 +12,7 @@
     "financial": "Finance",
     "reports": "Rapports",
     "settings": "Parametres",
+    "import": "Import",
     "admin": "Administration"
   },
   "common": {
@@ -193,5 +194,27 @@
       "site_marker": "Site",
       "empty": "Aucun employe avec coordonnees a afficher"
     }
+  },
+  "import": {
+    "title": "Import Excel",
+    "upload_hint": "Selectionnez un fichier Excel (.xlsx) contenant les donnees a importer.",
+    "analyzing": "Analyse du fichier en cours...",
+    "preview_progress": "Apercu en cours",
+    "preview_summary": "Resume de l'apercu",
+    "total_sheets": "Feuilles",
+    "total_rows": "Lignes analysees",
+    "total_importable": "Lignes importables",
+    "total_errors": "Erreurs",
+    "rows_parsed": "Lignes analysees",
+    "rows_imported": "Lignes importees",
+    "rows_skipped": "Lignes ignorees",
+    "errors_count": "{{count}} erreur(s)",
+    "no_sheets": "Aucune feuille exploitable dans ce fichier.",
+    "import_all": "Importer tout",
+    "import_sheet": "Importer cette feuille",
+    "success_title": "Import termine avec succes",
+    "partial_success_title": "Import termine avec des erreurs",
+    "status_ok": "OK",
+    "new_import": "Nouvelle importation"
   }
 }
