@@ -106,3 +106,47 @@ class ClusteringResponse(BaseModel):
     clusters: list[ClusterResponse]
     total_clusters: int
     total_employees: int
+
+
+# ---------------------------------------------------------------------------
+# Meeting zone schemas (Session 19)
+# ---------------------------------------------------------------------------
+
+
+class AccessLegResponse(BaseModel):
+    """Walking path from employee to meeting zone."""
+
+    employee_id: uuid.UUID
+    meeting_zone_lat: float
+    meeting_zone_lng: float
+    walking_distance_meters: float
+    walking_time_seconds: float
+    within_constraint: bool
+
+
+class MeetingZoneResponse(BaseModel):
+    """Optimized meeting/gathering point for a cluster."""
+
+    cluster_index: int
+    lat: float
+    lng: float
+    road_name: str | None
+    snap_distance_meters: float
+    pmr_accessible: bool
+    employee_count: int
+    pmr_count: int
+    employee_ids: list[uuid.UUID]
+    access_legs: list[AccessLegResponse]
+    all_within_constraint: bool
+
+
+class MeetingZonesResult(BaseModel):
+    """Full meeting zones optimization result."""
+
+    optimization_id: uuid.UUID
+    site_id: uuid.UUID
+    zones: list[MeetingZoneResponse]
+    total_zones: int
+    total_employees: int
+    zones_within_constraint: int
+    max_walking_distance_meters: float
