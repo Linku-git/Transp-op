@@ -1,0 +1,34 @@
+{
+  "app": {
+    "name": "Transpop",
+    "tagline": "Orchestration Mobilite RH"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "sites": "Sites",
+    "employees": "Employes",
+    "vehicles": "Vehicules",
+    "optimization": "Optimisation",
+    "financial": "Finance",
+    "reports": "Rapports",
+    "settings": "Parametres",
+    "admin": "Administration"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Creer",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "no_data": "Aucune donnee",
+    "error": "Une erreur est survenue"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Deconnexion",
+    "email": "Email",
+    "password": "Mot de passe"
+  }
+}

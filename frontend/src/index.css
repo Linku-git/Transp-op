@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap');
+
+@theme {
+  /* Colors — Design System tokens */
+  --color-primary: #041627;
+  --color-primary-container: #1a2b3c;
+  --color-on-primary: #ffffff;
+
+  --color-secondary: #006b5c;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #68fadd;
+  --color-on-secondary-container: #007261;
+
+  --color-surface: #f4faff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #e9f6fd;
+  --color-surface-container: #e3f0f8;
+  --color-surface-container-high: #dde8f0;
+  --color-surface-container-highest: #d7e4ec;
+
+  --color-on-surface: #111d23;
+  --color-on-surface-variant: #44474c;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+
+  --color-outline-variant: rgba(196, 198, 205, 0.15);
+
+  /* Fonts */
+  --font-display: 'Manrope', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Shadows — ambient only */
+  --shadow-sm: 0 2px 32px rgba(17, 29, 35, 0.06);
+  --shadow-md: 0 4px 48px rgba(17, 29, 35, 0.06);
+  --shadow-lg: 0 8px 64px rgba(17, 29, 35, 0.06);
+
+  /* Animation keyframes */
+  --animate-slide-up: slideUp 200ms ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
