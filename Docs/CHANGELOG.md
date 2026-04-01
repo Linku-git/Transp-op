@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-05] — 2026-04-01
+### Added
+- GitHub Actions CI pipeline (`.github/workflows/ci.yml`) — backend (ruff + mypy + pytest) and frontend (eslint + tsc + vitest)
+- Ruff Python linting config (`backend/ruff.toml`) with FastAPI-compatible rules
+- Mypy type checking config (`backend/mypy.ini`) with pydantic + sqlalchemy plugins
+- Prettier config (`frontend/.prettierrc`) for consistent formatting
+- Pre-commit hooks (`.pre-commit-config.yaml`) — ruff + prettier
+- Backend scripts (`backend/scripts.sh`) — lint, format, test, seed, migrate commands
+- Frontend scripts: `type-check`, `format`, `format:check` in package.json
+
+### Fixed
+- 3 B904 lint violations (raise-from-err) in auth middleware and endpoints
+- 5 import sorting violations auto-fixed by ruff
+
+---
+
 ## [Session-04] — 2026-04-01
 ### Added
 - SQLAlchemy models: Tenant, User, Role, Permission, RolePermission (`backend/app/models/auth.py`)

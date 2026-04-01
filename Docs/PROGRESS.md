@@ -8,7 +8,7 @@
 
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
-| Phase 0 — Cadrage & Setup | 01-05 | IN PROGRESS | 4/5 |
+| Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | NOT STARTED | 0/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
@@ -16,7 +16,7 @@
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **4/92** |
+| **Total** | **92** | | **5/92** |
 
 ---
 
@@ -28,7 +28,7 @@
 | 02 | [[sessions/session-02|Backend FastAPI Skeleton]] | COMPLETE | 2026-04-01 | Config, DB, Base model, health endpoint, Alembic, 4 tests passing |
 | 03 | [[sessions/session-03|Frontend React Scaffold]] | COMPLETE | 2026-04-01 | Vite + TS strict + TailwindCSS v4 + design system, 7 UI components, 8 tests |
 | 04 | [[sessions/session-04|Auth & RBAC Foundation]] | COMPLETE | 2026-04-01 | JWT auth, 5 roles, RBAC middleware, user/role/tenant CRUD, 15 tests |
-| 05 | [[sessions/session-05|CI/CD & Test Infrastructure]] | NOT STARTED | | |
+| 05 | [[sessions/session-05|CI/CD & Test Infrastructure]] | COMPLETE | 2026-04-01 | GitHub Actions CI, ruff, mypy, Prettier, pre-commit, 23 tests green |
 
 ## Phase 1 — MVP Core: Modules A-D
 
