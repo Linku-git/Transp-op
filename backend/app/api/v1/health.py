@@ -3,9 +3,8 @@ from __future__ import annotations
 import logging
 
 import redis.asyncio as aioredis
-from sqlalchemy import text
-
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings

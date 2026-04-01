@@ -32,9 +32,9 @@ async def get_current_user(
 
     try:
         payload = decode_token(token)
-    except JWTError:
+    except JWTError as exc:
         logger.warning("Invalid or expired JWT token")
-        raise credentials_exception
+        raise credentials_exception from exc
 
     if payload.get("type") != "access":
         logger.warning("Token type is not 'access'")
@@ -46,8 +46,8 @@ async def get_current_user(
 
     try:
         user_id = uuid.UUID(sub)
-    except ValueError:
-        raise credentials_exception
+    except ValueError as exc:
+        raise credentials_exception from exc
 
     stmt = (
         select(User)

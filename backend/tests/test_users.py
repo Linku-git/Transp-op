@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 import pytest
 from httpx import AsyncClient
 
@@ -54,7 +56,7 @@ async def test_create_user(client: AsyncClient) -> None:
         "/api/v1/users/",
         headers=headers,
         json={
-            "email": "testuser@transpop.dev",
+            "email": f"testuser-{uuid.uuid4().hex[:8]}@transpop.dev",
             "password": "testpass123",
             "first_name": "Test",
             "last_name": "User",
@@ -63,6 +65,6 @@ async def test_create_user(client: AsyncClient) -> None:
     )
     assert response.status_code == 201
     data = response.json()
-    assert data["email"] == "testuser@transpop.dev"
+    assert data["email"].startswith("testuser-")
     assert data["first_name"] == "Test"
     assert data["is_active"] is True

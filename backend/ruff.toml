@@ -1,0 +1,14 @@
+[lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+ignore = [
+    "E501",   # line too long — handled by formatter
+    "B008",   # function call in default arg — required by FastAPI Depends()
+    "SIM117", # nested with — async with doesn't always combine cleanly
+]
+
+[lint.isort]
+known-first-party = ["app"]
+
+[lint.per-file-ignores]
+"tests/*" = ["S101"]
+"alembic/*" = ["F401"]

@@ -89,11 +89,11 @@ async def refresh(body: RefreshRequest, db: AsyncSession = Depends(get_db)) -> T
     """Issue a new access token using a valid refresh token."""
     try:
         payload = decode_token(body.refresh_token)
-    except JWTError:
+    except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",
-        )
+        ) from exc
 
     if payload.get("type") != "refresh":
         raise HTTPException(
