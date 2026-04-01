@@ -23,12 +23,82 @@
     "search": "Search",
     "loading": "Loading...",
     "no_data": "No data",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "view": "View",
+    "previous": "Previous",
+    "next": "Next"
   },
   "auth": {
     "login": "Login",
     "logout": "Logout",
     "email": "Email",
     "password": "Password"
+  },
+  "sites": {
+    "add": "Add site",
+    "create_title": "New site",
+    "edit_title": "Edit site",
+    "not_found": "Site not found",
+    "back_to_list": "Back to list",
+    "empty": "No sites",
+    "delete_confirm": "Delete site \"{{name}}\"?",
+    "search_placeholder": "Search by code or name...",
+    "filter_city": "Filter by city...",
+    "filter_zfe": "ZFE only",
+    "pagination_info": "Page {{page}} of {{pages}} ({{total}} sites)",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "city": "City",
+      "shifts": "Shifts",
+      "zfe": "ZFE",
+      "security": "Security"
+    },
+    "security": {
+      "normal": "Normal",
+      "elevated": "Elevated",
+      "critical": "Critical"
+    },
+    "form": {
+      "section_id": "Identification",
+      "section_location": "Location",
+      "section_shifts": "Shifts",
+      "section_config": "Configuration",
+      "section_contact": "Contact",
+      "section_notes": "Notes",
+      "code": "Code",
+      "name": "Name",
+      "name_placeholder": "Site name",
+      "address": "Address",
+      "city": "City",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "num_shifts": "Number of shifts",
+      "shift_label": "shift(s)",
+      "shift_n": "Shift {{n}}",
+      "entry_time": "Entry time",
+      "exit_time": "Exit time",
+      "working_days": "Working days",
+      "days_per_week": "Days per week",
+      "zfe_zone": "Low Emission Zone (ZFE)",
+      "security_profile": "Security profile",
+      "contact_name": "Contact name",
+      "contact_phone": "Phone",
+      "access_notes": "Access notes",
+      "parking_notes": "Parking notes",
+      "observations": "Observations",
+      "map_hint": "Click on the map or drag the marker to set the position",
+      "error_required": "This field is required",
+      "error_lat": "Latitude must be between -90 and 90",
+      "error_lng": "Longitude must be between -180 and 180"
+    },
+    "detail": {
+      "info": "Information",
+      "location": "Location",
+      "shifts": "Shift schedule",
+      "employee_count": "Employees",
+      "vehicle_count": "Vehicles",
+      "pmr_count": "PMR"
+    }
   }
 }

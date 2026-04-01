@@ -23,12 +23,82 @@
     "search": "Rechercher",
     "loading": "Chargement...",
     "no_data": "Aucune donnee",
-    "error": "Une erreur est survenue"
+    "error": "Une erreur est survenue",
+    "view": "Voir",
+    "previous": "Precedent",
+    "next": "Suivant"
   },
   "auth": {
     "login": "Connexion",
     "logout": "Deconnexion",
     "email": "Email",
     "password": "Mot de passe"
+  },
+  "sites": {
+    "add": "Ajouter un site",
+    "create_title": "Nouveau site",
+    "edit_title": "Modifier le site",
+    "not_found": "Site introuvable",
+    "back_to_list": "Retour a la liste",
+    "empty": "Aucun site",
+    "delete_confirm": "Supprimer le site \"{{name}}\" ?",
+    "search_placeholder": "Rechercher par code ou nom...",
+    "filter_city": "Filtrer par ville...",
+    "filter_zfe": "ZFE uniquement",
+    "pagination_info": "Page {{page}} sur {{pages}} ({{total}} sites)",
+    "columns": {
+      "code": "Code",
+      "name": "Nom",
+      "city": "Ville",
+      "shifts": "Equipes",
+      "zfe": "ZFE",
+      "security": "Securite"
+    },
+    "security": {
+      "normal": "Normal",
+      "elevated": "Eleve",
+      "critical": "Critique"
+    },
+    "form": {
+      "section_id": "Identification",
+      "section_location": "Localisation",
+      "section_shifts": "Horaires",
+      "section_config": "Configuration",
+      "section_contact": "Contact",
+      "section_notes": "Notes",
+      "code": "Code",
+      "name": "Nom",
+      "name_placeholder": "Nom du site",
+      "address": "Adresse",
+      "city": "Ville",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "num_shifts": "Nombre d'equipes",
+      "shift_label": "equipe(s)",
+      "shift_n": "Equipe {{n}}",
+      "entry_time": "Heure entree",
+      "exit_time": "Heure sortie",
+      "working_days": "Jours travailles",
+      "days_per_week": "Jours par semaine",
+      "zfe_zone": "Zone a Faibles Emissions (ZFE)",
+      "security_profile": "Profil de securite",
+      "contact_name": "Nom du contact",
+      "contact_phone": "Telephone",
+      "access_notes": "Notes d'acces",
+      "parking_notes": "Notes de parking",
+      "observations": "Observations",
+      "map_hint": "Cliquez sur la carte ou deplacez le marqueur pour definir la position",
+      "error_required": "Ce champ est requis",
+      "error_lat": "Latitude entre -90 et 90",
+      "error_lng": "Longitude entre -180 et 180"
+    },
+    "detail": {
+      "info": "Informations",
+      "location": "Localisation",
+      "shifts": "Horaires des equipes",
+      "employee_count": "Employes",
+      "vehicle_count": "Vehicules",
+      "pmr_count": "PMR"
+    }
   }
 }

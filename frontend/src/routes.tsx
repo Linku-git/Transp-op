@@ -12,6 +12,30 @@ const DashboardPage = lazy(() =>
   }))
 );
 
+const SiteListPage = lazy(() =>
+  import('@/pages/sites/SiteListPage').then((m) => ({
+    default: m.SiteListPage,
+  }))
+);
+
+const SiteCreatePage = lazy(() =>
+  import('@/pages/sites/SiteCreatePage').then((m) => ({
+    default: m.SiteCreatePage,
+  }))
+);
+
+const SiteDetailPage = lazy(() =>
+  import('@/pages/sites/SiteDetailPage').then((m) => ({
+    default: m.SiteDetailPage,
+  }))
+);
+
+const SiteEditPage = lazy(() =>
+  import('@/pages/sites/SiteEditPage').then((m) => ({
+    default: m.SiteEditPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -59,6 +83,38 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <DashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sites',
+        element: (
+          <SuspenseWrapper>
+            <SiteListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sites/new',
+        element: (
+          <SuspenseWrapper>
+            <SiteCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sites/:id',
+        element: (
+          <SuspenseWrapper>
+            <SiteDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sites/:id/edit',
+        element: (
+          <SuspenseWrapper>
+            <SiteEditPage />
           </SuspenseWrapper>
         ),
       },
