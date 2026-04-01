@@ -150,3 +150,104 @@ class MeetingZonesResult(BaseModel):
     total_employees: int
     zones_within_constraint: int
     max_walking_distance_meters: float
+
+
+# ---------------------------------------------------------------------------
+# Full pipeline schemas (Session 23)
+# ---------------------------------------------------------------------------
+
+
+class OptimizationRunRequest(BaseModel):
+    """Request to launch a full optimization pipeline."""
+
+    site_id: uuid.UUID
+    condition_type: str = Field(default="normal", max_length=30)
+    target_date: date | None = None
+    algorithm: str = Field(default="dbscan", max_length=30)
+    eps_meters: float = Field(default=500.0, ge=50.0, le=5000.0)
+    min_samples: int = Field(default=2, ge=1, le=20)
+    n_clusters: int | None = Field(default=None, ge=2, le=500)
+    max_cluster_size: int | None = Field(default=None, ge=2, le=100)
+    max_walking_distance_meters: float = Field(
+        default=800.0, ge=100.0, le=5000.0
+    )
+    max_route_duration_seconds: int = Field(default=5400, ge=600, le=18000)
+    include_volunteers: bool = False
+    use_osrm: bool = True
+
+    @field_validator("algorithm")
+    @classmethod
+    def validate_algorithm(cls, v: str) -> str:
+        if v not in CLUSTERING_ALGORITHMS:
+            raise ValueError(f"algorithm must be one of {CLUSTERING_ALGORITHMS}")
+        return v
+
+    @field_validator("condition_type")
+    @classmethod
+    def validate_condition(cls, v: str) -> str:
+        if v not in CONDITION_TYPES:
+            raise ValueError(f"condition_type must be one of {CONDITION_TYPES}")
+        return v
+
+
+class OptimizationMetricsResponse(BaseModel):
+    """Metrics from an optimization run."""
+
+    total_employees: int
+    employees_assigned: int
+    employees_excluded_leave: int = 0
+    total_clusters: int
+    total_vehicles_used: int
+    avg_occupancy_rate: float
+    total_distance_km: float
+    total_duration_minutes: float
+    estimated_fuel_liters: float = 0.0
+    estimated_fuel_cost_mad: float = 0.0
+    co2_estimate_kg: float = 0.0
+    time_saved_vs_individual_hours: float = 0.0
+    unassigned_clusters: int = 0
+
+
+class OptimizationStatusResponse(BaseModel):
+    """Progress status of an optimization run."""
+
+    optimization_id: uuid.UUID
+    status: str  # pending, running, completed, failed
+    progress: float  # 0.0 to 1.0
+    step: str  # current step description
+    error: str | None = None
+
+
+class OptimizationFullResponse(BaseModel):
+    """Full optimization result with clusters, routes, and metrics."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    tenant_id: uuid.UUID
+    site_id: uuid.UUID | None
+    condition_type: str
+    status: str
+    params: dict
+    metrics: dict
+    target_date: date | None
+    created_at: datetime
+    completed_at: datetime | None
+    clusters: list[ClusterResponse] = []
+    routes: list[dict] = []  # Simplified route data
+
+
+class OptimizationHistoryItem(BaseModel):
+    """Summary of a past optimization for the history list."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    site_id: uuid.UUID | None
+    condition_type: str
+    status: str
+    metrics: dict
+    target_date: date | None
+    created_at: datetime
+    completed_at: datetime | None
+    site_name: str | None = None
