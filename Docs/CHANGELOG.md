@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-22] — 2026-04-01
+### Added
+- Route SQLAlchemy model with polyline, ordered stops JSONB, distance/time metrics (`backend/app/models/optimization.py`)
+- Alembic migration for route table with spatial index
+- OSRM table service (`osrm_table`) for NxN distance/time matrices with haversine fallback
+- OSRM multi-waypoint route service (`osrm_route_multi`) with polyline and leg parsing
+- OR-Tools CVRP solver with capacity dimension, time dimension (90min max), node dropping
+- PATH_CHEAPEST_ARC first solution + GUIDED_LOCAL_SEARCH metaheuristic (10s time limit)
+- Sequential fallback assignment when OR-Tools unavailable
+- Two-leg route model: walking access leg + driving main leg
+- ETA calculation per stop with cumulative distance tracking
+- Route Pydantic schemas (`RouteResponse`, `RouteStopResponse`, `TwoLegResponse`)
+- 2 API endpoints: GET `/routes` (with site/optimization/vehicle filters), GET `/routes/{id}`
+- 10 unit tests in `test_routing.py`
+
+---
+
 ## [Session-21] — 2026-04-01
 ### Added
 - Vehicle assignment service with best-fit decreasing bin-packing algorithm (`backend/app/services/vehicle_assignment.py`)

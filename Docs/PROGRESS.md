@@ -9,14 +9,14 @@
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 16/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 17/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **21/92** |
+| **Total** | **92** | | **22/92** |
 
 ---
 
@@ -50,7 +50,7 @@
 | 19 | [[sessions/session-19|Meeting Zone Optimization]] | COMPLETE | 2026-04-01 | OSRM client, road-snap, PMR accessibility, walking constraints, 7 tests |
 | 20 | [[sessions/session-20|Vehicle Model & Fleet API]] | COMPLETE | 2026-04-01 | Vehicle CRUD, 5 filters, fleet summary by type/condition/motor/site, 11 tests |
 | 21 | [[sessions/session-21|Vehicle Assignment Algorithm]] | COMPLETE | 2026-04-01 | Bin-packing assignment, split/merge, PMR/ZFE constraints, volunteer drivers, 9 tests |
-| 22 | [[sessions/session-22|Route Optimization (OSRM + CVRP)]] | NOT STARTED | | |
+| 22 | [[sessions/session-22|Route Optimization (OSRM + CVRP)]] | COMPLETE | 2026-04-01 | OR-Tools CVRP, OSRM table/route, two-leg model, ETA per stop, 10 tests |
 | 23 | [[sessions/session-23|Full Optimization Pipeline]] | NOT STARTED | | |
 | 24 | [[sessions/session-24|Optimization Map (Leaflet)]] | NOT STARTED | | |
 | 25 | [[sessions/session-25|Optimization Analytics Panel]] | NOT STARTED | | |
