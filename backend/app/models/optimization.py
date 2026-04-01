@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime
+from decimal import Decimal
 
 from geoalchemy2 import Geometry
 from sqlalchemy import (
@@ -11,7 +12,9 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     String,
+    Text,
     func,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
@@ -49,6 +52,9 @@ class Optimization(BaseModel):
     site: Mapped[Site | None] = relationship("Site", lazy="selectin")
     clusters: Mapped[list[Cluster]] = relationship(
         "Cluster", back_populates="optimization", cascade="all, delete-orphan"
+    )
+    routes: Mapped[list[Route]] = relationship(
+        "Route", back_populates="optimization", cascade="all, delete-orphan"
     )
 
 
@@ -88,4 +94,46 @@ class Cluster(BaseModel):
     optimization: Mapped[Optimization] = relationship(
         "Optimization", back_populates="clusters"
     )
+    site: Mapped[Site] = relationship("Site", lazy="selectin")
+
+
+class Route(BaseModel):
+    """An optimized transport route within an optimization run."""
+
+    __tablename__ = "route"
+    __table_args__ = (Index("idx_route_optimization", "optimization_id"),)
+
+    optimization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("optimization.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    vehicle_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("vehicle.id"), nullable=True
+    )
+    site_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("site.id"), nullable=False
+    )
+    ordered_stops: Mapped[dict] = mapped_column(
+        JSONB, server_default="[]", nullable=False
+    )
+    total_distance_km: Mapped[Decimal | None] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
+    total_time_minutes: Mapped[Decimal | None] = mapped_column(
+        Numeric(8, 2), nullable=True
+    )
+    polyline: Mapped[str | None] = mapped_column(Text, nullable=True)
+    geom: Mapped[str | None] = mapped_column(
+        Geometry(geometry_type="LINESTRING", srid=4326), nullable=True
+    )
+    rti_compliance_pct: Mapped[Decimal | None] = mapped_column(
+        Numeric(5, 2), nullable=True
+    )
+
+    # Relationships
+    optimization: Mapped[Optimization] = relationship(
+        "Optimization", back_populates="routes"
+    )
+    vehicle: Mapped[Vehicle | None] = relationship("Vehicle", lazy="selectin")
     site: Mapped[Site] = relationship("Site", lazy="selectin")
