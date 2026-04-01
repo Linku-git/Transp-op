@@ -1,13 +1,17 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { useSiteStore } from '@/stores/siteStore';
+import { getSiteSummary } from '@/api/sites';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
-import type { SecurityProfile } from '@/types/site';
+import { SiteSummaryCards } from '@/components/sites/SiteSummaryCards';
+import { ShiftConfigPanel } from '@/components/sites/ShiftConfigPanel';
+import type { SecurityProfile, SiteSummary } from '@/types/site';
 import 'leaflet/dist/leaflet.css';
 
 /* Fix default marker icons */
@@ -34,56 +38,11 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   );
 }
 
-function SecurityChip({ profile }: { profile: SecurityProfile }) {
-  const { t } = useTranslation();
-
-  const labelMap: Record<SecurityProfile, string> = {
-    normal: t('sites.security.normal', 'Normal'),
-    elevated: t('sites.security.elevated', 'Eleve'),
-    critical: t('sites.security.critical', 'Critique'),
-  };
-
-  const classMap: Record<SecurityProfile, string> = {
-    normal: 'bg-surface-container text-on-surface-variant',
-    elevated: 'bg-secondary-container text-on-secondary-container',
-    critical: 'bg-error-container text-error',
-  };
-
-  return (
-    <span
-      className={[
-        'inline-block rounded-md px-2.5 py-1 text-xs font-sans font-medium',
-        classMap[profile],
-      ].join(' ')}
-    >
-      {labelMap[profile]}
-    </span>
-  );
-}
-
-function SummaryCard({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
-  return (
-    <div className="bg-surface-container rounded-lg p-4">
-      <p className="text-xs font-medium text-on-surface-variant font-sans mb-1">
-        {label}
-      </p>
-      <span className="font-display text-2xl font-bold text-secondary tabular-nums">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function formatTime(time: string | null | undefined): string {
-  if (!time) return '\u2014';
-  return time;
-}
+const securityBadgeVariant: Record<SecurityProfile, 'success' | 'warning' | 'danger'> = {
+  normal: 'success',
+  elevated: 'warning',
+  critical: 'danger',
+};
 
 export function SiteDetailPage() {
   const { t } = useTranslation();
@@ -92,11 +51,38 @@ export function SiteDetailPage() {
   const { currentSite, isLoading, error, fetchSite, deleteSite } =
     useSiteStore();
 
+  const [summary, setSummary] = useState<SiteSummary | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+
   useEffect(() => {
     if (id) {
       fetchSite(id);
     }
   }, [id, fetchSite]);
+
+  /* Fetch summary data independently from the store */
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    setSummaryLoading(true);
+    getSiteSummary(id)
+      .then((data) => {
+        if (!cancelled) {
+          setSummary(data);
+        }
+      })
+      .catch(() => {
+        /* Summary failure is non-critical; leave as null */
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setSummaryLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const handleDelete = useCallback(async () => {
     if (!currentSite) return;
@@ -116,6 +102,11 @@ export function SiteDetailPage() {
     return (
       <div className="flex flex-col gap-6">
         <Skeleton variant="text" className="w-64 h-8" />
+        <div className="grid grid-cols-3 gap-4">
+          <Skeleton variant="rectangular" className="w-full" height="80px" />
+          <Skeleton variant="rectangular" className="w-full" height="80px" />
+          <Skeleton variant="rectangular" className="w-full" height="80px" />
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Skeleton variant="rectangular" className="w-full" height="300px" />
           <Skeleton variant="rectangular" className="w-full" height="300px" />
@@ -143,11 +134,20 @@ export function SiteDetailPage() {
 
   if (!currentSite) return null;
 
+  const hasNotes =
+    currentSite.access_notes || currentSite.parking_notes || currentSite.observations;
+
+  const securityLabel: Record<SecurityProfile, string> = {
+    normal: t('sites.security.normal', 'Normal'),
+    elevated: t('sites.security.elevated', 'Eleve'),
+    critical: t('sites.security.critical', 'Critique'),
+  };
+
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-display text-2xl font-bold text-on-surface">
             {currentSite.name}
           </h1>
@@ -155,24 +155,34 @@ export function SiteDetailPage() {
             {currentSite.code}
           </span>
           {currentSite.zfe_zone && (
-            <span className="inline-block rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-sans font-medium">
-              ZFE
-            </span>
+            <Badge variant="success">ZFE</Badge>
           )}
-          <SecurityChip profile={currentSite.security_profile} />
+          <Badge variant={securityBadgeVariant[currentSite.security_profile]}>
+            {securityLabel[currentSite.security_profile]}
+          </Badge>
         </div>
         <div className="flex items-center gap-2">
           <Link to={`/sites/${currentSite.id}/edit`}>
-            <Button variant="secondary">{t('common.edit')}</Button>
+            <Button variant="secondary">{t('common.edit', 'Modifier')}</Button>
           </Link>
           <Button variant="danger" onClick={handleDelete}>
-            {t('common.delete')}
+            {t('common.delete', 'Supprimer')}
           </Button>
         </div>
       </div>
 
+      {/* Summary stats */}
+      <div className="mb-8">
+        <SiteSummaryCards
+          summary={
+            summary ?? { employee_count: 0, vehicle_count: 0, pmr_count: 0 }
+          }
+          isLoading={summaryLoading}
+        />
+      </div>
+
+      {/* Info grid + Mini-map */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Site Information */}
         <Card title={t('sites.detail.info', 'Informations')}>
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
             <InfoRow label={t('sites.form.code', 'Code')} value={currentSite.code} />
@@ -227,59 +237,30 @@ export function SiteDetailPage() {
         </Card>
       </div>
 
-      {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        <SummaryCard
-          label={t('sites.detail.employee_count', 'Employes')}
-          value={0}
-        />
-        <SummaryCard
-          label={t('sites.detail.vehicle_count', 'Vehicules')}
-          value={0}
-        />
-        <SummaryCard
-          label={t('sites.detail.pmr_count', 'PMR')}
-          value={0}
-        />
+      {/* Shift schedule */}
+      <div className="mb-8">
+        <Card>
+          <ShiftConfigPanel site={currentSite} />
+        </Card>
       </div>
 
-      {/* Shift schedule */}
-      <Card title={t('sites.detail.shifts', 'Horaires des equipes')}>
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: currentSite.num_shifts }, (_, i) => {
-            const n = i + 1;
-            const entry =
-              n === 1
-                ? currentSite.shift_1_entry
-                : n === 2
-                  ? currentSite.shift_2_entry
-                  : currentSite.shift_3_entry;
-            const exit =
-              n === 1
-                ? currentSite.shift_1_exit
-                : n === 2
-                  ? currentSite.shift_2_exit
-                  : currentSite.shift_3_exit;
-            return (
-              <div
-                key={n}
-                className="flex items-center gap-4 bg-surface-container rounded-lg px-4 py-3"
-              >
-                <span className="text-sm font-medium text-on-surface font-sans w-24">
-                  {t('sites.form.shift_n', 'Equipe {{n}}', { n })}
-                </span>
-                <span className="text-sm text-on-surface-variant font-sans tabular-nums">
-                  {formatTime(entry)} &mdash; {formatTime(exit)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
+      {/* Quick action links */}
+      <div className="flex items-center gap-3 mb-8">
+        <Link to={`/employees?site_id=${currentSite.id}`}>
+          <Button variant="ghost">
+            {t('sites.detail.view_employees', 'Voir les employes')}
+          </Button>
+        </Link>
+        <Link to={`/vehicles?site_id=${currentSite.id}`}>
+          <Button variant="ghost">
+            {t('sites.detail.view_vehicles', 'Voir les vehicules')}
+          </Button>
+        </Link>
+      </div>
 
       {/* Notes */}
-      {(currentSite.access_notes || currentSite.parking_notes || currentSite.observations) && (
-        <div className="mt-6">
+      {hasNotes && (
+        <div className="mb-8">
           <Card title={t('sites.form.section_notes', 'Notes')}>
             <div className="flex flex-col gap-4">
               {currentSite.access_notes && (
@@ -304,6 +285,21 @@ export function SiteDetailPage() {
           </Card>
         </div>
       )}
+
+      {/* Bottom actions */}
+      <div className="flex items-center gap-3">
+        <Link to={`/sites/${currentSite.id}/edit`}>
+          <Button variant="secondary">{t('common.edit', 'Modifier')}</Button>
+        </Link>
+        <Button variant="danger" onClick={handleDelete}>
+          {t('common.delete', 'Supprimer')}
+        </Button>
+        <Link to="/sites" className="ml-auto">
+          <Button variant="ghost">
+            {t('sites.back_to_list', 'Retour a la liste')}
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
