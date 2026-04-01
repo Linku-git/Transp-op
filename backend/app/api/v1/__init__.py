@@ -13,6 +13,7 @@ from app.api.v1.roles import router as roles_router
 from app.api.v1.sites import router as sites_router
 from app.api.v1.tenants import router as tenants_router
 from app.api.v1.users import router as users_router
+from app.api.v1.vehicle_assignments import router as vehicle_assignments_router
 from app.api.v1.vehicles import router as vehicles_router
 
 api_router = APIRouter(prefix="/api/v1")
@@ -29,3 +30,4 @@ api_router.include_router(modal_stats_router, tags=["modal"])
 api_router.include_router(excel_import_router, tags=["import"])
 api_router.include_router(clusters_router, tags=["clusters"])
 api_router.include_router(vehicles_router, tags=["vehicles"])
+api_router.include_router(vehicle_assignments_router, tags=["vehicle-assignments"])
