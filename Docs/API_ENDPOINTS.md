@@ -82,8 +82,10 @@
 | PUT | `/employees/{id}/modal` | Create/update modal data | Yes | DRH, Admin | 15 |
 | DELETE | `/employees/{id}/modal` | Delete modal data | Yes | DRH, Admin | 15 |
 | GET | `/modal/stats` | Global modal distribution | Yes | DRH, DAF, Admin | 15 |
-| GET | `/modal/shift-analysis` | Modal shift analysis | Yes | DRH, DAF, Admin | 17 |
-| GET | `/modal/mobility-scores` | Mobility scores | Yes | DRH, DAF, Admin | 17 |
+| GET | `/modal/shift-analysis` | Modal shift analysis + disruption/weather | Yes | DRH, Admin | 17 |
+| GET | `/modal/mobility-scores` | Mobility scores + group/timeslot aggregation | Yes | DRH, Admin | 17 |
+| GET | `/modal/shadow-zones` | Shadow zone employees (no transport solution) | Yes | DRH, Admin | 17 |
+| GET | `/modal/carpool-potential` | Carpool supply vs demand per site | Yes | DRH, Admin | 17 |
 
 ---
 

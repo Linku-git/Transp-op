@@ -9,14 +9,14 @@
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 11/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 12/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **16/92** |
+| **Total** | **92** | | **17/92** |
 
 ---
 
@@ -45,7 +45,7 @@
 | 14 | [[sessions/session-14|Excel Import Frontend]] | COMPLETE | 2026-04-01 | Upload/preview/import UI, FileUpload, Tabs, ProgressBar, 5 tests |
 | 15 | [[sessions/session-15|Modal Analysis Model & API]] | COMPLETE | 2026-04-01 | Modal model, upsert CRUD, stats/scores, 6 endpoints, 9 tests |
 | 16 | [[sessions/session-16|Modal Analysis Frontend]] | COMPLETE | 2026-04-01 | PieChart/BarChart/Histogram, 5 dashboard cards, site filter, 3 tests |
-| 17 | [[sessions/session-17|Mobility Scores & Shadow Zones]] | NOT STARTED | | |
+| 17 | [[sessions/session-17|Mobility Scores & Shadow Zones]] | COMPLETE | 2026-04-01 | Scoring engine (0-100), shadow zones, weather/disruption analytics, carpool potential, 6 tests |
 | 18 | [[sessions/session-18|Clustering Engine]] | NOT STARTED | | |
 | 19 | [[sessions/session-19|Meeting Zone Optimization]] | NOT STARTED | | |
 | 20 | [[sessions/session-20|Vehicle Model & Fleet API]] | NOT STARTED | | |

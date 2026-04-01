@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-17] — 2026-04-01
+### Added
+- Mobility scoring engine (`backend/app/services/mobility_scoring.py`) — per-employee score (0-100), group aggregation (site/dept/shift), time-slot bucketing, shadow zone identification
+- Modal analytics service (`backend/app/services/modal_analytics.py`) — weather impact analysis, disruption vulnerability, carpool supply vs demand
+- `GET /modal/shadow-zones` — identify employees without viable transport solutions
+- `GET /modal/carpool-potential` — carpool supply vs demand per site
+- 8 new Pydantic response schemas (GroupScore, TimeSlotScore, ShadowZoneEmployee, MobilityScoresResponse, WeatherImpact, DisruptionVulnerability, CarpoolPotential, ShiftAnalysisResponse)
+- 6 new tests in `test_mobility_scoring.py`
+
+### Changed
+- `GET /modal/mobility-scores` — now returns group_scores and timeslot_scores alongside individual scores
+- `GET /modal/shift-analysis` — enhanced with disruption vulnerability and weather impact data, added site_id filter
+- Scoring algorithm rewritten: base=0 with weighted factors (distance, mode, interest, flexibility) replacing old base=50 approach
+
+---
+
 ## [Session-16] — 2026-04-01
 ### Added
 - ModalAnalysisPage — 5 dashboard cards: distribution pie chart, shift potential bar, distance histogram, mobility scores, shift analysis
