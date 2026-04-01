@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-09] — 2026-04-01
+### Added
+- Employee SQLAlchemy model with 30+ fields, PostGIS POINT geometry, GIST spatial index, unique (tenant_id, matricule) (`backend/app/models/employee.py`)
+- Alembic migration for employee table with all indexes
+- Pydantic schemas: EmployeeCreate/Update/Response, EmployeeSummary, CSVUploadResult (`backend/app/schemas/employee.py`)
+- 8 API endpoints: list (7 filters + search + pagination), get, create (auto-geocode), update, soft-delete, CSV upload, batch geocode, summary (`backend/app/api/v1/employees.py`)
+- Geocoding service via Nominatim with rate limiting (`backend/app/services/geocoding.py`)
+- 13 test cases covering CRUD, filters, CSV upload, validation errors, PostGIS
+
+### Changed
+- `backend/requirements.txt` — added python-multipart for file uploads
+
+---
+
 ## [Session-08] — 2026-04-01
 ### Added
 - Badge component with 5 variants: success, warning, danger, info, neutral (`frontend/src/components/ui/Badge.tsx`)
