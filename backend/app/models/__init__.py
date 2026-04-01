@@ -5,6 +5,7 @@ from app.models.leave import EmployeeLeave
 from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization
 from app.models.site import Site
+from app.models.vehicle import Vehicle
 
 __all__ = [
     "BaseModel",
@@ -20,4 +21,5 @@ __all__ = [
     "EmployeeModal",
     "Optimization",
     "Cluster",
+    "Vehicle",
 ]
