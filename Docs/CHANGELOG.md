@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-16] — 2026-04-01
+### Added
+- ModalAnalysisPage — 5 dashboard cards: distribution pie chart, shift potential bar, distance histogram, mobility scores, shift analysis
+- Reusable Recharts components: PieChart, BarChart, Histogram with design system tokens
+- Modal API client and TypeScript types (`frontend/src/api/modal.ts`, `types/modal.ts`)
+- Site filter dropdown for per-site analysis
+- i18n translations (16 keys in `modal` namespace)
+- 3 component tests with Recharts mocking
+
+### Changed
+- Sidebar — added "Analyse Modale" navigation link
+- routes.tsx — added /modal-analysis route
+
+---
+
 ## [Session-15] — 2026-04-01
 ### Added
 - EmployeeModal SQLAlchemy model with 17 data columns, unique(employee_id) constraint (`backend/app/models/modal.py`)
