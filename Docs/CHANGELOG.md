@@ -6,6 +6,27 @@
 
 ---
 
+## [Session-04] — 2026-04-01
+### Added
+- SQLAlchemy models: Tenant, User, Role, Permission, RolePermission (`backend/app/models/auth.py`)
+- Alembic migration for all auth tables
+- Pydantic v2 schemas for auth requests/responses (`backend/app/schemas/auth.py`)
+- JWT auth middleware with OAuth2PasswordBearer (`backend/app/middleware/auth.py`)
+- RBAC `require_role()` dependency factory (`backend/app/middleware/rbac.py`)
+- Auth endpoints: POST login, POST logout, POST refresh, GET me (`backend/app/api/v1/auth.py`)
+- User CRUD endpoints: GET list, POST create, PUT update, DELETE deactivate (`backend/app/api/v1/users.py`)
+- Role CRUD endpoints: GET list, POST create, PUT update (`backend/app/api/v1/roles.py`)
+- Tenant CRUD endpoints: GET list, POST create, PUT update (`backend/app/api/v1/tenants.py`)
+- Password hashing (bcrypt) and JWT encode/decode utilities (`backend/app/utils/security.py`)
+- Seed data script: default tenant, 5 system roles, admin user (`backend/app/scripts/seed_data.py`)
+- 11 new tests: auth flow (8) + user management (3)
+
+### Changed
+- `backend/app/database.py` — `get_db` uses `session.begin()` context, NullPool in test mode
+- `backend/requirements.txt` — added bcrypt==4.2.1, pydantic[email]
+
+---
+
 ## [Session-03] — 2026-04-01
 ### Added
 - Vite React TypeScript project with strict mode
