@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-18] — 2026-04-01
+### Added
+- Optimization and Cluster SQLAlchemy models with PostGIS centroid geometry (`backend/app/models/optimization.py`)
+- Alembic migration for optimization and cluster tables
+- Clustering service with 3 algorithms: DBSCAN (haversine), KMeans, hierarchical/Ward (`backend/app/services/clustering.py`)
+- Configurable params: eps_meters (50-5000m), min_samples, n_clusters, max_cluster_size
+- PMR-aware clustering with pmr_count per cluster
+- Auto-split oversized clusters via KMeans sub-clustering
+- Pydantic schemas: ClusteringRequest, ClusterResponse, OptimizationResponse, ClusteringResponse (`backend/app/schemas/optimization.py`)
+- 3 API endpoints: POST `/clusters/generate`, GET `/clusters`, GET `/clusters/{id}` (`backend/app/api/v1/clusters.py`)
+- 11 tests (9 unit + 2 integration) in `test_clustering.py`
+
+---
+
 ## [Session-17] — 2026-04-01
 ### Added
 - Mobility scoring engine (`backend/app/services/mobility_scoring.py`) — per-employee score (0-100), group aggregation (site/dept/shift), time-slot bucketing, shadow zone identification

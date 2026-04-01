@@ -151,9 +151,9 @@
 
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
-| POST | `/clusters/generate` | Run clustering | Yes | DRH, Admin | 18 |
-| GET | `/clusters` | Get saved clusters | Yes | DRH, Admin | 18 |
-| GET | `/clusters/{id}` | Single cluster with employees | Yes | DRH, Admin | 18 |
+| POST | `/clusters/generate` | Run clustering (DBSCAN/KMeans/hierarchical) | Yes | DRH, Admin | 18 |
+| GET | `/clusters` | Get saved clusters (filters: site_id, optimization_id) | Yes | DRH, Admin | 18 |
+| GET | `/clusters/{id}` | Single cluster with employee details | Yes | DRH, Admin | 18 |
 
 ---
 
