@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-19] — 2026-04-01
+### Added
+- OSRM API client (`backend/app/services/osrm_client.py`) — nearest road snap, walking/driving routes, haversine fallback
+- Meeting zone optimizer (`backend/app/services/meeting_zones.py`) — centroid snap-to-road, PMR accessibility check, walking distance constraint validation, per-employee access leg computation
+- `POST /clusters/generate-with-zones` — combined clustering + meeting zone optimization endpoint
+- Pydantic schemas: AccessLegResponse, MeetingZoneResponse, MeetingZonesResult
+- 7 tests (5 unit + 2 OSRM mock integration)
+
+---
+
 ## [Session-18] — 2026-04-01
 ### Added
 - Optimization and Cluster SQLAlchemy models with PostGIS centroid geometry (`backend/app/models/optimization.py`)

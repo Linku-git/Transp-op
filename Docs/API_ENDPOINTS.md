@@ -154,6 +154,7 @@
 | POST | `/clusters/generate` | Run clustering (DBSCAN/KMeans/hierarchical) | Yes | DRH, Admin | 18 |
 | GET | `/clusters` | Get saved clusters (filters: site_id, optimization_id) | Yes | DRH, Admin | 18 |
 | GET | `/clusters/{id}` | Single cluster with employee details | Yes | DRH, Admin | 18 |
+| POST | `/clusters/generate-with-zones` | Clustering + meeting zone optimization | Yes | DRH, Admin | 19 |
 
 ---
 
