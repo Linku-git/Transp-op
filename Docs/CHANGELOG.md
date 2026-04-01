@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-07] — 2026-04-01
+### Added
+- Site API client (`frontend/src/api/sites.ts`) — 7 functions for all CRUD operations
+- Site TypeScript types (`frontend/src/types/site.ts`) — Site, SiteCreate, SiteUpdate, SiteSummary, SiteListParams
+- Zustand site store (`frontend/src/stores/siteStore.ts`) — state + async actions for sites
+- SiteListPage — DataTable with search bar, city/ZFE filters, pagination, action buttons
+- SiteCreatePage + SiteForm — Full form with all fields organized in sections
+- SiteEditPage — Pre-filled form reusing SiteForm
+- SiteDetailPage — Read-only view with mini-map and summary cards
+- MapPicker component — Leaflet click-to-place GPS picker with draggable marker
+- i18n translations (fr/en) for all site-related strings
+- 4 component tests with Leaflet mocking for jsdom
+
+### Changed
+- `frontend/src/routes.tsx` — Added /sites, /sites/new, /sites/:id, /sites/:id/edit routes
+
+---
+
 ## [Session-06] — 2026-04-01
 ### Added
 - Site SQLAlchemy model with PostGIS POINT geometry column and GIST spatial index (`backend/app/models/site.py`)
