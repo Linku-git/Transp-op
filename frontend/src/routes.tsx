@@ -84,6 +84,18 @@ const OptimizationPage = lazy(() =>
   }))
 );
 
+const OptimizationResultPage = lazy(() =>
+  import('@/pages/optimization/OptimizationResultPage').then((m) => ({
+    default: m.OptimizationResultPage,
+  }))
+);
+
+const OptimizationHistoryPage = lazy(() =>
+  import('@/pages/optimization/OptimizationHistoryPage').then((m) => ({
+    default: m.OptimizationHistoryPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -227,6 +239,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <OptimizationPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization/history',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationHistoryPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization/:id',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationResultPage />
           </SuspenseWrapper>
         ),
       },
