@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-20] — 2026-04-01
+### Added
+- Vehicle SQLAlchemy model with 17 fields (`backend/app/models/vehicle.py`)
+- Alembic migration for vehicle table
+- Pydantic schemas with enum validation: condition (Bon/Moyen/Mauvais), motorization (diesel/hybrid/electric/hydrogen/gnv), owner_type
+- 5 API endpoints: GET/POST/PUT/DELETE `/vehicles` + GET `/vehicles/fleet-summary`
+- Multi-filter support: site_id, is_pmr_accessible, condition, motorization, zfe_compliant
+- Fleet summary aggregations: by type, condition, motorization, site with capacity/PMR/ZFE counts
+- 11 tests in `test_vehicles.py`
+
+---
+
 ## [Session-19] — 2026-04-01
 ### Added
 - OSRM API client (`backend/app/services/osrm_client.py`) — nearest road snap, walking/driving routes, haversine fallback

@@ -105,11 +105,11 @@
 
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
-| GET | `/vehicles` | List (filters: site_id, pmr, condition, motorization, zfe) | Yes | DRH, Admin | 20 |
+| GET | `/vehicles` | List with pagination (filters: site_id, pmr, condition, motorization, zfe) | Yes | DRH, DAF, Admin | 20 |
 | POST | `/vehicles` | Create vehicle | Yes | DRH, Admin | 20 |
 | PUT | `/vehicles/{id}` | Update vehicle | Yes | DRH, Admin | 20 |
 | DELETE | `/vehicles/{id}` | Delete vehicle | Yes | DRH, Admin | 20 |
-| GET | `/vehicles/fleet-summary` | Fleet overview by site, type, condition | Yes | DRH, DAF, Admin | 20 |
+| GET | `/vehicles/fleet-summary` | Fleet overview by type, condition, motorization, site | Yes | DRH, DAF, Admin | 20 |
 
 ---
 
