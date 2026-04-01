@@ -8,7 +8,7 @@
 
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
-| Phase 0 — Cadrage & Setup | 01-05 | IN PROGRESS | 2/5 |
+| Phase 0 — Cadrage & Setup | 01-05 | IN PROGRESS | 3/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | NOT STARTED | 0/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
@@ -16,7 +16,7 @@
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **2/92** |
+| **Total** | **92** | | **3/92** |
 
 ---
 
@@ -26,7 +26,7 @@
 |---------|-------|--------|------|-------|
 | 01 | [[sessions/session-01|Monorepo Setup & Docker]] | COMPLETE | 2026-04-01 | All services running: PostgreSQL 15 + PostGIS 3.4, Redis 7, OSRM, FastAPI |
 | 02 | [[sessions/session-02|Backend FastAPI Skeleton]] | COMPLETE | 2026-04-01 | Config, DB, Base model, health endpoint, Alembic, 4 tests passing |
-| 03 | [[sessions/session-03|Frontend React Scaffold]] | NOT STARTED | | |
+| 03 | [[sessions/session-03|Frontend React Scaffold]] | COMPLETE | 2026-04-01 | Vite + TS strict + TailwindCSS v4 + design system, 7 UI components, 8 tests |
 | 04 | [[sessions/session-04|Auth & RBAC Foundation]] | NOT STARTED | | |
 | 05 | [[sessions/session-05|CI/CD & Test Infrastructure]] | NOT STARTED | | |
 

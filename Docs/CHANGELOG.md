@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-03] — 2026-04-01
+### Added
+- Vite React TypeScript project with strict mode
+- TailwindCSS v4 with full design system tokens (`@theme` block in index.css)
+- Layout shell: `AppLayout`, `Sidebar` (NavLink-based navigation), `Header` (language toggle, user display)
+- 7 base UI components: `Button` (4 variants), `Input`, `Card`, `DataTable` (generic typed), `Modal`, `Toast`, `Skeleton`
+- Routing with lazy-loaded pages (`routes.tsx` using `createBrowserRouter`)
+- Zustand auth store (`useAuthStore`) with localStorage persistence
+- Axios API client with JWT interceptors
+- i18n configuration (French default, English fallback) with translation stubs
+- Placeholder pages: `DashboardPage`, `LoginPage`
+- `frontend/Dockerfile` (multi-stage Node 18 build + nginx serve)
+- Vitest test setup with jsdom + React Testing Library
+- 8 tests: AppLayout render, Button variants/loading/disabled, Card render, routing navigation
+
+---
+
 ## [Session-02] — 2026-04-01
 ### Added
 - `backend/app/config.py` — Pydantic Settings loading from `.env`
