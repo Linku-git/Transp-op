@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-10] — 2026-04-01
+### Added
+- Employee TypeScript types, API client (8 functions), Zustand store (`frontend/src/types/employee.ts`, `api/employees.ts`, `stores/employeeStore.ts`)
+- EmployeeListPage — DataTable with 6 filters (site, shift, PMR, department, active, search), pagination, PMR/opt-in badges
+- Shared EmployeeForm — 4 sections (identity, assignment, location/MapPicker, mobility with conditional carpool)
+- EmployeeCreatePage, EmployeeEditPage (pre-filled), EmployeeDetailPage (dual-marker map + transport profile)
+- i18n translations (70+ keys in `employees` namespace for FR/EN)
+- 3 component tests
+
+### Changed
+- `frontend/src/routes.tsx` — Added /employees, /employees/new, /employees/:id, /employees/:id/edit
+
+---
+
 ## [Session-09] — 2026-04-01
 ### Added
 - Employee SQLAlchemy model with 30+ fields, PostGIS POINT geometry, GIST spatial index, unique (tenant_id, matricule) (`backend/app/models/employee.py`)
