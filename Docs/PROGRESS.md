@@ -9,14 +9,14 @@
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 2/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 3/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **7/92** |
+| **Total** | **92** | | **8/92** |
 
 ---
 
@@ -36,7 +36,7 @@
 |---------|-------|--------|------|-------|
 | 06 | [[sessions/session-06|Site Model & CRUD API]] | COMPLETE | 2026-04-01 | PostGIS model, 7 CRUD endpoints, pagination, filters, 13 tests |
 | 07 | [[sessions/session-07|Site Frontend Pages]] | COMPLETE | 2026-04-01 | List/create/edit/detail pages, MapPicker, Zustand store, 4 tests |
-| 08 | [[sessions/session-08|Site Dashboard & Shifts UI]] | NOT STARTED | | |
+| 08 | [[sessions/session-08|Site Dashboard & Shifts UI]] | COMPLETE | 2026-04-01 | Badge, SiteSummaryCards, ShiftConfigPanel, enhanced detail page, 3 tests |
 | 09 | [[sessions/session-09|Employee Model & CRUD API]] | NOT STARTED | | |
 | 10 | [[sessions/session-10|Employee Frontend Pages]] | NOT STARTED | | |
 | 11 | [[sessions/session-11|Employee Map View & Bulk Actions]] | NOT STARTED | | |

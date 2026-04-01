@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-08] — 2026-04-01
+### Added
+- Badge component with 5 variants: success, warning, danger, info, neutral (`frontend/src/components/ui/Badge.tsx`)
+- SiteSummaryCards — 3-column stat grid for employee/vehicle/PMR counts (`frontend/src/components/sites/SiteSummaryCards.tsx`)
+- ShiftConfigPanel — Visual 24h shift timeline with proportional bars (`frontend/src/components/sites/ShiftConfigPanel.tsx`)
+- 3 new component tests (Badge variants, summary counts, shift rendering)
+
+### Changed
+- SiteDetailPage — Full enhancement with summary API call, badges, shift panel, quick action links, notes section
+
+---
+
 ## [Session-07] — 2026-04-01
 ### Added
 - Site API client (`frontend/src/api/sites.ts`) — 7 functions for all CRUD operations
