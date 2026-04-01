@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-24] — 2026-04-01
+### Added
+- Optimization page (`/optimization`) with split layout: controls panel + Leaflet map
+- TypeScript types for optimization entities, metrics, routes, meeting zones, layer visibility
+- API client (5 functions) for optimization endpoints
+- Zustand store with launch/poll/fetch, layer toggles, route selection
+- ClusterRegion map component: circle overlay scaled by employee count
+- RoutePolyline: Google encoded polyline decoder, 8-color palette, route popup with metrics
+- MeetingZoneMarker: circle marker with PMR accessibility indicator
+- AccessLeg: dashed walking path line (employee -> meeting zone)
+- MapLegend: glassmorphism floating panel with 6 layer toggles + per-route selector
+- Metrics bar: vehicles, employees, occupancy, distance, CO2
+- Progress bar with step description for async optimization runs
+- 15 new frontend tests (4 files)
+
+---
+
 ## [Session-23] — 2026-04-01
 ### Added
 - Full optimization pipeline orchestrator (`backend/app/services/optimization_pipeline.py`)
