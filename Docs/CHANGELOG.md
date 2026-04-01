@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-02] — 2026-04-01
+### Added
+- `backend/app/config.py` — Pydantic Settings loading from `.env`
+- `backend/app/database.py` — SQLAlchemy async engine, session factory, `get_db` dependency
+- `backend/app/models/base.py` — `BaseModel` with UUID pk + `TimestampMixin` (created_at, updated_at)
+- `backend/app/api/v1/health.py` — Health endpoint checking DB and Redis connectivity
+- `backend/app/api/v1/__init__.py` — API v1 router aggregation
+- `backend/alembic.ini` + `alembic/env.py` — Async Alembic configured with PostGIS table exclusion
+- `backend/tests/conftest.py` — Async test client fixture (httpx + ASGITransport)
+- `backend/tests/test_health.py` — 4 tests (root, health, docs, openapi schema)
+- `backend/pytest.ini` — Pytest async mode config
+
+### Changed
+- `backend/app/main.py` — Added lifespan events, API router inclusion, config-driven settings
+
+---
+
 ## [Session-01] — 2026-04-01
 ### Added
 - Monorepo directory structure (`backend/`, `frontend/`, `mobile/`)
