@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-14] — 2026-04-01
+### Added
+- ExcelImportPage — multi-step flow (upload -> preview -> import) with per-sheet tabs
+- FileUpload — drag-and-drop component with .xlsx validation and loading state
+- Tabs — horizontal tab navigation with badge counts
+- ProgressBar — animated progress indicator with 3 variants
+- SheetPreview — auto-column data table with truncation
+- ValidationErrors — grouped error display with row/column references
+- Import API client (preview, import, single-sheet) with FormData upload
+- 5 component tests
+
+### Changed
+- Sidebar — added Import navigation link
+- routes.tsx — added /import route
+
+---
+
 ## [Session-13] — 2026-04-01
 ### Added
 - ExcelImportService — multi-sheet parser for 6-sheet template (SITES, EFFECTIF, USAGES, CONTRAINTES, PARC, ABSENCES) with upsert, validation, preview mode (`backend/app/services/excel_parser.py`)
