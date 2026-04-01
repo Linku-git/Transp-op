@@ -89,6 +89,17 @@ service-account.json
 # Docker
 # =====================
 docker-compose.override.yml
+docker-data/
+
+# =====================
+# Obsidian
+# =====================
+.obsidian/
+
+# =====================
+# Reports
+# =====================
+bandit-report.json
 
 # =====================
 # OS

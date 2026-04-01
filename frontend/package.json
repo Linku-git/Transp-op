@@ -1,0 +1,11 @@
+{
+  "name": "transpop-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'Frontend scaffold — run session-03 to initialize React + Vite'",
+    "build": "echo 'Not yet configured'",
+    "test": "echo 'Not yet configured'"
+  }
+}
