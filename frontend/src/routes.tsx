@@ -78,6 +78,12 @@ const ModalAnalysisPage = lazy(() =>
   }))
 );
 
+const OptimizationPage = lazy(() =>
+  import('@/pages/optimization/OptimizationPage').then((m) => ({
+    default: m.OptimizationPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -213,6 +219,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ModalAnalysisPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationPage />
           </SuspenseWrapper>
         ),
       },
