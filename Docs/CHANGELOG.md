@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-25] — 2026-04-02
+### Added
+- MetricsPanel: 6 KPI cards with inline SVG icons (vehicles, employees, occupancy gauge, distance, fuel cost, CO2)
+- RouteList: expandable accordion showing per-vehicle stops with ETA and cumulative distance
+- ClusterTable: borderless table with PMR chips and hover highlights
+- SiteBreakdown: summary card with condition type chip and computed totals
+- GaugeChart: SVG semicircle gauge with clamping, ARIA attributes, configurable size/color
+- OptimizationResultPage (`/optimization/:id`): map + tabbed analytics panel + export buttons
+- OptimizationHistoryPage (`/optimization/history`): table with status chips, pagination, view links
+- 2 new lazy-loaded routes added to routes.tsx
+- 35 new frontend tests (4 files)
+
+---
+
 ## [Session-24] — 2026-04-01
 ### Added
 - Optimization page (`/optimization`) with split layout: controls panel + Leaflet map
