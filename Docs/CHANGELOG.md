@@ -6,6 +6,24 @@
 
 ---
 
+## [Mini-Changes] — 2026-04-01
+### Added
+- Frontend dev container in `docker-compose.yml` (node:20-alpine, Vite dev server with hot reload)
+- `frontend_node_modules` named volume to isolate container deps from host
+- Live Browser Check section in ui-review skill (Chrome console/visual verification)
+- Browser test scope in run-tests skill
+- Section 11 (Browser Verification) in `agents.md`
+
+### Fixed
+- Backend Docker healthcheck URL: `/health` → `/api/v1/health`
+- Health-check skill: clarified which services exist vs future (celery/celery-beat)
+
+### Changed
+- deploy-local skill: added frontend container verification step
+- health-check skill: added `docker compose ps frontend` and log checks
+
+---
+
 ## [Session-20] — 2026-04-01
 ### Added
 - Vehicle SQLAlchemy model with 17 fields (`backend/app/models/vehicle.py`)

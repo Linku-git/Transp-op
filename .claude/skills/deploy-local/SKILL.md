@@ -26,7 +26,12 @@ description: Start the local development environment. Starts Docker services, ap
    ```bash
    docker compose ps
    ```
-6. Print access URLs:
+6. Verify frontend container started correctly:
+   ```bash
+   docker compose logs frontend --tail=20
+   ```
+   If you see npm install or Vite startup errors, report them before continuing.
+7. Print access URLs:
    - Backend API: http://localhost:8000
    - API Docs (Swagger): http://localhost:8000/docs
    - Frontend: http://localhost:5173

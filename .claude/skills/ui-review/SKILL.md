@@ -97,3 +97,25 @@ For each fix, use the Edit tool to make the change. Preserve all functionality �
 Do NOT fix Category 3 items automatically — report them for human review.
 
 After fixing, re-scan to confirm all hard violations are resolved and print an updated summary.
+
+---
+
+## Live Browser Check
+
+After the static code audit, verify the app in Google Chrome:
+
+1. **Open Chrome**:
+   ```bash
+   start chrome http://localhost:5173
+   ```
+2. **Check Console** — Open DevTools (F12 > Console tab) and look for:
+   - JavaScript errors (red)
+   - React warnings (yellow)
+   - Failed network requests (4xx/5xx in Network tab)
+   - CORS errors
+3. **Check Visual Rendering**:
+   - Page loads without blank screen
+   - Navigation between pages works
+   - No layout breakage or missing elements
+   - Design system tokens applied (no raw borders, no pure black, correct fonts)
+4. **Report** any console errors or visual issues found alongside the static audit report.

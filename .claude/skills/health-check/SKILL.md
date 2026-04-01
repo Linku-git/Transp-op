@@ -15,10 +15,12 @@ Verify these are running and healthy:
 - `db` (PostgreSQL 15 + PostGIS) — port 5432
 - `redis` (Redis 7) — port 6379
 - `backend` (FastAPI) — port 8000
-- `frontend` (React/Vite) — port 5173
+- `frontend` (React/Vite dev server) — port 5173
+- `osrm` (OSRM routing) — port 5000
+
+Future services (not yet in docker-compose.yml):
 - `celery` (Celery worker)
 - `celery-beat` (Celery scheduler)
-- `osrm` (OSRM routing) — port 5000
 
 ## 2. Database
 ```bash
@@ -39,7 +41,12 @@ curl -s http://localhost:8000/docs -o /dev/null -w "%{http_code}"
 
 ## 5. Frontend
 ```bash
+docker compose ps frontend
 curl -s http://localhost:5173 -o /dev/null -w "%{http_code}"
+```
+Check Docker container status first. If the container is not running, report it. If running but curl fails, check logs:
+```bash
+docker compose logs frontend --tail=10
 ```
 
 ## 6. OSRM
