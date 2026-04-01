@@ -60,6 +60,12 @@ const EmployeeEditPage = lazy(() =>
   }))
 );
 
+const EmployeeMapPage = lazy(() =>
+  import('@/pages/employees/EmployeeMapPage').then((m) => ({
+    default: m.EmployeeMapPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -155,6 +161,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <EmployeeCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'employees/map',
+        element: (
+          <SuspenseWrapper>
+            <EmployeeMapPage />
           </SuspenseWrapper>
         ),
       },

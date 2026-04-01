@@ -8,6 +8,50 @@ import { Input } from '@/components/ui/Input';
 import { DataTable, type Column } from '@/components/ui/DataTable';
 import type { Employee, OptInChoice } from '@/types/employee';
 
+function downloadCSV(employees: Employee[]) {
+  const headers = [
+    'matricule',
+    'first_name',
+    'last_name',
+    'site_name',
+    'department',
+    'shift_time',
+    'is_pmr',
+    'active',
+  ];
+  const escape = (v: string | null | undefined | boolean): string => {
+    const str = String(v ?? '');
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+  const rows = employees.map((e) =>
+    [
+      e.matricule,
+      e.first_name,
+      e.last_name,
+      e.site_name,
+      e.department,
+      e.shift_time,
+      e.is_pmr,
+      e.active,
+    ]
+      .map(escape)
+      .join(','),
+  );
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `employes_export_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
 const PAGE_SIZE = 20;
 
 function PmrChip() {
@@ -86,6 +130,7 @@ export function EmployeeListPage() {
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState(true);
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchSites({ page: 1, page_size: 100 });
@@ -118,13 +163,88 @@ export function EmployeeListPage() {
       );
       if (confirmed) {
         await deleteEmployee(id);
+        setSelected((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
       }
     },
     [deleteEmployee, t],
   );
 
+  const toggleSelect = useCallback((id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    setSelected((prev) => {
+      if (prev.size === employees.length && employees.length > 0) {
+        return new Set();
+      }
+      return new Set(employees.map((e) => e.id));
+    });
+  }, [employees]);
+
+  const handleBulkExportCSV = useCallback(() => {
+    const selectedEmployees = employees.filter((e) => selected.has(e.id));
+    if (selectedEmployees.length > 0) {
+      downloadCSV(selectedEmployees);
+    }
+  }, [employees, selected]);
+
+  const handleBulkDelete = useCallback(async () => {
+    const count = selected.size;
+    const confirmed = window.confirm(
+      t(
+        'employees.bulk.delete_confirm',
+        'Supprimer {{count}} employe(s) selectionnes ?',
+        { count },
+      ),
+    );
+    if (!confirmed) return;
+    const ids = Array.from(selected);
+    for (const id of ids) {
+      await deleteEmployee(id);
+    }
+    setSelected(new Set());
+  }, [selected, deleteEmployee, t]);
+
+  const handleDeselectAll = useCallback(() => {
+    setSelected(new Set());
+  }, []);
+
+  /* Clear selection when page or filters change */
+  useEffect(() => {
+    setSelected(new Set());
+  }, [page, siteFilter, shiftFilter, pmrFilter, departmentFilter, activeFilter, search]);
+
+  const allSelected =
+    employees.length > 0 && selected.size === employees.length;
+
   const columns: Column<Employee>[] = useMemo(
     () => [
+      {
+        key: 'select',
+        label: '',
+        render: (row: Employee) => (
+          <input
+            type="checkbox"
+            checked={selected.has(row.id)}
+            onChange={() => toggleSelect(row.id)}
+            className="w-4 h-4 rounded accent-secondary cursor-pointer"
+            onClick={(e) => e.stopPropagation()}
+          />
+        ),
+      },
       {
         key: 'matricule',
         label: t('employees.columns.matricule', 'Matricule'),
@@ -217,7 +337,7 @@ export function EmployeeListPage() {
         ),
       },
     ],
-    [t, navigate, handleDelete],
+    [t, navigate, handleDelete, selected, toggleSelect],
   );
 
   const totalPages = meta?.pages ?? 1;
@@ -229,9 +349,16 @@ export function EmployeeListPage() {
         <h1 className="font-display text-2xl font-bold text-on-surface">
           {t('nav.employees')}
         </h1>
-        <Link to="/employees/new">
-          <Button>{t('employees.add', 'Ajouter un employe')}</Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/employees/map">
+            <Button variant="ghost">
+              {t('employees.view_on_map', 'Voir sur la carte')}
+            </Button>
+          </Link>
+          <Link to="/employees/new">
+            <Button>{t('employees.add', 'Ajouter un employe')}</Button>
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}
@@ -312,8 +439,44 @@ export function EmployeeListPage() {
         </div>
       )}
 
-      {/* Table */}
+      {/* Bulk action bar */}
+      {selected.size > 0 && (
+        <div className="bg-surface-container-low rounded-lg p-3 mb-4 flex items-center gap-3 flex-wrap">
+          <span className="text-sm font-sans font-medium text-on-surface">
+            {t('employees.bulk.selected_count', '{{count}} selectionne(s)', {
+              count: selected.size,
+            })}
+          </span>
+          <Button variant="secondary" size="sm" onClick={handleBulkExportCSV}>
+            {t('employees.bulk.export_csv', 'Exporter CSV')}
+          </Button>
+          <Button variant="danger" size="sm" onClick={handleBulkDelete}>
+            {t('common.delete', 'Supprimer')}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleDeselectAll}>
+            {t('employees.bulk.deselect_all', 'Deselectionner tout')}
+          </Button>
+        </div>
+      )}
+
+      {/* Table with select-all header */}
       <div className="bg-surface-container-lowest rounded-lg overflow-hidden">
+        {/* Select-all row above table */}
+        {!isLoading && employees.length > 0 && (
+          <div className="px-4 py-2 bg-surface-container flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={toggleSelectAll}
+              className="w-4 h-4 rounded accent-secondary cursor-pointer"
+            />
+            <span className="text-xs font-sans text-on-surface-variant">
+              {allSelected
+                ? t('employees.bulk.deselect_all', 'Deselectionner tout')
+                : t('employees.bulk.select_all', 'Tout selectionner')}
+            </span>
+          </div>
+        )}
         <DataTable<Employee>
           columns={columns}
           data={employees}

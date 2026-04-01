@@ -176,6 +176,22 @@
       "no_location": "Aucune coordonnee disponible",
       "transport_profile": "Profil de transport",
       "address_info": "Adresse"
+    },
+    "view_on_map": "Voir sur la carte",
+    "bulk": {
+      "selected_count": "{{count}} selectionne(s)",
+      "export_csv": "Exporter CSV",
+      "delete_confirm": "Supprimer {{count}} employe(s) selectionnes ?",
+      "deselect_all": "Deselectionner tout",
+      "select_all": "Tout selectionner"
+    },
+    "map": {
+      "title": "Carte des employes",
+      "count": "{{count}} employe(s) affiches",
+      "filters": "Filtres",
+      "legend": "Legende",
+      "site_marker": "Site",
+      "empty": "Aucun employe avec coordonnees a afficher"
     }
   }
 }

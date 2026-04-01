@@ -176,6 +176,22 @@
       "no_location": "No coordinates available",
       "transport_profile": "Transport profile",
       "address_info": "Address"
+    },
+    "view_on_map": "View on map",
+    "bulk": {
+      "selected_count": "{{count}} selected",
+      "export_csv": "Export CSV",
+      "delete_confirm": "Delete {{count}} selected employee(s)?",
+      "deselect_all": "Deselect all",
+      "select_all": "Select all"
+    },
+    "map": {
+      "title": "Employee Map",
+      "count": "{{count}} employee(s) displayed",
+      "filters": "Filters",
+      "legend": "Legend",
+      "site_marker": "Site",
+      "empty": "No employees with coordinates to display"
     }
   }
 }
