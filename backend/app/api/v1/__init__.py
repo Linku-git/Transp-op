@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.api.v1.auth import router as auth_router
 from app.api.v1.employees import router as employees_router
+from app.api.v1.excel_import import router as excel_import_router
 from app.api.v1.health import router as health_router
 from app.api.v1.leaves import router as leaves_router
 from app.api.v1.roles import router as roles_router
@@ -20,3 +21,4 @@ api_router.include_router(tenants_router, tags=["tenants"])
 api_router.include_router(sites_router, tags=["sites"])
 api_router.include_router(employees_router, tags=["employees"])
 api_router.include_router(leaves_router, tags=["leaves"])
+api_router.include_router(excel_import_router, tags=["import"])
