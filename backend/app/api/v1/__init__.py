@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1.auth import router as auth_router
+from app.api.v1.employees import router as employees_router
 from app.api.v1.health import router as health_router
 from app.api.v1.roles import router as roles_router
 from app.api.v1.sites import router as sites_router
@@ -16,3 +17,4 @@ api_router.include_router(users_router, tags=["users"])
 api_router.include_router(roles_router, tags=["roles"])
 api_router.include_router(tenants_router, tags=["tenants"])
 api_router.include_router(sites_router, tags=["sites"])
+api_router.include_router(employees_router, tags=["employees"])
