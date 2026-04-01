@@ -14,13 +14,14 @@ redis==5.2.1
 celery[redis]==5.4.0
 
 # Validation & settings
-pydantic==2.10.4
+pydantic[email]==2.10.4
 pydantic-settings==2.7.1
 python-dotenv==1.0.1
 
 # Auth
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
 
 # Optimization & ML
 ortools==9.11.4210
