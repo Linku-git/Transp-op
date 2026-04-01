@@ -2,21 +2,21 @@
 
 > See also: [[README]] | [[ROADMAP]] | [[agents]]
 
-> Last updated: 2026-04-01
+> Last updated: 2026-04-02
 
 ## Summary
 
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 20/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 21/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **25/92** |
+| **Total** | **92** | | **26/92** |
 
 ---
 
@@ -54,7 +54,7 @@
 | 23 | [[sessions/session-23|Full Optimization Pipeline]] | COMPLETE | 2026-04-01 | E2E pipeline, Celery task, Redis progress, leave filtering, metrics (fuel/CO2/time), 8 tests |
 | 24 | [[sessions/session-24|Optimization Map (Leaflet)]] | COMPLETE | 2026-04-01 | Interactive map, 5 map components, layer controls, route popups, progress indicator, 15 tests |
 | 25 | [[sessions/session-25|Optimization Analytics Panel]] | COMPLETE | 2026-04-02 | MetricsPanel, RouteList, ClusterTable, GaugeChart, result/history pages, 35 tests |
-| 26 | [[sessions/session-26|Weather API Integration]] | NOT STARTED | | |
+| 26 | [[sessions/session-26|Weather API Integration]] | COMPLETE | 2026-04-02 | WeatherForecast model, OWM service, 4 endpoints, scenario suggestions, 5 tests |
 | 27 | [[sessions/session-27|Scenario Simulation Backend]] | NOT STARTED | | |
 | 28 | [[sessions/session-28|Scenario Comparison Frontend]] | NOT STARTED | | |
 | 29 | [[sessions/session-29|Settings & Constraints CRUD]] | NOT STARTED | | |

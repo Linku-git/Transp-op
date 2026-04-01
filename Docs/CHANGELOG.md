@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-26] — 2026-04-02
+### Added
+- WeatherForecast model with unique constraint on (site_id, date, source)
+- Weather service: OpenWeatherMap 5-day/3-hour fetch, daily aggregation, upsert, scenario suggestions
+- 4 API endpoints: GET `/weather/{site_id}`, POST `/weather/{site_id}/refresh`, POST `/weather/refresh-all`, GET `/weather/{site_id}/suggestions`
+- Pydantic schemas: WeatherForecastResponse, WeatherRefreshResponse, WeatherRefreshAllResponse, ScenarioSuggestion, WeatherSuggestionsResponse
+- Alembic migration for weather_forecast table
+- Config: `weather_api_key`, `weather_api_url` settings
+- 5 backend tests with mocked external API (138 total passing)
+
+---
+
 ## [Session-25] — 2026-04-02
 ### Added
 - MetricsPanel: 6 KPI cards with inline SVG icons (vehicles, employees, occupancy gauge, distance, fuel cost, CO2)
