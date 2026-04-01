@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-06] — 2026-04-01
+### Added
+- Site SQLAlchemy model with PostGIS POINT geometry column and GIST spatial index (`backend/app/models/site.py`)
+- Alembic migration for site table with GeoAlchemy2 geometry support
+- Pydantic schemas: SiteCreate (with lat/lng/security_profile validation), SiteUpdate, SiteResponse, SiteSummary, SiteListResponse (`backend/app/schemas/site.py`)
+- 7 CRUD API endpoints: list (paginated + city/ZFE filters), get by ID, get by code, create (with PostGIS ST_MakePoint), update (geom recalc), delete, summary (`backend/app/api/v1/sites.py`)
+- 13 test cases covering all CRUD operations, validation, filters, and PostGIS geometry
+
+---
+
 ## [Session-05] — 2026-04-01
 ### Added
 - GitHub Actions CI pipeline (`.github/workflows/ci.yml`) — backend (ruff + mypy + pytest) and frontend (eslint + tsc + vitest)
