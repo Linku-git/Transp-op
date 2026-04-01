@@ -72,6 +72,12 @@ const ExcelImportPage = lazy(() =>
   }))
 );
 
+const ModalAnalysisPage = lazy(() =>
+  import('@/pages/modal/ModalAnalysisPage').then((m) => ({
+    default: m.ModalAnalysisPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -199,6 +205,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ExcelImportPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'modal-analysis',
+        element: (
+          <SuspenseWrapper>
+            <ModalAnalysisPage />
           </SuspenseWrapper>
         ),
       },

@@ -11,6 +11,7 @@ const navItems: NavItem[] = [
   { key: 'dashboard', path: '/dashboard', labelKey: 'nav.dashboard' },
   { key: 'sites', path: '/sites', labelKey: 'nav.sites' },
   { key: 'employees', path: '/employees', labelKey: 'nav.employees' },
+  { key: 'modal-analysis', path: '/modal-analysis', labelKey: 'nav.modal_analysis' },
   { key: 'import', path: '/import', labelKey: 'nav.import' },
   { key: 'vehicles', path: '/vehicles', labelKey: 'nav.vehicles' },
   { key: 'optimization', path: '/optimization', labelKey: 'nav.optimization' },

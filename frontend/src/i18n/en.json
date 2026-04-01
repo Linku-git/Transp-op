@@ -13,6 +13,7 @@
     "reports": "Reports",
     "settings": "Settings",
     "import": "Import",
+    "modal_analysis": "Modal Analysis",
     "admin": "Administration"
   },
   "common": {
@@ -194,6 +195,23 @@
       "site_marker": "Site",
       "empty": "No employees with coordinates to display"
     }
+  },
+  "modal": {
+    "title": "Modal Analysis",
+    "site_selector": "Site",
+    "all_sites": "All sites",
+    "distribution_title": "Modal Distribution",
+    "employees_analyzed": "employees analyzed",
+    "shift_potential_title": "Shift Potential",
+    "interest_yes": "Yes",
+    "interest_no": "No",
+    "interest_conditional": "Under conditions",
+    "count_label": "Employees",
+    "distance_distribution_title": "Distance Distribution",
+    "mobility_scores_title": "Mobility Scores",
+    "shift_analysis_title": "Shift Analysis",
+    "shift_label": "Shift",
+    "empty": "No modal data available."
   },
   "import": {
     "title": "Excel Import",

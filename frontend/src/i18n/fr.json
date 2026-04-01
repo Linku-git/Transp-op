@@ -13,6 +13,7 @@
     "reports": "Rapports",
     "settings": "Parametres",
     "import": "Import",
+    "modal_analysis": "Analyse Modale",
     "admin": "Administration"
   },
   "common": {
@@ -194,6 +195,23 @@
       "site_marker": "Site",
       "empty": "Aucun employe avec coordonnees a afficher"
     }
+  },
+  "modal": {
+    "title": "Analyse Modale",
+    "site_selector": "Site",
+    "all_sites": "Tous les sites",
+    "distribution_title": "Distribution Modale",
+    "employees_analyzed": "employes analyses",
+    "shift_potential_title": "Potentiel de Report",
+    "interest_yes": "Oui",
+    "interest_no": "Non",
+    "interest_conditional": "Sous conditions",
+    "count_label": "Employes",
+    "distance_distribution_title": "Distribution des Distances",
+    "mobility_scores_title": "Scores de Mobilite",
+    "shift_analysis_title": "Analyse par Equipe",
+    "shift_label": "Equipe",
+    "empty": "Aucune donnee modale disponible."
   },
   "import": {
     "title": "Import Excel",
