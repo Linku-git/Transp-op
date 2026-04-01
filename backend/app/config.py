@@ -32,5 +32,9 @@ class Settings(BaseSettings):
     # External services
     osrm_url: str = "http://osrm:5000"
 
+    # Weather
+    weather_api_key: str = ""
+    weather_api_url: str = "https://api.openweathermap.org/data/2.5/forecast"
+
 
 settings = Settings()

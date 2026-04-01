@@ -6,6 +6,7 @@ from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization, Route
 from app.models.site import Site
 from app.models.vehicle import Vehicle
+from app.models.weather import WeatherForecast
 
 __all__ = [
     "BaseModel",
@@ -23,4 +24,5 @@ __all__ = [
     "Cluster",
     "Route",
     "Vehicle",
+    "WeatherForecast",
 ]
