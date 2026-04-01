@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-15] — 2026-04-01
+### Added
+- EmployeeModal SQLAlchemy model with 17 data columns, unique(employee_id) constraint (`backend/app/models/modal.py`)
+- Alembic migration for employee_modal table
+- Pydantic schemas with transport mode enum validation, stats/score models (`backend/app/schemas/modal.py`)
+- 6 API endpoints: CRUD upsert for employee modal, distribution stats, shift analysis, mobility scores (`backend/app/api/v1/modal.py`)
+- 9 test cases covering upsert, stats, scores, and mode validation
+
+---
+
 ## [Session-14] — 2026-04-01
 ### Added
 - ExcelImportPage — multi-step flow (upload -> preview -> import) with per-sheet tabs
