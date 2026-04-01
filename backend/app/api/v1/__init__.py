@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1.auth import router as auth_router
+from app.api.v1.clusters import router as clusters_router
 from app.api.v1.employees import router as employees_router
 from app.api.v1.excel_import import router as excel_import_router
 from app.api.v1.health import router as health_router
@@ -25,3 +26,4 @@ api_router.include_router(leaves_router, tags=["leaves"])
 api_router.include_router(employee_modal_router, tags=["modal"])
 api_router.include_router(modal_stats_router, tags=["modal"])
 api_router.include_router(excel_import_router, tags=["import"])
+api_router.include_router(clusters_router, tags=["clusters"])
