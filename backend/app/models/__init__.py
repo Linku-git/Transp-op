@@ -1,6 +1,7 @@
 from app.models.auth import Permission, Role, RolePermission, Tenant, User
 from app.models.base import BaseModel, TimestampMixin
 from app.models.employee import Employee
+from app.models.leave import EmployeeLeave
 from app.models.site import Site
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     "User",
     "Site",
     "Employee",
+    "EmployeeLeave",
 ]
