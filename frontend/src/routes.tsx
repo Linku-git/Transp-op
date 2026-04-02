@@ -108,6 +108,18 @@ const ScenarioComparePage = lazy(() =>
   }))
 );
 
+const SettingsPage = lazy(() =>
+  import('@/pages/settings/SettingsPage').then((m) => ({
+    default: m.SettingsPage,
+  }))
+);
+
+const ConstraintsPage = lazy(() =>
+  import('@/pages/settings/ConstraintsPage').then((m) => ({
+    default: m.ConstraintsPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -283,6 +295,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ScenarioComparePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'settings',
+        element: (
+          <SuspenseWrapper>
+            <SettingsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'settings/constraints',
+        element: (
+          <SuspenseWrapper>
+            <ConstraintsPage />
           </SuspenseWrapper>
         ),
       },
