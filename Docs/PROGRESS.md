@@ -10,13 +10,13 @@
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | COMPLETE | 25/25 |
-| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 8/14 |
+| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 9/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **38/92** |
+| **Total** | **92** | | **39/92** |
 
 ---
 
@@ -72,7 +72,7 @@
 | 36 | [[sessions/session-36|Financial Dashboard — ROI]] | COMPLETE | 2026-04-02 | WaterfallChart, PaybackSlider, CostPerTripGauge, InvestmentComparatorCards, DAFExportButton, 7 tests |
 | 37 | [[sessions/session-37|Cost-per-Trip & Breakeven]] | COMPLETE | 2026-04-02 | Cost per seat, breakeven analysis, chart, 8 tests |
 | 38 | [[sessions/session-38|DAF Export (ERP Format)]] | COMPLETE | 2026-04-02 | SAP FI/Sage/Cegid CSV/XML, TCO/ROI PDF+Excel, 10 tests |
-| 39 | [[sessions/session-39|HR Dashboard KPIs Backend]] | NOT STARTED | | |
+| 39 | [[sessions/session-39|HR Dashboard KPIs Backend]] | COMPLETE | 2026-04-02 | Mobility coverage, absenteeism, retention, shadow zones, 6 tests |
 | 40 | [[sessions/session-40|HR Dashboard Frontend]] | NOT STARTED | | |
 | 41 | [[sessions/session-41|RSE/Environment Dashboard]] | NOT STARTED | | |
 | 42 | [[sessions/session-42|Enhanced Reporting Engine]] | NOT STARTED | | |

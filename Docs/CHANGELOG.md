@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-39] — 2026-04-02
+### Added
+- HR analytics service with 5 KPI functions (`backend/app/services/hr_analytics.py`):
+  - Mobility coverage: % of employees with transport solution, breakdown by site, shift, department
+  - Mobility score evolution: time-series from completed optimization runs
+  - Absenteeism correlation: compare absence rates for transport-interest groups (with/without/maybe)
+  - Retention impact: turnover analysis, departed with/without transport interest, estimated savings
+  - Shadow zones: employees with distance >30km or no modal data, threshold-based flagging
+- KPI router with GET `/kpis/hr` endpoint (`backend/app/api/v1/kpis.py`)
+- 6 tests in `backend/tests/test_hr_analytics.py`
+
+### Changed
+- `backend/app/api/v1/__init__.py` — Registered kpis router
+
+---
+
 ## [Session-38] — 2026-04-02
 ### Added
 - DAF export engine: ERP-compatible CSV and XML with standard accounting columns (account code, label, debit, credit, journal) (`backend/app/services/daf_export.py`)

@@ -330,7 +330,7 @@
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
 | GET | `/kpis/operations` | Operations KPIs | Yes | DRH, Admin | 25 |
-| GET | `/kpis/hr` | HR dashboard KPIs | Yes | DRH, DAF, Admin | 39 |
+| GET | `/kpis/hr` | HR KPIs (coverage, absenteeism, retention, shadow zones) | Yes | DRH, DAF, Admin | 39 |
 | GET | `/kpis/rse` | RSE KPIs | Yes | DRH, DAF, Admin | 41 |
 | GET | `/kpis/rti` | RTI compliance KPIs | Yes | DRH, Admin | 60 |
 | GET | `/kpis/security` | Security metrics | Yes | DRH, Admin | 64 |
