@@ -6,6 +6,26 @@
 
 ---
 
+## [Session-38] — 2026-04-02
+### Added
+- DAF export engine: ERP-compatible CSV and XML with standard accounting columns (account code, label, debit, credit, journal) (`backend/app/services/daf_export.py`)
+- 3 ERP format templates: SAP FI (BKPF/BSEG, BUKRS, HKONT, WRBTR), Sage (JournalCode, CompteNum, PieceRef), Cegid (SectionAnalytique, CodeAnalytique)
+- TCO/ROI accounting entry builders from calculation results
+- TCO PDF report with reportlab: summary table + vehicle breakdown
+- ROI PDF report with reportlab: summary + lever breakdown table
+- TCO Excel report with openpyxl: styled "Resume TCO" sheet with vehicle detail
+- ROI Excel report with openpyxl: styled "Resume ROI" sheet with lever detail
+- POST `/financial/export/daf` — ERP export (CSV or XML, configurable ERP format)
+- POST `/financial/export/tco` — TCO report download (PDF or Excel)
+- POST `/financial/export/roi` — ROI report download (PDF or Excel)
+- Pydantic schemas: `DAFExportRequest`, `FinancialReportRequest`
+- 10 tests in `backend/tests/test_daf_export.py`
+
+### Changed
+- `backend/app/api/v1/financial.py` — Added 3 export endpoints with file download responses
+
+---
+
 ## [Session-37] — 2026-04-02
 ### Added
 - Cost analysis engine: cost per available seat, per occupied seat, per employee, breakeven point (`backend/app/services/cost_analysis.py`)

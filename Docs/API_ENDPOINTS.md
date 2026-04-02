@@ -217,7 +217,9 @@
 | POST | `/financial/compare/sensitivity` | Sensitivity analysis (fuel, headcount, fill rate) | Yes | DRH, DAF, Admin | 34 |
 | POST | `/financial/cost-analysis` | Cost per seat + breakeven analysis | Yes | DRH, DAF, Admin | 37 |
 | GET | `/financial/vehicles` | Vehicle reference catalog | Yes | DRH, DAF, Admin | 31 |
-| POST | `/financial/export/daf` | DAF-compatible export | Yes | DAF, Admin | 38 |
+| POST | `/financial/export/daf` | DAF ERP export (CSV/XML, SAP/Sage/Cegid) | Yes | DAF, Admin | 38 |
+| POST | `/financial/export/tco` | TCO report (PDF or Excel) | Yes | DRH, DAF, Admin | 38 |
+| POST | `/financial/export/roi` | ROI report (PDF or Excel) | Yes | DRH, DAF, Admin | 38 |
 
 ---
 
