@@ -6,6 +6,25 @@
 
 ---
 
+## [Session-30] — 2026-04-02
+### Added
+- ExportEngine service with 5 format generators: PDF, Excel, CSV stops, CSV employees, GeoJSON (`backend/app/services/export_engine.py`)
+- PDF driver sheets using reportlab: cover page with metrics summary, per-route driver sheets with ordered stops tables, PMR indicators highlighted in blue with bold red text
+- Multi-sheet Excel workbook using openpyxl: "Resume" summary sheet, per-site sheet with clusters/routes/employees sections, PMR rows highlighted in yellow
+- CSV stop order export: route_number, stop_order, employee details, PMR flags, ETA, cumulative distance
+- CSV employee assignments export: employee details with cluster/route/vehicle assignments
+- GeoJSON FeatureCollection: route LineStrings (from polyline or stops), stop Points with PMR properties, cluster centroid Points
+- 5 API endpoints under `/export/` prefix: GET pdf, excel, csv/stops, csv/employees, geojson — all require `optimization_id` query param (`backend/app/api/v1/exports.py`)
+- Celery task wrapper for large async exports with Redis progress tracking, 120s timeout (`backend/app/tasks/export_tasks.py`)
+- Google encoded polyline decoder helper for GeoJSON route geometry
+- `reportlab>=4.4.3` dependency added to requirements.txt
+- 22 tests in `backend/tests/test_exports.py` covering all formats + PMR indicators + polyline decoder
+
+### Changed
+- `backend/app/api/v1/__init__.py` — Registered exports router with tags=["exports"]
+
+---
+
 ## [Session-29] — 2026-04-02
 ### Added
 - OptimizationSettings SQLAlchemy model with tenant-scoped one-row-per-tenant pattern (UniqueConstraint on tenant_id), fields: meeting_radius_meters, max_walking_distance_meters, max_route_duration_seconds, fuel_cost_per_liter, fuel_consumption_l_per_100km, co2_kg_per_liter, rti_threshold_minutes, night_mode_start, night_mode_end, min_night_group_size (`backend/app/models/settings.py`)
