@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-37] — 2026-04-02
+### Added
+- Cost analysis engine: cost per available seat, per occupied seat, per employee, breakeven point (`backend/app/services/cost_analysis.py`)
+- PRD example verified: 50-seat bus at 120K/year = 5.45 EUR/seat, 6.81 at 80% fill, breakeven at 73 employees
+- Breakeven chart data generator with transport vs kilometric allowance curves
+- Pydantic schemas: `CostAnalysisRequest`, `CostAnalysisResponse`, `BreakevenPoint`
+- POST `/financial/cost-analysis` endpoint
+- CostAnalysisPanel: form + 4 metric cards + breakeven badge
+- BreakevenChart: Recharts LineChart with transport/allowance curves, reference line at breakeven
+- TypeScript types + API function for cost analysis
+- 8 tests (6 backend + 2 frontend)
+
+### Changed
+- `backend/app/api/v1/financial.py` — Added cost-analysis endpoint
+- `backend/app/schemas/financial.py` — Added 3 cost analysis schemas
+
+---
+
 ## [Session-36] — 2026-04-02
 ### Added
 - WaterfallChart: Recharts BarChart showing 4 ROI levers (absenteisme, retention, flotte, trajet) + total

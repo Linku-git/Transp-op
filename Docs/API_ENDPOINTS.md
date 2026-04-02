@@ -215,6 +215,7 @@
 | POST | `/financial/roi/calculate` | Calculate ROI (4 levers + payback, optional DB persist) | Yes | DRH, DAF, Admin | 33 |
 | POST | `/financial/compare` | Compare CAPEX/MaD/OPEX with recommendation | Yes | DRH, DAF, Admin | 34 |
 | POST | `/financial/compare/sensitivity` | Sensitivity analysis (fuel, headcount, fill rate) | Yes | DRH, DAF, Admin | 34 |
+| POST | `/financial/cost-analysis` | Cost per seat + breakeven analysis | Yes | DRH, DAF, Admin | 37 |
 | GET | `/financial/vehicles` | Vehicle reference catalog | Yes | DRH, DAF, Admin | 31 |
 | POST | `/financial/export/daf` | DAF-compatible export | Yes | DAF, Admin | 38 |
 
