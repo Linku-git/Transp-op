@@ -11,6 +11,14 @@
 
 ## Changes
 
+### [2026-04-02 20:35] Config: Vite allowedHosts corrected to boolean true
+- **Files:** `frontend/vite.config.ts`
+- **What:** Changed `allowedHosts` from the string `'all'` to the boolean `true`
+- **Why:** Vite 8 requires `true` (boolean), not the string `'all'`, to allow all hosts. The string value caused a "Blocked request" error in the Replit proxy environment.
+- **Before:** `allowedHosts: 'all'`
+- **After:** `allowedHosts: true`
+- **Risk:** Low
+
 ### [2026-04-02 20:20] Config: Vite server config updated for Replit environment
 - **Files:** `frontend/vite.config.ts`
 - **What:** Changed server port from 5173 to 5000, set host to 0.0.0.0, added `allowedHosts: 'all'`, added API proxy forwarding `/api` to `http://localhost:8000`
