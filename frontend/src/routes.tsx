@@ -144,6 +144,18 @@ const TCOCalculatorPage = lazy(() =>
   }))
 );
 
+const ReportListPage = lazy(() =>
+  import('@/pages/reports/ReportListPage').then((m) => ({
+    default: m.ReportListPage,
+  }))
+);
+
+const ReportGeneratorPage = lazy(() =>
+  import('@/pages/reports/ReportGeneratorPage').then((m) => ({
+    default: m.ReportGeneratorPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -367,6 +379,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <TCOCalculatorPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'reports',
+        element: (
+          <SuspenseWrapper>
+            <ReportListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'reports/generate',
+        element: (
+          <SuspenseWrapper>
+            <ReportGeneratorPage />
           </SuspenseWrapper>
         ),
       },

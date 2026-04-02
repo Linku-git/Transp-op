@@ -165,6 +165,59 @@ async def export_geojson(
 
 
 # ---------------------------------------------------------------------------
+# GET /export/history — list generated reports
+# ---------------------------------------------------------------------------
+
+
+@router.get("/history", response_model=dict)
+async def list_generated_reports(
+    report_type: str | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """List generated report history for the current tenant."""
+    from sqlalchemy import select, func
+    conditions = [GeneratedReport.tenant_id == current_user.tenant_id]
+    if report_type:
+        conditions.append(GeneratedReport.report_type == report_type)
+
+    count_stmt = select(func.count()).select_from(GeneratedReport).where(*conditions)
+    total = (await db.execute(count_stmt)).scalar_one()
+
+    offset = (page - 1) * page_size
+    data_stmt = (
+        select(GeneratedReport)
+        .where(*conditions)
+        .order_by(GeneratedReport.generated_at.desc())
+        .offset(offset)
+        .limit(page_size)
+    )
+    rows = (await db.execute(data_stmt)).scalars().all()
+
+    pages = max(1, (total + page_size - 1) // page_size)
+
+    return {
+        "data": [
+            {
+                "id": str(r.id),
+                "report_type": r.report_type,
+                "format": r.format,
+                "params": r.params,
+                "file_url": r.file_url,
+                "generated_at": r.generated_at.isoformat() if r.generated_at else None,
+                "generated_by": str(r.generated_by) if r.generated_by else None,
+            }
+            for r in rows
+        ],
+        "total": total,
+        "page": page,
+        "pages": pages,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Helper: persist GeneratedReport record
 # ---------------------------------------------------------------------------
 
