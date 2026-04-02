@@ -6,6 +6,25 @@
 
 ---
 
+## [Session-40] — 2026-04-02
+### Added
+- HRDashboardPage at `/dashboard/hr` with full KPI visualization fetching from GET `/kpis/hr`
+- HeatmapTable: reusable color-coded coverage table (red/amber/green thresholds)
+- ScatterPlot: reusable Recharts scatter chart component
+- RetentionImpactCard: savings estimate, turnover rate, departure with/without transport bar
+- ShadowZonesList: employees beyond 30km threshold, limited to 20 with "voir plus"
+- MobilityAlerts: critical/warning banners when coverage < 60% or shadow zones > 10%
+- Mobility score evolution LineChart (Recharts)
+- TypeScript types for HR KPIs + API client
+- i18n translations for HR section (fr + en)
+- Route for `/dashboard/hr` with lazy loading
+- 8 tests in `frontend/src/pages/dashboard/__tests__/HRDashboard.test.tsx`
+
+### Changed
+- `frontend/src/routes.tsx` — Added HR dashboard route
+
+---
+
 ## [Session-39] — 2026-04-02
 ### Added
 - HR analytics service with 5 KPI functions (`backend/app/services/hr_analytics.py`):

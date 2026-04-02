@@ -105,13 +105,15 @@
 
 ### HR Dashboard (Sessions 39-40)
 
-#### HRDashboard `/dashboard/hr`
-- Mobility coverage by site/shift/team (heatmap table)
-- Mobility score evolution (line chart over time)
-- Absenteeism correlation scatter plot
-- Retention impact card (cost of replacement vs mobility cost)
-- Shadow zones list + map overlay
-- Unaddressed mobility gap alerts
+#### HRDashboardPage `/dashboard/hr` ✅ Session 40
+- MobilityAlerts: critical (coverage <60%) and warning (shadow zones >10%) banners
+- Coverage summary card (big number) + 3 HeatmapTables (by site/shift/department)
+- HeatmapTable: reusable color-coded table (red <50%, amber 50-75%, green >75%)
+- Mobility score evolution LineChart (date vs score)
+- Absenteeism correlation ScatterPlot (reusable Recharts scatter)
+- RetentionImpactCard: savings estimate, turnover rate, departure breakdown bar
+- ShadowZonesList: employees beyond 30km threshold with location details
+- Components: `HeatmapTable`, `ScatterPlot`, `RetentionImpactCard`, `ShadowZonesList`, `MobilityAlerts`
 
 ---
 
