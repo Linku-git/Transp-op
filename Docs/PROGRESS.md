@@ -10,13 +10,13 @@
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | COMPLETE | 25/25 |
-| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 11/14 |
+| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 12/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **41/92** |
+| **Total** | **92** | | **42/92** |
 
 ---
 
@@ -75,7 +75,7 @@
 | 39 | [[sessions/session-39|HR Dashboard KPIs Backend]] | COMPLETE | 2026-04-02 | Mobility coverage, absenteeism, retention, shadow zones, 6 tests |
 | 40 | [[sessions/session-40|HR Dashboard Frontend]] | COMPLETE | 2026-04-02 | HeatmapTable, ScatterPlot, RetentionCard, ShadowZones, MobilityAlerts, 8 tests |
 | 41 | [[sessions/session-41|RSE/Environment Dashboard]] | COMPLETE | 2026-04-02 | CO2/modal/ZFE backend+frontend, DPEF export, 13 tests |
-| 42 | [[sessions/session-42|Enhanced Reporting Engine]] | NOT STARTED | | |
+| 42 | [[sessions/session-42|Enhanced Reporting Engine]] | COMPLETE | 2026-04-02 | GeneratedReport model, 4 report types (PDF+Excel), DB persistence, 7 tests |
 | 43 | [[sessions/session-43|Report Generation Frontend]] | NOT STARTED | | |
 | 44 | [[sessions/session-44|KPI Snapshot System]] | NOT STARTED | | |
 

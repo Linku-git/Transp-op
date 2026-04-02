@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-42] — 2026-04-02
+### Added
+- GeneratedReport SQLAlchemy model (tenant_id, report_type, params, file_url, format, generated_by) + Alembic migration
+- 4 report generators in `report_engine.py`: modal analysis, fleet utilization, volunteer driver, HR mobility
+- Each generator supports PDF (reportlab) and Excel (openpyxl) output
+- GET endpoints: `/export/modal-report`, `/export/fleet-report`, `/export/volunteer-report`, `/export/hr-mobility`
+- `_persist_report` helper stores GeneratedReport records in DB for each export
+- 7 tests in `backend/tests/test_generated_report.py`
+
+### Changed
+- `backend/app/api/v1/exports.py` — Added 4 report endpoints + persistence helper
+- `backend/app/models/__init__.py` — Added GeneratedReport export
+
+---
+
 ## [Session-41] — 2026-04-02
 ### Added
 - RSE analytics service: CO2 savings (baseline vs actual), private vehicles avoided, modal distribution (soft/electric/shared/individual with before/after), ZFE compliance (`backend/app/services/rse_analytics.py`)

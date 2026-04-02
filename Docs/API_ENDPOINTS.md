@@ -312,9 +312,9 @@
 | GET | `/export/csv/stops` | CSV stop order | Yes | DRH, Admin | 30 |
 | GET | `/export/csv/employees` | CSV employee assignments | Yes | DRH, Admin | 30 |
 | GET | `/export/geojson` | GeoJSON FeatureCollection | Yes | DRH, Admin | 30 |
-| GET | `/export/modal-report` | Modal analysis report | Yes | DRH, Admin | 42 |
-| GET | `/export/fleet-report` | Fleet utilization | Yes | DRH, Admin | 42 |
-| GET | `/export/volunteer-report` | Volunteer driver report | Yes | DRH, Admin | 42 |
+| GET | `/export/modal-report` | Modal analysis report (PDF/Excel) | Yes | DRH, Admin | 42 |
+| GET | `/export/fleet-report` | Fleet utilization report (PDF/Excel) | Yes | DRH, Admin | 42 |
+| GET | `/export/volunteer-report` | Volunteer driver report (PDF/Excel) | Yes | DRH, Admin | 42 |
 | POST | `/export/financial/tco` | TCO report | Yes | DAF, Admin | 38 |
 | POST | `/export/financial/roi` | ROI report | Yes | DAF, Admin | 38 |
 | POST | `/export/financial/daf` | DAF ERP export | Yes | DAF, Admin | 38 |
