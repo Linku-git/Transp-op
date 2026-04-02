@@ -6,6 +6,26 @@
 
 ---
 
+## [Session-41] — 2026-04-02
+### Added
+- RSE analytics service: CO2 savings (baseline vs actual), private vehicles avoided, modal distribution (soft/electric/shared/individual with before/after), ZFE compliance (`backend/app/services/rse_analytics.py`)
+- DPEF PDF report generator with reportlab (CO2, modal, ZFE, vehicles tables)
+- GET `/kpis/rse` endpoint returning all RSE KPIs
+- POST `/kpis/rse/dpef` endpoint for DPEF PDF download
+- RSEDashboardPage at `/dashboard/rse`: 3 summary cards, CO2TrendLine, modal PieChart, ZFEComplianceGauge, ModalShiftComparison, DPEF export button
+- CO2TrendLine: Recharts line chart with green trend
+- ZFEComplianceGauge: SVG semicircle gauge (green/amber/red thresholds)
+- ModalShiftComparison: grouped bar chart comparing before/after modal distribution
+- TypeScript types + API client for RSE KPIs
+- i18n translations (fr + en)
+- 13 tests total (7 backend + 6 frontend)
+
+### Changed
+- `backend/app/api/v1/kpis.py` — Added RSE and DPEF endpoints
+- `frontend/src/routes.tsx` — Added `/dashboard/rse` route
+
+---
+
 ## [Session-40] — 2026-04-02
 ### Added
 - HRDashboardPage at `/dashboard/hr` with full KPI visualization fetching from GET `/kpis/hr`

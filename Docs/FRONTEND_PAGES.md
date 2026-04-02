@@ -119,13 +119,13 @@
 
 ### RSE/Environment Dashboard (Session 41)
 
-#### RSEDashboard `/dashboard/rse`
-- Private vehicles avoided counter
-- CO2 saved (kg) with trend line
-- Soft/electric modes share (pie chart)
-- ZFE compliance percentage (gauge)
-- DPEF report generation button
-- Modal shift before/after comparison
+#### RSEDashboardPage `/dashboard/rse` ✅ Session 41
+- 3 summary cards: CO2 saved, private vehicles avoided, ZFE compliance %
+- CO2TrendLine: Recharts line chart (green trend over time)
+- Modal distribution PieChart + ZFEComplianceGauge (SVG semicircle)
+- ModalShiftComparison: before/after grouped bar chart
+- DPEF export button (downloads PDF from POST /kpis/rse/dpef)
+- Components: `CO2TrendLine`, `ZFEComplianceGauge`, `ModalShiftComparison`
 
 ---
 

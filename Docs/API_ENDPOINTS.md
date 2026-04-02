@@ -331,7 +331,8 @@
 |--------|----------|-------------|------|-------|---------|
 | GET | `/kpis/operations` | Operations KPIs | Yes | DRH, Admin | 25 |
 | GET | `/kpis/hr` | HR KPIs (coverage, absenteeism, retention, shadow zones) | Yes | DRH, DAF, Admin | 39 |
-| GET | `/kpis/rse` | RSE KPIs | Yes | DRH, DAF, Admin | 41 |
+| GET | `/kpis/rse` | RSE KPIs (CO2, modal, ZFE, vehicles avoided) | Yes | DRH, DAF, Admin | 41 |
+| POST | `/kpis/rse/dpef` | DPEF PDF report download | Yes | DRH, DAF, Admin | 41 |
 | GET | `/kpis/rti` | RTI compliance KPIs | Yes | DRH, Admin | 60 |
 | GET | `/kpis/security` | Security metrics | Yes | DRH, Admin | 64 |
 | GET | `/kpis/financial` | Financial KPIs | Yes | DAF, Admin | 35 |
