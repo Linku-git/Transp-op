@@ -6,6 +6,8 @@ import { listSites } from '@/api/sites';
 import { getEmployeeSummary } from '@/api/employees';
 import { getOptimizationHistory, getLatestOptimization } from '@/api/optimization';
 import { getModalStats } from '@/api/modal';
+import { MapView } from '@/components/maps/MapView';
+import { SiteMarker } from '@/components/maps/SiteMarker';
 import type { Site } from '@/types/site';
 import type { EmployeeSummary } from '@/types/employee';
 import type { OptimizationHistoryItem, Optimization, OptimizationMetrics } from '@/types/optimization';
@@ -451,54 +453,153 @@ function OrchestrationStreamTable({
   );
 }
 
-function WeatherCard({ isLoading }: { isLoading: boolean }) {
-  if (isLoading) {
+/* ------------------------------------------------------------------ */
+/*  WMO Weather Code helpers                                           */
+/* ------------------------------------------------------------------ */
+
+function wmoIcon(code: number): string {
+  if (code === 0) return '☀️';
+  if (code <= 3) return '⛅';
+  if (code <= 48) return '🌫️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  if (code <= 86) return '🌨️';
+  return '⛈️';
+}
+
+function wmoLabel(code: number): string {
+  if (code === 0) return 'Ciel dégagé';
+  if (code === 1) return 'Principalement dégagé';
+  if (code === 2) return 'Partiellement nuageux';
+  if (code === 3) return 'Couvert';
+  if (code <= 48) return 'Brouillard';
+  if (code <= 57) return 'Bruine';
+  if (code <= 67) return 'Pluie';
+  if (code <= 77) return 'Neige';
+  if (code <= 82) return 'Averses';
+  if (code <= 86) return 'Averses de neige';
+  return 'Orage';
+}
+
+interface CityWeather {
+  siteId: string;
+  city: string;
+  temp: number;
+  weatherCode: number;
+  humidity: number;
+  windKph: number;
+}
+
+function WeatherCard({ sites, isLoading }: { sites: Site[]; isLoading: boolean }) {
+  const [cityWeather, setCityWeather] = useState<CityWeather[]>([]);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
+  useEffect(() => {
+    if (!sites.length) return;
+    setWeatherLoading(true);
+
+    const validSites = sites.filter((s) => s.lat && s.lng);
+    Promise.all(
+      validSites.map(async (site) => {
+        try {
+          const url =
+            `https://api.open-meteo.com/v1/forecast?latitude=${site.lat}&longitude=${site.lng}` +
+            `&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&timezone=auto`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const cur = data.current ?? {};
+          return {
+            siteId: site.id,
+            city: site.city || site.name,
+            temp: Math.round(cur.temperature_2m ?? 0),
+            weatherCode: cur.weather_code ?? 0,
+            humidity: Math.round(cur.relative_humidity_2m ?? 0),
+            windKph: Math.round(cur.wind_speed_10m ?? 0),
+          } as CityWeather;
+        } catch {
+          return null;
+        }
+      }),
+    ).then((results) => {
+      setCityWeather(results.filter(Boolean) as CityWeather[]);
+      setWeatherLoading(false);
+    });
+  }, [sites]);
+
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('fr', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  if (isLoading || weatherLoading) {
     return (
-      <div className="rounded-2xl p-6 bg-gradient-to-br from-blue-500 to-blue-700 animate-pulse">
-        <div className="h-4 w-20 rounded bg-white/20 mb-3" />
+      <div className="rounded-2xl p-5 bg-gradient-to-br from-blue-600 to-indigo-700 animate-pulse h-full min-h-[280px]">
+        <div className="h-3 w-24 rounded bg-white/20 mb-4" />
         <div className="h-10 w-16 rounded bg-white/20 mb-2" />
-        <div className="h-3 w-28 rounded bg-white/20" />
+        <div className="h-3 w-32 rounded bg-white/20 mb-5" />
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => <div key={i} className="h-8 rounded-xl bg-white/10" />)}
+        </div>
       </div>
     );
   }
 
-  const today = new Date();
-  const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
-  const dateStr = today.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-  });
+  const active = cityWeather[selectedIdx] ?? null;
 
   return (
-    <div className="rounded-2xl p-6 bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="material-symbols-outlined text-lg text-white/90">
-          wb_sunny
-        </span>
-        <span className="text-xs font-semibold text-white/80 uppercase tracking-widest">
-          Weather
-        </span>
-      </div>
-      <p className="text-4xl font-black tabular-nums">24&#176;C</p>
-      <p className="text-sm text-white/80 mt-1">Mostly Clear</p>
-      <div className="mt-4 pt-4 border-t border-white/20">
-        <p className="text-xs text-white/70">{dayName}</p>
-        <p className="text-sm font-semibold text-white/90">{dateStr}</p>
-      </div>
-      <div className="flex items-center gap-4 mt-4">
-        <div className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm text-white/70">
-            water_drop
-          </span>
-          <span className="text-xs text-white/80">12%</span>
+    <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md flex flex-col overflow-hidden">
+      {/* Hero city */}
+      {active && (
+        <div className="px-5 pt-5 pb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="material-symbols-outlined text-base text-white/70">wb_sunny</span>
+            <span className="text-xs font-semibold text-white/70 uppercase tracking-widest">Météo</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-4xl font-black tabular-nums leading-none">{active.temp}°C</p>
+              <p className="text-sm text-white/80 mt-1">{wmoIcon(active.weatherCode)} {wmoLabel(active.weatherCode)}</p>
+              <p className="text-xs text-white/60 mt-0.5 font-medium">{active.city}</p>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1 justify-end mb-1">
+                <span className="material-symbols-outlined text-sm text-white/60">water_drop</span>
+                <span className="text-xs text-white/70">{active.humidity}%</span>
+              </div>
+              <div className="flex items-center gap-1 justify-end">
+                <span className="material-symbols-outlined text-sm text-white/60">air</span>
+                <span className="text-xs text-white/70">{active.windKph} km/h</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-white/50 mt-2 capitalize">{dateStr}</p>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm text-white/70">
-            air
-          </span>
-          <span className="text-xs text-white/80">8 km/h</span>
+      )}
+
+      {/* City list */}
+      {cityWeather.length > 0 && (
+        <div className="border-t border-white/10 overflow-y-auto max-h-48">
+          {cityWeather.map((cw, idx) => (
+            <button
+              key={cw.siteId}
+              onClick={() => setSelectedIdx(idx)}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                idx === selectedIdx ? 'bg-white/20' : 'hover:bg-white/10'
+              }`}
+            >
+              <span className="text-lg leading-none">{wmoIcon(cw.weatherCode)}</span>
+              <span className="flex-1 text-sm font-medium text-white truncate">{cw.city}</span>
+              <span className="text-sm font-bold text-white tabular-nums">{cw.temp}°</span>
+            </button>
+          ))}
         </div>
-      </div>
+      )}
+
+      {cityWeather.length === 0 && !weatherLoading && (
+        <div className="px-5 pb-5 text-xs text-white/60 text-center">
+          Aucune donnée météo disponible.<br />Vérifiez que des sites avec coordonnées sont configurés.
+        </div>
+      )}
     </div>
   );
 }
@@ -665,47 +766,44 @@ export function DashboardPage() {
       <div className="grid grid-cols-12 gap-4">
         {/* Left: Large Map Container */}
         <div className="col-span-12 lg:col-span-8">
-          <div className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden relative"
-               style={{ minHeight: '420px' }}>
-            {/* Map placeholder with gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-surface-container-low to-surface-container">
-              {/* Grid pattern overlay */}
-              <div
-                className="absolute inset-0 opacity-[0.03]"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(var(--color-on-surface) 1px, transparent 1px), linear-gradient(90deg, var(--color-on-surface) 1px, transparent 1px)',
-                  backgroundSize: '40px 40px',
-                }}
-              />
-
-              {/* Map center marker */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-2 opacity-30">
-                  <span className="material-symbols-outlined text-6xl text-on-surface-variant">
-                    map
-                  </span>
-                  <span className="text-xs text-on-surface-variant font-medium">
-                    Map view
-                  </span>
-                </div>
-              </div>
-            </div>
+          <div
+            className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden relative"
+            style={{ minHeight: '420px', height: '420px' }}
+          >
+            {/* Real Google Maps with site markers */}
+            {(() => {
+              const validSites = sites.filter((s) => s.lat && s.lng);
+              const center: [number, number] =
+                validSites.length > 0
+                  ? [
+                      validSites.reduce((sum, s) => sum + s.lat, 0) / validSites.length,
+                      validSites.reduce((sum, s) => sum + s.lng, 0) / validSites.length,
+                    ]
+                  : [31.7917, -7.0926];
+              const zoom = validSites.length === 1 ? 12 : validSites.length > 1 ? 7 : 6;
+              return (
+                <MapView center={center} zoom={zoom} height="100%" className="absolute inset-0 rounded-2xl">
+                  {validSites.map((site) => (
+                    <SiteMarker key={site.id} site={site} color="#0058be" />
+                  ))}
+                </MapView>
+              );
+            })()}
 
             {/* Glassmorphism overlay: Hub label */}
-            <div className="absolute bottom-4 left-4 glass-effect bg-white/80 rounded-xl px-5 py-4 shadow-sm">
+            <div className="absolute bottom-4 left-4 z-10 glass-effect bg-white/80 backdrop-blur-sm rounded-xl px-5 py-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-2xl">
                   location_city
                 </span>
                 <div>
                   <p className="text-sm font-bold text-on-surface">
-                    {sites.length > 0 ? sites[0].city : 'Casablanca'} Hub
+                    {sites.length > 0 ? sites[0].city : 'Maroc'} Hub
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     <span className="text-xs text-on-surface-variant">
-                      {sites.length} site{sites.length !== 1 ? 's' : ''} active
+                      {sites.length} site{sites.length !== 1 ? 's' : ''} actif{sites.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                 </div>
@@ -713,14 +811,14 @@ export function DashboardPage() {
             </div>
 
             {/* Stats overlay: top-right */}
-            <div className="absolute top-4 right-4 glass-effect bg-white/80 rounded-xl px-4 py-3 shadow-sm">
+            <div className="absolute top-4 right-4 z-10 glass-effect bg-white/80 backdrop-blur-sm rounded-xl px-4 py-3 shadow-sm">
               <div className="flex items-center gap-4">
                 <div className="text-center">
                   <p className="text-lg font-black text-on-surface tabular-nums">
                     {employeeSummary?.total_count ?? '--'}
                   </p>
                   <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
-                    Employees
+                    Employés
                   </p>
                 </div>
                 <div className="w-px h-8 bg-outline-variant" />
@@ -769,7 +867,7 @@ export function DashboardPage() {
 
         {/* Right: Weather Widget */}
         <div className="col-span-12 lg:col-span-3">
-          <WeatherCard isLoading={isLoading} />
+          <WeatherCard sites={sites} isLoading={isLoading} />
         </div>
       </div>
     </div>
