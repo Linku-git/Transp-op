@@ -96,6 +96,18 @@ const OptimizationHistoryPage = lazy(() =>
   }))
 );
 
+const ScenarioListPage = lazy(() =>
+  import('@/pages/scenarios/ScenarioListPage').then((m) => ({
+    default: m.ScenarioListPage,
+  }))
+);
+
+const ScenarioComparePage = lazy(() =>
+  import('@/pages/scenarios/ScenarioComparePage').then((m) => ({
+    default: m.ScenarioComparePage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -255,6 +267,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <OptimizationResultPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'scenarios',
+        element: (
+          <SuspenseWrapper>
+            <ScenarioListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'scenarios/compare',
+        element: (
+          <SuspenseWrapper>
+            <ScenarioComparePage />
           </SuspenseWrapper>
         ),
       },

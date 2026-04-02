@@ -11,6 +11,7 @@ import { RoutePolyline } from '@/components/maps/RoutePolyline';
 import { MeetingZoneMarker } from '@/components/maps/MeetingZoneMarker';
 import { AccessLeg } from '@/components/maps/AccessLeg';
 import { MapLegend } from '@/components/maps/MapLegend';
+import { WeatherWidget } from '@/components/optimization/WeatherWidget';
 import type { OptimizationRunParams, OptimizationMetrics, MeetingZone } from '@/types/optimization';
 import type { Site } from '@/types/site';
 
@@ -22,6 +23,7 @@ const CONDITION_OPTIONS = [
   { value: 'strike', label: 'Strike' },
   { value: 'peak', label: 'Peak' },
   { value: 'night', label: 'Night' },
+  { value: 'transit_failure', label: 'Transit Failure' },
 ];
 
 const ALGORITHM_OPTIONS = [
@@ -188,6 +190,10 @@ export function OptimizationPage() {
     includeVolunteers,
     launch,
   ]);
+
+  const handleWeatherScenario = useCallback((conditionType: string) => {
+    setConditionType(conditionType);
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -447,6 +453,13 @@ export function OptimizationPage() {
                   <span className="text-on-surface">{current.target_date}</span>
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Weather forecast widget */}
+          {siteId && (
+            <div className="mt-5">
+              <WeatherWidget siteId={siteId} onCreateScenario={handleWeatherScenario} />
             </div>
           )}
         </div>

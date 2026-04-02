@@ -91,7 +91,8 @@ describe('OptimizationPage', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('-- Select a site --')).toBeInTheDocument();
+    const siteOptions = screen.getAllByText('-- Select a site --');
+    expect(siteOptions.length).toBeGreaterThan(0);
     expect(screen.getByText('Site Alpha (S01)')).toBeInTheDocument();
     expect(screen.getByText('Site Beta (S02)')).toBeInTheDocument();
   });

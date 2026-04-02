@@ -15,6 +15,7 @@ const navItems: NavItem[] = [
   { key: 'import', path: '/import', labelKey: 'nav.import' },
   { key: 'vehicles', path: '/vehicles', labelKey: 'nav.vehicles' },
   { key: 'optimization', path: '/optimization', labelKey: 'nav.optimization' },
+  { key: 'scenarios', path: '/scenarios', labelKey: 'nav.scenarios' },
   { key: 'financial', path: '/financial', labelKey: 'nav.financial' },
   { key: 'reports', path: '/reports', labelKey: 'nav.reports' },
   { key: 'settings', path: '/settings', labelKey: 'nav.settings' },
