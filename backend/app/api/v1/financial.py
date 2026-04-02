@@ -31,8 +31,11 @@ from app.schemas.financial import (
     InvestmentCompareResponse,
     SensitivityRequest,
     SensitivityResponse,
+    CostAnalysisRequest,
+    CostAnalysisResponse,
     VehicleReferenceResponse,
 )
+from app.services.cost_analysis import calculate_cost_analysis
 from app.services.investment_comparator import compare_investment_models, sensitivity_analysis
 from app.services.roi_calculator import calculate_roi
 from app.services.tco_calculator import calculate_tco
@@ -453,6 +456,37 @@ async def investment_sensitivity(
         current_user.id,
     )
     return SensitivityResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /financial/cost-analysis — cost per trip and breakeven
+# ---------------------------------------------------------------------------
+
+
+@router.post("/cost-analysis", response_model=CostAnalysisResponse)
+async def cost_analysis(
+    body: CostAnalysisRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> CostAnalysisResponse:
+    """Calculate cost per seat, per employee, and breakeven vs kilometric allowance."""
+    result = calculate_cost_analysis(
+        annual_route_cost=body.annual_route_cost,
+        vehicle_capacity=body.vehicle_capacity,
+        fill_rate=body.fill_rate,
+        transported_employees=body.transported_employees,
+        average_distance_km=body.average_distance_km,
+        kilometric_allowance_per_km=body.kilometric_allowance_per_km,
+        working_days=body.working_days,
+        trips_per_day=body.trips_per_day,
+        total_annual_cost=body.total_annual_cost,
+    )
+
+    logger.info(
+        "Cost analysis for %d-seat vehicle by user %s",
+        body.vehicle_capacity,
+        current_user.id,
+    )
+    return CostAnalysisResponse(**result)
 
 
 # ---------------------------------------------------------------------------

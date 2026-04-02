@@ -426,6 +426,50 @@ class SensitivityResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Cost Analysis schemas
+# ---------------------------------------------------------------------------
+
+
+class CostAnalysisRequest(BaseModel):
+    """Request body for cost-per-trip and breakeven analysis."""
+
+    annual_route_cost: Decimal = Field(..., ge=0)
+    vehicle_capacity: int = Field(..., ge=1)
+    fill_rate: Decimal = Field(default=Decimal("0.80"), ge=Decimal("0.01"), le=Decimal("1.0"))
+    transported_employees: int = Field(..., ge=1)
+    average_distance_km: Decimal = Field(..., ge=0)
+    kilometric_allowance_per_km: Decimal = Field(default=Decimal("0.25"), ge=0)
+    working_days: int = Field(default=220, ge=1, le=365)
+    trips_per_day: int = Field(default=2, ge=1, le=10)
+    total_annual_cost: Decimal | None = Field(default=None, ge=0)
+
+
+class BreakevenPoint(BaseModel):
+    """Single data point for breakeven chart."""
+
+    employees: int
+    transport_cost_per_employee: float
+    allowance_cost_per_employee: float
+
+
+class CostAnalysisResponse(BaseModel):
+    """Full cost analysis response."""
+
+    cost_per_available_seat: float
+    cost_per_occupied_seat: float
+    annual_cost_per_employee: float
+    breakeven_employees: int
+    annual_route_cost: float
+    vehicle_capacity: int
+    fill_rate: float
+    transported_employees: int
+    working_days: int
+    trips_per_day: int
+    annual_allowance_per_employee: float
+    breakeven_chart: list[BreakevenPoint]
+
+
+# ---------------------------------------------------------------------------
 # VehicleReference schemas
 # ---------------------------------------------------------------------------
 

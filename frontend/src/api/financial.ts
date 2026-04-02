@@ -7,6 +7,8 @@ import type {
   ROICalculateResponse,
   InvestmentCompareRequest,
   InvestmentCompareResponse,
+  CostAnalysisRequest,
+  CostAnalysisResponse,
 } from '../types/financial';
 
 const FINANCIAL_PATH = '/api/v1/financial';
@@ -43,6 +45,16 @@ export const compareInvestments = async (
 ): Promise<InvestmentCompareResponse> => {
   const response = await api.post<InvestmentCompareResponse>(
     `${FINANCIAL_PATH}/compare`,
+    request,
+  );
+  return response.data;
+};
+
+export const calculateCostAnalysis = async (
+  request: CostAnalysisRequest,
+): Promise<CostAnalysisResponse> => {
+  const response = await api.post<CostAnalysisResponse>(
+    `${FINANCIAL_PATH}/cost-analysis`,
     request,
   );
   return response.data;

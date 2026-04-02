@@ -173,3 +173,37 @@ export interface InvestmentCompareResponse {
   models: InvestmentModelResult[];
   recommendation: InvestmentRecommendation;
 }
+
+// Cost Analysis types
+export interface CostAnalysisRequest {
+  annual_route_cost: number;
+  vehicle_capacity: number;
+  fill_rate: number;
+  transported_employees: number;
+  average_distance_km: number;
+  kilometric_allowance_per_km: number;
+  working_days?: number;
+  trips_per_day?: number;
+  total_annual_cost?: number;
+}
+
+export interface BreakevenPoint {
+  employees: number;
+  transport_cost_per_employee: number;
+  allowance_cost_per_employee: number;
+}
+
+export interface CostAnalysisResponse {
+  cost_per_available_seat: number;
+  cost_per_occupied_seat: number;
+  annual_cost_per_employee: number;
+  breakeven_employees: number;
+  annual_route_cost: number;
+  vehicle_capacity: number;
+  fill_rate: number;
+  transported_employees: number;
+  working_days: number;
+  trips_per_day: number;
+  annual_allowance_per_employee: number;
+  breakeven_chart: BreakevenPoint[];
+}
