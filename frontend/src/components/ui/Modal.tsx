@@ -47,15 +47,15 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       className="fixed inset-0 z-50 m-auto max-w-lg w-full bg-transparent p-0 backdrop:bg-black/30 backdrop:backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
-      <div className="bg-surface-container-lowest rounded-lg shadow-lg p-6 relative">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 relative">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-xl font-semibold text-on-surface">
+          <h2 className="font-sans text-lg font-bold text-on-surface">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-md cursor-pointer"
+            className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-lg cursor-pointer"
             aria-label="Close"
           >
             <svg

@@ -116,9 +116,24 @@ export function ExcelImportPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
-          {t('import.title')}
-        </h1>
+        <div>
+          <nav className="flex items-center gap-1.5 text-xs font-sans text-on-surface-variant mb-2">
+            <span>{t('common.dashboard', 'Tableau de bord')}</span>
+            <span>/</span>
+            <span className="text-primary font-medium">{t('import.title')}</span>
+          </nav>
+          <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
+            {t('import.title')}
+          </h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary">
+            {t('import.download_template', 'Telecharger le modele')}
+          </Button>
+          <Button>
+            {t('import.initialize', 'Initialiser le processus')}
+          </Button>
+        </div>
       </div>
 
       {/* Error banner */}
@@ -130,28 +145,48 @@ export function ExcelImportPage() {
 
       {/* Step 1: Upload */}
       {step === 'upload' && (
-        <div className="bg-surface-container-lowest rounded-lg p-8">
-          <div className="max-w-lg mx-auto">
-            <p className="text-sm text-on-surface-variant font-sans mb-6 text-center">
-              {t('import.upload_hint')}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-8">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-6">
+              {t('import.upload_zone', 'Zone de depot')}
+            </h2>
+            <div className="border-2 border-dashed border-outline-variant/30 rounded-xl p-10 hover:border-primary/50 transition-colors">
+              <div className="flex flex-col items-center gap-4">
+                <svg className="h-12 w-12 text-primary hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <p className="text-sm text-on-surface-variant font-sans text-center">
+                  {t('import.upload_hint')}
+                </p>
+              </div>
+              <div className="mt-6">
+                <FileUpload
+                  onFile={handleFileSelected}
+                  accept=".xlsx,.xls"
+                  isLoading={false}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="bg-surface-container-highest rounded-xl p-6">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
+              {t('import.validation_summary', 'Resume de validation')}
+            </h2>
+            <p className="text-sm text-on-surface-variant font-sans">
+              {t('import.no_file_yet', 'Aucun fichier selectionne. Deposez un fichier Excel pour demarrer.')}
             </p>
-            <FileUpload
-              onFile={handleFileSelected}
-              accept=".xlsx,.xls"
-              isLoading={false}
-            />
           </div>
         </div>
       )}
 
       {/* Step 2: Preview (loading) */}
       {step === 'preview' && isLoadingPreview && (
-        <div className="bg-surface-container-lowest rounded-lg p-8">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-8">
           <div className="max-w-md mx-auto space-y-4">
             <p className="text-sm text-on-surface-variant font-sans text-center">
               {t('import.analyzing')}
             </p>
-            <ProgressBar value={100} label={t('import.preview_progress')} variant="secondary" />
+            <ProgressBar value={100} label={t('import.preview_progress')} variant="primary" />
           </div>
         </div>
       )}
@@ -162,7 +197,7 @@ export function ExcelImportPage() {
           {/* Summary card */}
           <Card>
             <div className="p-6">
-              <h2 className="font-display text-lg font-semibold text-on-surface mb-4">
+              <h2 className="font-sans text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
                 {t('import.preview_summary')}
               </h2>
               <div className="flex flex-wrap gap-6">
@@ -189,7 +224,7 @@ export function ExcelImportPage() {
 
           {/* Sheet tabs */}
           {previewResult.sheets.length > 0 && (
-            <div className="bg-surface-container-lowest rounded-lg">
+            <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10">
               <Tabs
                 tabs={previewResult.sheets.map((s) => ({
                   key: s.sheet,
@@ -256,7 +291,7 @@ export function ExcelImportPage() {
 
           {/* Empty sheets state */}
           {previewResult.sheets.length === 0 && (
-            <div className="bg-surface-container-lowest rounded-lg p-8 text-center">
+            <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-8 text-center">
               <p className="text-sm text-on-surface-variant font-sans">
                 {t('import.no_sheets')}
               </p>
@@ -286,7 +321,7 @@ export function ExcelImportPage() {
           {/* Success / error summary */}
           <Card>
             <div className="p-6">
-              <h2 className="font-display text-lg font-semibold text-on-surface mb-4">
+              <h2 className="font-sans text-lg font-semibold text-on-surface mb-4">
                 {importResult.total_errors === 0
                   ? t('import.success_title')
                   : t('import.partial_success_title')}
@@ -360,7 +395,7 @@ function SummaryStat({
       <span className="text-xs font-sans text-on-surface-variant">{label}</span>
       <span
         className={[
-          'font-display text-2xl font-bold tabular-nums',
+          'font-sans text-2xl font-black tabular-nums',
           isError ? 'text-error' : 'text-on-surface',
         ].join(' ')}
       >

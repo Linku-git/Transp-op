@@ -10,12 +10,12 @@ export function Card({ title, children, className = '' }: CardProps) {
   return (
     <div
       className={[
-        'bg-surface-container-lowest rounded-lg p-6',
+        'bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6',
         className,
       ].join(' ')}
     >
       {title && (
-        <h3 className="font-display text-lg font-semibold text-on-surface mb-4">
+        <h3 className="font-sans text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
           {title}
         </h3>
       )}

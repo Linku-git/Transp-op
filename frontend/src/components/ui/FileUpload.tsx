@@ -11,7 +11,7 @@ interface FileUploadProps {
 function Spinner() {
   return (
     <svg
-      className="animate-spin h-6 w-6 text-secondary"
+      className="animate-spin h-6 w-6 text-primary"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ function UploadIcon() {
 function FileIcon() {
   return (
     <svg
-      className="h-5 w-5 text-secondary"
+      className="h-5 w-5 text-primary"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -199,8 +199,8 @@ export function FileUpload({
           'relative rounded-lg p-8 text-center transition-colors duration-150 cursor-pointer',
           'ring-2 ring-dashed',
           isDragOver
-            ? 'bg-secondary/10 ring-secondary/40'
-            : 'bg-surface-container-high ring-surface-container-highest',
+            ? 'bg-primary/10 ring-primary/40'
+            : 'bg-surface-container-high/50 ring-outline-variant/15',
           isLoading ? 'pointer-events-none' : '',
         ].join(' ')}
       >
@@ -224,7 +224,7 @@ export function FileUpload({
           ) : (
             <>
               <UploadIcon />
-              <p className="font-display text-lg text-on-surface">{label}</p>
+              <p className="font-sans text-lg text-on-surface">{label}</p>
               <p className="text-sm text-on-surface-variant font-sans">
                 {description}
               </p>

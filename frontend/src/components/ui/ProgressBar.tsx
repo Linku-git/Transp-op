@@ -8,7 +8,7 @@ interface ProgressBarProps {
 
 const fillClasses: Record<ProgressBarVariant, string> = {
   primary: 'bg-primary',
-  secondary: 'bg-secondary',
+  secondary: 'bg-primary',
   error: 'bg-error',
 };
 

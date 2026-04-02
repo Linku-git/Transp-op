@@ -12,24 +12,42 @@ interface SiteSummaryCardsProps {
   isLoading?: boolean;
 }
 
-function StatCard({ value, label }: { value: number; label: string }) {
+interface StatCardProps {
+  value: number;
+  label: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+}
+
+function StatCard({ value, label, icon, iconBg, iconColor }: StatCardProps) {
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-5">
-      <span className="font-display text-3xl font-bold text-secondary tabular-nums block">
-        {value}
-      </span>
-      <span className="text-sm text-on-surface-variant font-sans mt-1 block">
-        {label}
-      </span>
+    <div className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 flex items-center gap-4 hover:bg-surface-bright transition-colors">
+      <div className={`w-12 h-12 rounded-full ${iconBg} flex items-center justify-center shrink-0`}>
+        <span className={`material-symbols-outlined text-xl ${iconColor}`}>{icon}</span>
+      </div>
+      <div className="flex flex-col">
+        <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest font-sans">
+          {label}
+        </span>
+        <span className="text-2xl font-black text-on-surface tabular-nums font-sans mt-0.5">
+          {value}
+        </span>
+      </div>
     </div>
   );
 }
 
 function StatCardSkeleton() {
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-5">
-      <Skeleton variant="text" className="w-16 h-9 mb-1" />
-      <Skeleton variant="text" className="w-24 h-4" />
+    <div className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10">
+      <div className="flex items-center gap-4">
+        <Skeleton variant="circular" className="w-12 h-12" />
+        <div className="flex flex-col gap-1">
+          <Skeleton variant="text" className="w-20 h-3" />
+          <Skeleton variant="text" className="w-16 h-8" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -39,7 +57,7 @@ export function SiteSummaryCards({ summary, isLoading = false }: SiteSummaryCard
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCardSkeleton />
         <StatCardSkeleton />
         <StatCardSkeleton />
@@ -48,18 +66,27 @@ export function SiteSummaryCards({ summary, isLoading = false }: SiteSummaryCard
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <StatCard
         value={summary.employee_count}
         label={t('sites.detail.employee_count', 'Employes')}
+        icon="groups"
+        iconBg="bg-primary/10"
+        iconColor="text-primary"
       />
       <StatCard
         value={summary.vehicle_count}
         label={t('sites.detail.vehicle_count', 'Vehicules')}
+        icon="directions_bus"
+        iconBg="bg-tertiary/10"
+        iconColor="text-tertiary"
       />
       <StatCard
         value={summary.pmr_count}
         label={t('sites.detail.pmr_count', 'PMR')}
+        icon="accessible"
+        iconBg="bg-secondary/10"
+        iconColor="text-secondary"
       />
     </div>
   );

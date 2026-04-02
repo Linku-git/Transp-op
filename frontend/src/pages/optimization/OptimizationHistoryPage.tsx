@@ -10,16 +10,16 @@ function StatusChip({ status }: { status: string }) {
 
   switch (status) {
     case 'completed':
-      bg = 'bg-secondary-container';
-      text = 'text-on-secondary-container';
+      bg = 'bg-primary/10';
+      text = 'text-primary';
       break;
     case 'failed':
       bg = 'bg-error-container';
       text = 'text-error';
       break;
     case 'running':
-      bg = 'bg-surface-container-high';
-      text = 'text-on-surface';
+      bg = 'bg-tertiary/10';
+      text = 'text-tertiary';
       break;
     default:
       bg = 'bg-surface-container-high';
@@ -65,7 +65,7 @@ export function OptimizationHistoryPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="animate-spin h-8 w-8 text-secondary"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export function OptimizationHistoryPage() {
         <div className="flex items-center gap-4">
           <Link
             to="/optimization"
-            className="text-sm font-sans text-secondary font-medium hover:underline flex items-center gap-1"
+            className="text-sm font-sans text-primary font-medium hover:underline flex items-center gap-1"
           >
             <svg
               className="w-4 h-4"
@@ -112,7 +112,7 @@ export function OptimizationHistoryPage() {
             </svg>
             {t('common.back', 'Back')}
           </Link>
-          <h1 className="font-display text-2xl font-bold text-on-surface">
+          <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
             {t('optimization.history_title', 'Optimization History')}
           </h1>
         </div>
@@ -147,7 +147,7 @@ export function OptimizationHistoryPage() {
               d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <p className="font-display text-base font-semibold text-on-surface mb-1">
+          <p className="font-sans text-base font-semibold text-on-surface mb-1">
             {t('optimization.history_empty_title', 'No optimization runs found')}
           </p>
           <p className="text-sm font-sans text-on-surface-variant mb-4">
@@ -158,7 +158,7 @@ export function OptimizationHistoryPage() {
           </p>
           <Link
             to="/optimization"
-            className="text-sm font-sans font-medium text-secondary hover:underline"
+            className="text-sm font-sans font-medium text-primary hover:underline"
           >
             {t('optimization.go_to_optimization', 'Go to Optimization')}
           </Link>
@@ -167,33 +167,33 @@ export function OptimizationHistoryPage() {
 
       {/* Table */}
       {history.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-lg flex-1 flex flex-col overflow-hidden">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-auto">
             <table className="w-full text-sm font-sans">
               <thead>
-                <tr className="text-xs text-on-surface-variant bg-surface-container-low">
-                  <th className="text-left py-3 px-4 font-medium">
+                <tr className="bg-surface-container-low">
+                  <th className="text-left py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_date', 'Date')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_site', 'Site')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_condition', 'Condition')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_status', 'Status')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_vehicles', 'Vehicles')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_distance', 'Distance')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_duration', 'Duration')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                     {t('optimization.col_actions', 'Actions')}
                   </th>
                 </tr>
@@ -217,7 +217,7 @@ export function OptimizationHistoryPage() {
                   return (
                     <tr
                       key={item.id}
-                      className="hover:bg-surface-container-low transition-colors"
+                      className="hover:bg-surface-bright transition-colors"
                     >
                       <td className="py-3 px-4 text-on-surface">
                         {new Date(item.created_at).toLocaleDateString()}
@@ -243,7 +243,7 @@ export function OptimizationHistoryPage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           to={`/optimization/${item.id}`}
-                          className="text-sm font-sans font-medium text-secondary hover:underline"
+                          className="text-sm font-sans font-medium text-primary hover:underline"
                         >
                           {t('common.view', 'View')}
                         </Link>

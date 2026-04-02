@@ -48,7 +48,7 @@ function ScoreBar({ score }: { score: number }) {
     <div className="flex items-center gap-3">
       <div className="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden">
         <div
-          className="h-full rounded-full bg-secondary transition-all duration-300"
+          className="h-full rounded-full bg-primary transition-all duration-300"
           style={{ width: `${clampedScore}%` }}
         />
       </div>
@@ -61,7 +61,7 @@ function ScoreBar({ score }: { score: number }) {
 
 function InterestChip({ label, value }: { label: string; value: string }) {
   const chipMap: Record<string, string> = {
-    oui: 'bg-secondary-container text-on-secondary-container',
+    oui: 'bg-primary-container text-on-primary-container',
     non: 'bg-surface-container-high text-on-surface-variant',
     sous_conditions: 'bg-surface-container text-on-surface-variant',
   };
@@ -80,7 +80,7 @@ function InterestChip({ label, value }: { label: string; value: string }) {
 
 function CardSkeleton() {
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-6 space-y-4">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 space-y-4">
       <Skeleton variant="text" width="40%" />
       <Skeleton variant="rectangular" height="220px" />
     </div>
@@ -119,8 +119,8 @@ export function ModalAnalysisPage() {
         getMobilityScores(),
       ]);
       setStats(statsResult);
-      setShiftData(shiftResult);
-      setScores(scoresResult);
+      setShiftData(Array.isArray(shiftResult) ? shiftResult : []);
+      setScores(Array.isArray(scoresResult) ? scoresResult : []);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : t('common.error');
@@ -137,7 +137,7 @@ export function ModalAnalysisPage() {
   // --- Derived chart data ---
 
   const pieData = useMemo(() => {
-    if (!stats) return [];
+    if (!stats || !Array.isArray(stats.distribution)) return [];
     return stats.distribution.map((d) => ({
       name: d.mode,
       value: d.count,
@@ -167,16 +167,17 @@ export function ModalAnalysisPage() {
   }, [stats, t]);
 
   const distanceBins = useMemo(() => {
-    if (!stats) return [];
+    if (!stats || !Array.isArray(stats.distribution)) return [];
     return buildDistanceBins(stats.distribution);
   }, [stats]);
 
   const top10Scores = useMemo(() => {
-    return scores.slice(0, 10);
+    const arr = Array.isArray(scores) ? scores : [];
+    return arr.slice(0, 10);
   }, [scores]);
 
   const shiftBarData = useMemo(() => {
-    if (shiftData.length === 0) return [];
+    if (!Array.isArray(shiftData) || shiftData.length === 0) return [];
     return shiftData.map((shift) => ({
       label: shift.shift_time,
       value: shift.total,
@@ -189,13 +190,20 @@ export function ModalAnalysisPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
-          {t('modal.title', 'Analyse Modale')}
-        </h1>
+        <div>
+          <nav className="flex items-center gap-1.5 text-xs font-sans text-on-surface-variant mb-2">
+            <span>{t('common.dashboard', 'Tableau de bord')}</span>
+            <span>/</span>
+            <span className="text-primary font-medium">{t('modal.title', 'Analyse Modale')}</span>
+          </nav>
+          <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
+            {t('modal.title', 'Analyse Modale')}
+          </h1>
+        </div>
       </div>
 
       {/* Site selector */}
-      <div className="bg-surface-container-lowest rounded-lg p-4 mb-6">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-4 mb-6">
         <div className="flex items-end gap-4">
           <div className="w-72">
             <label className="block text-xs font-sans text-on-surface-variant mb-1">
@@ -204,7 +212,7 @@ export function ModalAnalysisPage() {
             <select
               value={selectedSiteId}
               onChange={(e) => setSelectedSiteId(e.target.value)}
-              className="w-full rounded-md bg-surface-container-high text-on-surface font-sans text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-secondary/40 transition"
+              className="w-full rounded-md bg-surface-container-high text-on-surface font-sans text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary/40 transition"
             >
               <option value={ALL_SITES}>
                 {t('modal.all_sites', 'Tous les sites')}
@@ -244,7 +252,7 @@ export function ModalAnalysisPage() {
           <Card title={t('modal.distribution_title', 'Distribution Modale')}>
             <PieChart data={pieData} height={260} showLegend />
             <div className="mt-4 text-center">
-              <span className="font-display text-2xl font-bold text-secondary">
+              <span className="font-sans text-2xl font-black text-primary">
                 {stats.total}
               </span>
               <span className="font-sans text-sm text-on-surface-variant ml-2">
@@ -337,7 +345,7 @@ export function ModalAnalysisPage() {
 
       {/* Empty state: no error, not loading, but no stats */}
       {!isLoading && !error && !stats && (
-        <div className="bg-surface-container-lowest rounded-lg p-16 flex flex-col items-center gap-4">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-16 flex flex-col items-center gap-4">
           <p className="font-sans text-sm text-on-surface-variant">
             {t('modal.empty', 'Aucune donnee modale disponible.')}
           </p>

@@ -15,11 +15,24 @@ tools:
 
 You are a React/TypeScript specialist for Transpop.
 
+## Design Reference — Google Stitch MCP
+
+The project's UI designs live in Google Stitch. The `stitch` MCP server is configured and available.
+
+**When building new pages or components:**
+1. Query Stitch MCP to retrieve the design for the target page/component
+2. Extract exact spacing, color tokens, and component structure from the design
+3. Implement pixel-accurate layouts based on the Stitch design specs
+4. Map Stitch design tokens to the TailwindCSS theme defined in `Docs/DESIGN_SYSTEM.md`
+
+Always use Stitch as the visual reference alongside `Docs/FRONTEND_PAGES.md` for functional specs.
+
 ## Before Writing Code
-1. Read the session file for task requirements
-2. Check `Docs/FRONTEND_PAGES.md` for page specifications
-3. Check `Docs/API_ENDPOINTS.md` for backend API contracts
-4. Check existing components in `frontend/src/` for patterns
+1. **Query Stitch MCP** for the design of the page/component you're building
+2. Read the session file for task requirements
+3. Check `Docs/FRONTEND_PAGES.md` for page specifications
+4. Check `Docs/API_ENDPOINTS.md` for backend API contracts
+5. Check existing components in `frontend/src/` for patterns
 
 ## Component Pattern
 For any new page:

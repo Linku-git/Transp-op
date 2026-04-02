@@ -14,7 +14,7 @@ export function ClusterTable({ clusters }: ClusterTableProps) {
 
   if (clusters.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-lg p-8 flex items-center justify-center">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-8 flex items-center justify-center">
         <p className="font-sans text-sm text-on-surface-variant">
           {t('optimization.no_clusters', 'Aucun cluster disponible')}
         </p>
@@ -23,20 +23,20 @@ export function ClusterTable({ clusters }: ClusterTableProps) {
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-lg overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="bg-surface-container">
-            <th className="text-left font-sans text-xs font-medium text-on-surface-variant px-4 py-3">
+            <th className="text-left text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-4 py-3">
               #
             </th>
-            <th className="text-right font-sans text-xs font-medium text-on-surface-variant px-4 py-3">
+            <th className="text-right text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-4 py-3">
               {t('optimization.cluster_employees', 'Employes')}
             </th>
-            <th className="text-right font-sans text-xs font-medium text-on-surface-variant px-4 py-3">
+            <th className="text-right text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-4 py-3">
               PMR
             </th>
-            <th className="text-left font-sans text-xs font-medium text-on-surface-variant px-4 py-3">
+            <th className="text-left text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-4 py-3">
               {t('optimization.cluster_centroid', 'Centroide')}
             </th>
           </tr>
@@ -45,7 +45,7 @@ export function ClusterTable({ clusters }: ClusterTableProps) {
           {clusters.map((cluster, idx) => (
             <tr
               key={cluster.id}
-              className="transition-colors duration-100 hover:bg-surface-container-low"
+              className="transition-colors duration-100 hover:bg-surface-bright"
             >
               <td className="px-4 py-3 font-sans text-sm text-on-surface tabular-nums">
                 {idx + 1}
@@ -55,7 +55,7 @@ export function ClusterTable({ clusters }: ClusterTableProps) {
               </td>
               <td className="px-4 py-3 text-right">
                 {cluster.pmr_count > 0 ? (
-                  <span className="inline-block rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-sans font-medium tabular-nums">
+                  <span className="inline-block rounded-md bg-primary/10 text-primary px-2 py-0.5 text-xs font-sans font-medium tabular-nums">
                     {cluster.pmr_count}
                   </span>
                 ) : (

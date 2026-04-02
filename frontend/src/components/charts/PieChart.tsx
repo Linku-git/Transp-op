@@ -9,18 +9,18 @@ import {
 } from 'recharts';
 
 /**
- * Teal-to-navy palette for pie slices. Avoids pure black, stays
- * within the design-system surface/secondary spectrum.
+ * Azure Velocity palette for pie slices. Primary blue anchored,
+ * extended with secondary slate-blue, tertiary amber, and tints.
  */
 const SLICE_PALETTE = [
-  '#006b5c', // secondary (teal)
-  '#041627', // primary (deep navy)
-  '#007261', // on-secondary-container
-  '#1a2b3c', // primary-container
-  '#68fadd', // secondary-container
-  '#44474c', // on-surface-variant
-  '#dde8f0', // surface-container-high
-  '#e3f0f8', // surface-container
+  '#0058be', // primary (azure blue)
+  '#495e8a', // secondary (slate-blue)
+  '#924700', // tertiary (burnt amber)
+  '#2170e4', // primary lighter
+  '#b75b00', // tertiary lighter
+  '#304671', // secondary darker
+  '#adc6ff', // primary-container
+  '#ffb786', // tertiary-container
 ] as const;
 
 interface PieSlice {
@@ -54,7 +54,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   const entry = payload[0];
   return (
-    <div className="bg-surface-container-lowest text-on-surface rounded-md px-3 py-2 shadow-sm">
+    <div className="bg-surface-container-lowest text-on-surface rounded-lg px-3 py-2 shadow-sm border border-outline-variant/10">
       <p className="font-sans text-sm font-medium">{entry.name}</p>
       <p className="font-sans text-xs text-on-surface-variant">
         {entry.value}
@@ -93,7 +93,7 @@ export function PieChart({
   return (
     <div>
       {title && (
-        <h4 className="font-display text-base font-semibold text-on-surface mb-4">
+        <h4 className="font-sans text-base font-semibold text-on-surface mb-4">
           {title}
         </h4>
       )}

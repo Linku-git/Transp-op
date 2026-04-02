@@ -22,7 +22,7 @@ function formatDelta(
       value === 0
         ? 'text-on-surface-variant'
         : improved
-          ? 'text-secondary'
+          ? 'text-green-700'
           : 'text-error',
   };
 }
@@ -38,7 +38,7 @@ function LoadingSpinner({ label }: { label: string }) {
     <div className="flex-1 flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <svg
-          className="animate-spin h-8 w-8 text-secondary"
+          className="animate-spin h-8 w-8 text-primary"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -80,13 +80,13 @@ function ScenarioSelector({
 }) {
   return (
     <div className="flex-1">
-      <label className="block text-xs font-sans text-on-surface-variant mb-1.5 font-medium">
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-outline mb-1.5">
         {label}
       </label>
       <select
         value={selectedId}
         onChange={(e) => onChange(index, e.target.value)}
-        className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 appearance-none cursor-pointer"
+        className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
       >
         <option value="">{''}</option>
         {scenarios.map((s) => (
@@ -112,14 +112,14 @@ function MetricRow({
 }) {
   const formatter = format ?? ((v: number) => v.toFixed(1));
   return (
-    <tr className="hover:bg-surface-container-low transition-colors">
+    <tr className="hover:bg-surface-bright transition-colors">
       <td className="py-3 px-4 text-sm font-sans text-on-surface font-medium">
         {label}
       </td>
       {values.map((val, idx) => (
         <td
           key={idx}
-          className="py-3 px-4 text-right font-display text-base font-bold text-on-surface tabular-nums"
+          className="py-3 px-4 text-right font-sans text-base font-bold text-on-surface tabular-nums"
         >
           {formatter(val)}
           <span className="text-xs font-normal font-sans text-on-surface-variant ml-1">
@@ -144,11 +144,11 @@ function DeltaRow({
 }) {
   const delta = formatDelta(deltaValue, unit, invertSign);
   return (
-    <tr className="hover:bg-surface-container-low transition-colors">
+    <tr className="hover:bg-surface-bright transition-colors">
       <td className="py-3 px-4 text-sm font-sans text-on-surface font-medium">
         {label}
       </td>
-      <td className={`py-3 px-4 text-right font-display text-base font-bold tabular-nums ${delta.className}`}>
+      <td className={`py-3 px-4 text-right font-sans text-base font-bold tabular-nums ${delta.className}`}>
         {delta.text}
       </td>
     </tr>
@@ -257,14 +257,14 @@ function RecommendationsPanel({
   }, [deltas, scenarios, t]);
 
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-6">
-      <h2 className="font-display text-lg font-bold text-on-surface mb-4">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
+      <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
         {t('scenarios.recommendations', 'Recommendations')}
       </h2>
       <ul className="space-y-2">
         {recommendations.map((rec, idx) => (
           <li key={idx} className="flex gap-2 text-sm font-sans text-on-surface">
-            <span className="text-secondary mt-0.5 flex-shrink-0">
+            <span className="text-primary mt-0.5 flex-shrink-0">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -435,7 +435,7 @@ export function ScenarioComparePage() {
         <div className="flex items-center gap-4">
           <Link
             to="/scenarios"
-            className="text-sm font-sans text-secondary font-medium hover:underline flex items-center gap-1"
+            className="text-sm font-sans text-primary font-medium hover:underline flex items-center gap-1"
           >
             <svg
               className="w-4 h-4"
@@ -448,7 +448,7 @@ export function ScenarioComparePage() {
             </svg>
             {t('common.back', 'Back')}
           </Link>
-          <h1 className="font-display text-2xl font-bold text-on-surface">
+          <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
             {t('scenarios.compare_title', 'Scenario Comparison')}
           </h1>
         </div>
@@ -456,7 +456,7 @@ export function ScenarioComparePage() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-error-container rounded-lg p-4 mb-4 flex items-center justify-between">
+        <div className="bg-error-container rounded-xl p-4 mb-4 flex items-center justify-between">
           <p className="text-error text-sm font-sans">{error}</p>
           <button
             onClick={clearError}
@@ -471,7 +471,7 @@ export function ScenarioComparePage() {
       {scenarios.length === 0 && (
         <div className="flex-1 flex flex-col items-center justify-center">
           <svg
-            className="mx-auto mb-3 w-12 h-12 text-on-surface-variant/40"
+            className="mx-auto mb-3 w-12 h-12 text-primary/30"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -483,7 +483,7 @@ export function ScenarioComparePage() {
               d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
             />
           </svg>
-          <p className="font-display text-base font-semibold text-on-surface mb-1">
+          <p className="font-sans text-base font-semibold text-on-surface mb-1">
             {t('scenarios.empty_title', 'No scenarios available')}
           </p>
           <p className="text-sm font-sans text-on-surface-variant mb-4">
@@ -494,7 +494,7 @@ export function ScenarioComparePage() {
           </p>
           <Link
             to="/optimization"
-            className="text-sm font-sans font-medium text-secondary hover:underline"
+            className="text-sm font-sans font-medium text-primary hover:underline"
           >
             {t('scenarios.go_to_optimization', 'Go to Optimization')}
           </Link>
@@ -504,8 +504,8 @@ export function ScenarioComparePage() {
       {/* Selector section */}
       {scenarios.length > 0 && (
         <>
-          <div className="bg-surface-container-lowest rounded-lg p-6 mb-6">
-            <h2 className="font-display text-base font-semibold text-on-surface mb-4">
+          <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
               {t('scenarios.select_scenarios', 'Select scenarios to compare')}
             </h2>
             <div className="flex gap-4 items-end">
@@ -556,28 +556,28 @@ export function ScenarioComparePage() {
           {comparison && !isComparing && (
             <div className="flex flex-col gap-6 flex-1 min-h-0 overflow-y-auto">
               {/* Side-by-side metric cards */}
-              <div className="bg-surface-container-lowest rounded-lg overflow-hidden">
-                <h2 className="font-display text-base font-semibold text-on-surface px-6 pt-5 pb-3">
+              <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant px-6 pt-5 pb-3">
                   {t('scenarios.side_by_side', 'Side-by-Side Metrics')}
                 </h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm font-sans">
                     <thead>
-                      <tr className="text-xs text-on-surface-variant bg-surface-container-low">
-                        <th className="text-left py-3 px-4 font-medium">
+                      <tr className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50">
+                        <th className="text-left py-3 px-4">
                           {t('scenarios.metric', 'Metric')}
                         </th>
                         {comparedScenarios.map((s) => (
                           <th
                             key={s.id}
-                            className="text-right py-3 px-4 font-medium max-w-[200px] truncate"
+                            className="text-right py-3 px-4 max-w-[200px] truncate"
                           >
                             {scenarioLabel(s)}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-outline-variant/10">
                       <MetricRow
                         label={t('scenarios.metric_vehicles', 'Vehicles')}
                         values={comparedScenarios.map(
@@ -643,9 +643,9 @@ export function ScenarioComparePage() {
                 return (
                   <div
                     key={`${delta.scenario_a_id}-${delta.scenario_b_id}`}
-                    className="bg-surface-container-lowest rounded-lg overflow-hidden"
+                    className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden"
                   >
-                    <h2 className="font-display text-base font-semibold text-on-surface px-6 pt-5 pb-1">
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant px-6 pt-5 pb-1">
                       {t('scenarios.deltas_title', 'Deltas')}
                     </h2>
                     <p className="text-xs font-sans text-on-surface-variant px-6 pb-3">
@@ -654,16 +654,16 @@ export function ScenarioComparePage() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm font-sans">
                         <thead>
-                          <tr className="text-xs text-on-surface-variant bg-surface-container-low">
-                            <th className="text-left py-3 px-4 font-medium">
+                          <tr className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50">
+                            <th className="text-left py-3 px-4">
                               {t('scenarios.metric', 'Metric')}
                             </th>
-                            <th className="text-right py-3 px-4 font-medium">
+                            <th className="text-right py-3 px-4">
                               {t('scenarios.delta', 'Delta')}
                             </th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-outline-variant/10">
                           <DeltaRow
                             label={t('scenarios.metric_vehicles', 'Vehicles')}
                             delta={delta.vehicles_delta}

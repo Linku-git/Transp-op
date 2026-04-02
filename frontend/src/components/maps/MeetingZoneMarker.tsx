@@ -11,8 +11,8 @@ export function MeetingZoneMarker({ zone }: MeetingZoneMarkerProps) {
       center={[zone.lat, zone.lng]}
       radius={8}
       pathOptions={{
-        color: '#006b5c',
-        fillColor: zone.pmr_accessible ? '#68fadd' : '#006b5c',
+        color: '#0058be',
+        fillColor: zone.pmr_accessible ? '#93c5fd' : '#0058be',
         fillOpacity: 0.7,
         weight: 2,
       }}
@@ -29,7 +29,7 @@ export function MeetingZoneMarker({ zone }: MeetingZoneMarkerProps) {
             <p className="text-on-surface-variant">{zone.road_name}</p>
           )}
           {zone.pmr_accessible && (
-            <p className="text-secondary">PMR Accessible</p>
+            <p className="text-primary">PMR Accessible</p>
           )}
         </div>
       </Popup>

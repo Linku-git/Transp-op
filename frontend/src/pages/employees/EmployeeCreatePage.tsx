@@ -39,7 +39,7 @@ export function EmployeeCreatePage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-on-surface mb-8">
+      <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight mb-8">
         {t('employees.create_title', 'Nouvel employe')}
       </h1>
 

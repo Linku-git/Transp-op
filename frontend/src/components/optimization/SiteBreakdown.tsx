@@ -16,7 +16,7 @@ function SummaryRow({
   return (
     <div className="flex items-center justify-between py-2">
       <span className="font-sans text-sm text-on-surface-variant">{label}</span>
-      <span className="font-display text-sm font-semibold text-on-surface tabular-nums">
+      <span className="font-sans text-sm font-semibold text-on-surface tabular-nums">
         {value}
       </span>
     </div>
@@ -25,10 +25,10 @@ function SummaryRow({
 
 function ConditionChip({ condition }: { condition: string }) {
   const chipStyles: Record<string, string> = {
-    normal: 'bg-secondary-container text-on-secondary-container',
+    normal: 'bg-primary/10 text-primary',
     rain: 'bg-surface-container-high text-on-surface-variant',
     strike: 'bg-error-container text-error',
-    peak: 'bg-surface-container text-on-surface-variant',
+    peak: 'bg-tertiary/10 text-tertiary',
     night: 'bg-surface-container-high text-on-surface-variant',
   };
 
@@ -83,10 +83,10 @@ export function SiteBreakdown({ optimization }: SiteBreakdownProps) {
   }, [optimization.clusters, hasMetrics, metrics]);
 
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-5">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
       {/* Site name header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-base font-semibold text-on-surface">
+        <h3 className="font-sans text-base font-semibold text-on-surface">
           {siteName}
         </h3>
         <ConditionChip condition={optimization.condition_type} />

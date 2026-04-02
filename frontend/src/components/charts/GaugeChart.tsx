@@ -4,14 +4,14 @@ interface GaugeChartProps {
   value: number; // 0-100 percentage
   label?: string;
   size?: number; // diameter in px, default 120
-  color?: string; // arc color, default '#006b5c'
+  color?: string; // arc color, default '#0058be'
 }
 
 export function GaugeChart({
   value,
   label,
   size = 120,
-  color = '#006b5c',
+  color = '#0058be',
 }: GaugeChartProps) {
   const clamped = Math.max(0, Math.min(100, value));
 
@@ -81,10 +81,10 @@ export function GaugeChart({
           y={geometry.cy - 4}
           textAnchor="middle"
           dominantBaseline="auto"
-          className="font-display"
+          className="font-sans"
           fill="#111d23"
           fontSize={size * 0.18}
-          fontWeight={700}
+          fontWeight={900}
         >
           {clamped.toFixed(0)}%
         </text>

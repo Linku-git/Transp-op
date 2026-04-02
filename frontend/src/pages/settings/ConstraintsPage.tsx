@@ -204,7 +204,7 @@ export function ConstraintsPage() {
   );
 
   const inputClasses =
-    'bg-surface-container-high rounded-md p-2 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40';
+    'bg-surface-container-high/50 border-none rounded-lg p-2 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20';
 
   // Loading state
   if (isLoading && constraints.length === 0) {
@@ -212,7 +212,7 @@ export function ConstraintsPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="animate-spin h-8 w-8 text-secondary"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -243,7 +243,7 @@ export function ConstraintsPage() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
+        <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
           {t('constraints.title', 'Contraintes')}
         </h1>
         <Button
@@ -258,16 +258,16 @@ export function ConstraintsPage() {
       </div>
 
       {/* Category filter */}
-      <div className="bg-surface-container-lowest rounded-lg p-4 mb-6">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 mb-6">
         <div className="flex flex-wrap items-end gap-4">
           <div className="w-64">
-            <label className="block text-xs font-sans font-medium text-on-surface-variant mb-1.5">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-outline mb-1.5">
               {t('constraints.filter_category', 'Filtrer par categorie')}
             </label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 appearance-none cursor-pointer"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
             >
               <option value="">
                 {t('constraints.all_categories', 'Toutes les categories')}
@@ -289,7 +289,7 @@ export function ConstraintsPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-error-container rounded-lg p-4 mb-4 flex items-center justify-between">
+        <div className="bg-error-container rounded-xl p-4 mb-4 flex items-center justify-between">
           <p className="text-error text-sm font-sans">{error}</p>
           <button
             onClick={() => setError(null)}
@@ -302,13 +302,13 @@ export function ConstraintsPage() {
 
       {/* Add form */}
       {showAddForm && (
-        <div className="bg-surface-container-lowest rounded-lg p-6 mb-6">
-          <h2 className="font-display text-lg font-semibold text-on-surface mb-4">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
             {t('constraints.new_title', 'Nouvelle contrainte')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-sans font-medium text-on-surface-variant">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
                 {t('constraints.col_key', 'Cle')} *
               </label>
               <input
@@ -320,7 +320,7 @@ export function ConstraintsPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-sans font-medium text-on-surface-variant">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
                 {t('constraints.col_value', 'Valeur')} *
               </label>
               <input
@@ -332,7 +332,7 @@ export function ConstraintsPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-sans font-medium text-on-surface-variant">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
                 {t('constraints.col_category', 'Categorie')}
               </label>
               <input
@@ -344,7 +344,7 @@ export function ConstraintsPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-sans font-medium text-on-surface-variant">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
                 {t('constraints.col_description', 'Description')}
               </label>
               <input
@@ -377,7 +377,7 @@ export function ConstraintsPage() {
       {!isLoading && constraints.length === 0 && (
         <div className="flex-1 flex flex-col items-center justify-center">
           <svg
-            className="mx-auto mb-3 w-12 h-12 text-on-surface-variant/40"
+            className="mx-auto mb-3 w-12 h-12 text-primary/30"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -389,7 +389,7 @@ export function ConstraintsPage() {
               d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
             />
           </svg>
-          <p className="font-display text-base font-semibold text-on-surface mb-1">
+          <p className="font-sans text-base font-semibold text-on-surface mb-1">
             {t('constraints.empty_title', 'Aucune contrainte')}
           </p>
           <p className="text-sm font-sans text-on-surface-variant mb-4">
@@ -410,32 +410,32 @@ export function ConstraintsPage() {
 
       {/* Table */}
       {constraints.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-lg flex-1 flex flex-col overflow-hidden">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-auto">
             <table className="w-full text-sm font-sans">
               <thead>
-                <tr className="text-xs text-on-surface-variant bg-surface-container-low">
-                  <th className="text-left py-3 px-4 font-medium">
+                <tr className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50">
+                  <th className="text-left py-3 px-4">
                     {t('constraints.col_key', 'Cle')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('constraints.col_value', 'Valeur')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('constraints.col_category', 'Categorie')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('constraints.col_description', 'Description')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('constraints.col_active', 'Actif')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('constraints.col_actions', 'Actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-outline-variant/10">
                 {constraints.map((constraint) => {
                   const isEditing = editingRow?.id === constraint.id;
                   const isDeleting = deletingId === constraint.id;
@@ -445,7 +445,7 @@ export function ConstraintsPage() {
                     return (
                       <tr
                         key={constraint.id}
-                        className="bg-secondary-container/20"
+                        className="bg-primary/5"
                       >
                         <td className="py-3 px-4 text-on-surface font-medium">
                           {constraint.key}
@@ -499,7 +499,7 @@ export function ConstraintsPage() {
                                 is_active: e.target.checked,
                               })
                             }
-                            className="w-4 h-4 rounded accent-secondary cursor-pointer"
+                            className="w-4 h-4 rounded accent-primary cursor-pointer"
                           />
                         </td>
                         <td className="py-3 px-4 text-right">
@@ -528,7 +528,7 @@ export function ConstraintsPage() {
                   return (
                     <tr
                       key={constraint.id}
-                      className="transition-colors hover:bg-surface-container-low"
+                      className="transition-colors hover:bg-surface-bright"
                     >
                       <td className="py-3 px-4 text-on-surface font-medium">
                         {constraint.key}
@@ -561,7 +561,7 @@ export function ConstraintsPage() {
                             className={[
                               'inline-block rounded-md px-2.5 py-0.5 text-xs font-sans font-medium',
                               constraint.is_active
-                                ? 'bg-secondary-container text-on-secondary-container'
+                                ? 'bg-green-50 text-green-700'
                                 : 'bg-surface-container-high text-on-surface-variant',
                             ].join(' ')}
                           >

@@ -62,12 +62,12 @@ export function SiteEditPage() {
   if (!isLoading && !currentSite) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-2">
-        <p className="font-display text-xl font-semibold text-on-surface">
+        <p className="font-sans text-xl font-semibold text-on-surface">
           {error ?? t('sites.not_found', 'Site introuvable')}
         </p>
         <button
           onClick={() => navigate('/sites')}
-          className="text-sm text-secondary font-sans hover:underline"
+          className="text-sm text-primary font-sans hover:underline"
         >
           {t('sites.back_to_list', 'Retour a la liste')}
         </button>
@@ -76,10 +76,26 @@ export function SiteEditPage() {
   }
 
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-on-surface mb-8">
-        {t('sites.edit_title', 'Modifier le site')}: {currentSite?.name}
-      </h1>
+    <div className="flex flex-col gap-8">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs font-sans text-on-surface-variant">
+        <button onClick={handleCancel} className="hover:text-on-surface transition-colors">
+          {t('nav.sites')}
+        </button>
+        <span className="material-symbols-outlined text-sm">chevron_right</span>
+        <span className="text-on-surface font-medium">{currentSite?.name}</span>
+        <span className="material-symbols-outlined text-sm">chevron_right</span>
+        <span className="text-on-surface font-medium">{t('common.edit', 'Modifier')}</span>
+      </div>
+
+      <div>
+        <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
+          {t('sites.edit_title', 'Modifier le site')}
+        </h1>
+        <p className="text-sm text-on-surface-variant font-sans mt-1">
+          {currentSite?.name} &mdash; {currentSite?.code}
+        </p>
+      </div>
 
       {currentSite && (
         <SiteForm

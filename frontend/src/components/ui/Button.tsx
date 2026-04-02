@@ -12,10 +12,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-br from-primary to-primary-container text-on-primary',
-  secondary: 'bg-secondary text-on-secondary',
-  danger: 'bg-error text-white',
-  ghost: 'bg-transparent text-on-surface',
+    'bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]',
+  secondary:
+    'bg-surface-container-lowest text-primary border border-outline-variant/15 hover:bg-surface-bright shadow-sm',
+  danger: 'bg-error text-on-error',
+  ghost: 'bg-transparent text-on-surface-variant hover:bg-slate-200/50',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -64,8 +65,8 @@ export function Button({
   return (
     <button
       className={[
-        'inline-flex items-center justify-center font-sans font-medium rounded-md',
-        'transition-opacity duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40',
+        'inline-flex items-center justify-center font-sans font-bold rounded-lg',
+        'transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
         variantClasses[variant],
         sizeClasses[size],
         isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',

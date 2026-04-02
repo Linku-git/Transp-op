@@ -12,8 +12,8 @@ import {
 /** Design-system grid-line color: surface-container-highest at 20% opacity */
 const GRID_STROKE = 'rgba(215, 228, 236, 0.2)';
 
-/** Default bar fill: secondary teal */
-const DEFAULT_BAR_FILL = '#006b5c';
+/** Default bar fill: primary azure blue */
+const DEFAULT_BAR_FILL = '#0058be';
 
 interface BarDatum {
   label: string;
@@ -47,7 +47,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   }
 
   return (
-    <div className="bg-surface-container-lowest text-on-surface rounded-md px-3 py-2 shadow-sm">
+    <div className="bg-surface-container-lowest text-on-surface rounded-lg px-3 py-2 shadow-sm border border-outline-variant/10">
       <p className="font-sans text-sm font-medium">{label}</p>
       <p className="font-sans text-xs text-on-surface-variant">
         {payload[0].value}
@@ -85,7 +85,7 @@ export function BarChart({
   return (
     <div>
       {title && (
-        <h4 className="font-display text-base font-semibold text-on-surface mb-4">
+        <h4 className="font-sans text-base font-semibold text-on-surface mb-4">
           {title}
         </h4>
       )}

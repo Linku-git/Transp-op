@@ -51,12 +51,12 @@ function RouteRow({
   }, []);
 
   return (
-    <div className="bg-surface-container-lowest rounded-lg overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
       {/* Collapsed header */}
       <button
         onClick={toggle}
         type="button"
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-surface-container-low transition-colors duration-150 cursor-pointer"
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-surface-bright transition-colors duration-150 cursor-pointer"
       >
         {/* Color dot */}
         <span
@@ -116,7 +116,7 @@ function RouteRow({
                     className="flex items-center gap-3"
                   >
                     {/* Step number */}
-                    <span className="font-display text-xs font-bold text-on-surface-variant w-5 text-right tabular-nums">
+                    <span className="font-sans text-xs font-bold text-on-surface-variant w-5 text-right tabular-nums">
                       {stopIdx + 1}
                     </span>
 
@@ -167,7 +167,7 @@ export function RouteList({ routes }: RouteListProps) {
 
   if (routes.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-lg p-8 flex items-center justify-center">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-8 flex items-center justify-center">
         <p className="font-sans text-sm text-on-surface-variant">
           {t('optimization.no_routes', 'Aucune route disponible')}
         </p>
@@ -180,16 +180,16 @@ export function RouteList({ routes }: RouteListProps) {
       {/* Column headers */}
       <div className="flex items-center gap-3 px-4 py-2">
         <span className="w-3" /> {/* Color dot spacer */}
-        <span className="font-sans text-xs font-medium text-on-surface-variant flex-1">
+        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex-1">
           {t('optimization.route_vehicle', 'Vehicule')}
         </span>
-        <span className="font-sans text-xs font-medium text-on-surface-variant">
+        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
           {t('optimization.route_stops', 'Arrets')}
         </span>
-        <span className="font-sans text-xs font-medium text-on-surface-variant w-16 text-right">
+        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant w-16 text-right">
           {t('optimization.route_distance', 'Dist.')}
         </span>
-        <span className="font-sans text-xs font-medium text-on-surface-variant w-14 text-right">
+        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant w-14 text-right">
           {t('optimization.route_duration', 'Duree')}
         </span>
         <span className="w-3.5" /> {/* Chevron spacer */}

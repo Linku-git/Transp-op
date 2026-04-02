@@ -49,7 +49,7 @@ export function SheetPreview({ data, maxRows = 20 }: SheetPreviewProps) {
               {columns.map((col) => (
                 <th
                   key={col}
-                  className="px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container text-left whitespace-nowrap"
+                  className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container text-left whitespace-nowrap"
                 >
                   {col}
                 </th>

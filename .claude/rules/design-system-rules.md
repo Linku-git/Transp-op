@@ -1,43 +1,87 @@
-# Design System Rules — "The Architectural Conductor"
+# Design System Rules — "Azure Velocity"
 
 ## Mandatory for ALL Frontend & Mobile UI Work
 
-When writing any React component, Flutter widget, or CSS/Tailwind styling, you MUST follow `Docs/DESIGN_SYSTEM.md`. This is a hard requirement.
+When writing any React component, Flutter widget, or CSS/Tailwind styling, you MUST follow the Azure Velocity design system. This is a hard requirement.
 
 ## Critical Rules (Never Break These)
 
-1. **NO BORDERS** — Never use `border`, `border-solid`, `divide-y`, or 1px lines to separate sections. Use tonal surface shifts instead (`surface` → `surface-container-low` → `surface-container`).
+1. **AZURE BLUE PRIMARY** — Primary interactive color is #0058be. Use `bg-primary`, `text-primary`. Never use teal or navy as primary.
 
-2. **NO PURE BLACK** — Never use `#000000` or `text-black`. Always use `on-surface` (#111d23).
+2. **INTER ONLY** — Use Inter font everywhere. `font-sans` for all text. No Manrope, no `font-display` (it maps to Inter too).
 
-3. **NO BOX SHADOWS BY DEFAULT** — Elevation comes from surface nesting, not shadows. Use ambient shadows (32-64px blur, 6% opacity) only for floating elements (modals, dropdowns, map controls).
+3. **MATERIAL SYMBOLS** — Use Material Symbols Outlined for all icons. Render as `<span className="material-symbols-outlined">icon_name</span>`.
 
-4. **DUAL FONT STRATEGY** — Manrope (`font-display`) for headlines/stats/narrative. Inter (`font-sans`) for interface text/data/labels. Never mix.
+4. **SUBTLE BORDERS** — Cards and containers use `border border-outline-variant/10` with `shadow-sm`. Heavier borders use `/15`.
 
-5. **90/10 COLOR RULE** — 90% neutral surfaces + slate grays. 10% Teal (`secondary`) for interactive/actionable elements only.
+5. **90/10 COLOR RULE** — 90% neutral surfaces (slate-50, surface tokens). 10% Azure Blue for interactive/actionable elements.
 
-6. **LOW-CHROME CHIPS** — Status indicators use muted backgrounds (`secondary-container`, `surface-container-high`, `error-container`), never saturated badges.
+6. **UPPERCASE LABELS** — Section headers and labels use `text-[10px] font-bold uppercase tracking-widest text-on-surface-variant`.
+
+## Color Tokens
+```
+primary: #0058be (Azure Blue)
+primary-container: #2170e4
+secondary: #495e8a (Slate Blue)
+tertiary: #924700 (Amber)
+surface: #f7f9fb
+surface-container-lowest: #ffffff (cards)
+surface-container-low: #f2f4f6 (sidebar/nav)
+surface-container: #eceef0
+surface-container-high: #e6e8ea (input bg)
+on-surface: #191c1e
+on-surface-variant: #424754
+outline-variant: #c2c6d6
+error: #ba1a1a
+```
 
 ## Surface Nesting Pattern
 ```
-surface (#f4faff)                    ← page background
-  └─ surface-container-low (#e9f6fd) ← sidebar / nav rail
-  └─ surface-container-lowest (#fff) ← card / workspace
-      └─ surface-container (#e3f0f8) ← nested module
+surface (#f7f9fb)                      <- page background
+  └─ slate-50                          <- sidebar / header
+  └─ surface-container-lowest (#fff)   <- card / workspace
+      └─ surface-container-low (#f2f4f6) <- nested module
 ```
 
 ## Component Patterns
 
-### Tables → No grid lines, hover with surface-container-low, right-align numbers
-### Inputs → No border at rest (surface-container-high bg), teal ghost border on focus (40% opacity)
-### Buttons → rounded-md (0.375rem), primary uses momentum gradient (135deg)
-### Spacing → spacing.16+ between major sections, spacing.24 for high-intensity data separation
-### Maps → Silver/Navy base, teal overlays for paths, glassmorphism for floating controls
+### Cards
+`bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6`
+
+### Tables
+- Wrapper: `bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden`
+- Headers: `bg-surface-container-low/50`, `text-[10px] font-black uppercase tracking-widest`
+- Row hover: `hover:bg-surface-bright`
+- Row dividers: `divide-y divide-outline-variant/10`
+
+### Inputs
+- `bg-surface-container-high/50 border-none rounded-lg focus:ring-2 focus:ring-primary/20`
+- Labels: `text-[10px] font-bold uppercase tracking-widest text-outline`
+
+### Buttons
+- Primary: `bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg shadow-lg shadow-primary/20`
+- Secondary: `bg-surface-container-lowest text-primary border border-outline-variant/15 rounded-lg shadow-sm`
+
+### Badges
+- Success: `bg-green-50 text-green-700`
+- Warning: `bg-amber-50 text-amber-700`
+- Danger: `bg-error-container/30 text-error`
+- Info: `bg-primary/10 text-primary`
+
+### Maps
+- Glassmorphism overlays: `bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-white/20`
+- Primary markers: #0058be
+- Route lines: primary blue palette
+
+### Sidebar
+- `bg-slate-50` fixed w-64
+- Logo: gradient icon from-primary to-primary-container
+- Active nav: `bg-blue-50 text-blue-700`
+- Inactive nav: `text-slate-600 hover:bg-slate-200`
+
+### Header
+- `sticky top-0 bg-slate-50/80 backdrop-blur-md shadow-sm`
+- Search: `rounded-full bg-surface-container-high`
 
 ## Quick Reference
-Read `Docs/DESIGN_SYSTEM.md` for:
-- Full color token table
-- Typography scale
-- Spacing system
-- TailwindCSS theme config
-- Component specifications
+Read `Docs/DESIGN_SYSTEM.md` for the full specification.

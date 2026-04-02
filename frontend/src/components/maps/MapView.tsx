@@ -34,7 +34,7 @@ export function MapView({
 }: MapViewProps) {
   return (
     <div
-      className={['rounded-lg overflow-hidden', className].join(' ')}
+      className={['rounded-xl overflow-hidden font-sans', className].join(' ')}
       style={{ height }}
     >
       <MapContainer

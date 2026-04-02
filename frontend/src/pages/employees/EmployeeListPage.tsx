@@ -57,7 +57,8 @@ const PAGE_SIZE = 20;
 function PmrChip() {
   const { t } = useTranslation();
   return (
-    <span className="inline-block rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-sans font-medium">
+    <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-container/30 text-tertiary px-2.5 py-0.5 text-xs font-sans font-semibold">
+      <span className="material-symbols-outlined text-sm">accessible</span>
       {t('employees.badges.pmr', 'PMR')}
     </span>
   );
@@ -65,7 +66,7 @@ function PmrChip() {
 
 function OptInChip({ value }: { value: OptInChoice }) {
   const classMap: Record<OptInChoice, string> = {
-    Oui: 'bg-secondary-container text-on-secondary-container',
+    Oui: 'bg-secondary-container/30 text-on-secondary-container',
     Non: 'bg-surface-container-high text-on-surface-variant',
     'Sous conditions': 'bg-surface-container text-on-surface-variant',
   };
@@ -73,7 +74,7 @@ function OptInChip({ value }: { value: OptInChoice }) {
   return (
     <span
       className={[
-        'inline-block rounded-md px-2 py-0.5 text-xs font-sans font-medium',
+        'inline-block rounded-full px-2.5 py-0.5 text-xs font-sans font-medium',
         classMap[value],
       ].join(' ')}
     >
@@ -98,9 +99,9 @@ function SelectFilter({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={[
-        'w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm',
+        'w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm',
         'outline-none transition-shadow duration-150 appearance-none',
-        'focus:ring-1 focus:ring-secondary/40',
+        'focus:ring-2 focus:ring-primary/20',
       ].join(' ')}
     >
       <option value="">{placeholder}</option>
@@ -240,7 +241,7 @@ export function EmployeeListPage() {
             type="checkbox"
             checked={selected.has(row.id)}
             onChange={() => toggleSelect(row.id)}
-            className="w-4 h-4 rounded accent-secondary cursor-pointer"
+            className="w-4 h-4 rounded accent-primary cursor-pointer"
             onClick={(e) => e.stopPropagation()}
           />
         ),
@@ -251,7 +252,7 @@ export function EmployeeListPage() {
         render: (row) => (
           <Link
             to={`/employees/${row.id}`}
-            className="text-secondary font-medium hover:underline"
+            className="text-primary font-mono font-bold hover:underline"
           >
             {row.matricule}
           </Link>
@@ -346,23 +347,32 @@ export function EmployeeListPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
-          {t('nav.employees')}
-        </h1>
-        <div className="flex items-center gap-2">
+        <div>
+          <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
+            {t('nav.employees')}
+          </h1>
+          <p className="text-sm text-on-surface-variant font-sans mt-1">
+            {t('employees.description', 'Gestion et suivi des employes')}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
           <Link to="/employees/map">
-            <Button variant="ghost">
+            <Button variant="secondary">
+              <span className="material-symbols-outlined text-lg mr-1.5">map</span>
               {t('employees.view_on_map', 'Voir sur la carte')}
             </Button>
           </Link>
           <Link to="/employees/new">
-            <Button>{t('employees.add', 'Ajouter un employe')}</Button>
+            <Button>
+              <span className="material-symbols-outlined text-lg mr-1.5">person_add</span>
+              {t('employees.add', 'Ajouter un employe')}
+            </Button>
           </Link>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-surface-container-lowest rounded-lg p-4 mb-6">
+      <div className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 mb-6">
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex-1 min-w-[200px]">
             <Input
@@ -412,7 +422,7 @@ export function EmployeeListPage() {
               type="checkbox"
               checked={pmrFilter}
               onChange={(e) => setPmrFilter(e.target.checked)}
-              className="w-4 h-4 rounded accent-secondary"
+              className="w-4 h-4 rounded accent-primary"
             />
             <span className="text-sm font-sans text-on-surface-variant">
               {t('employees.filter_pmr', 'PMR')}
@@ -423,7 +433,7 @@ export function EmployeeListPage() {
               type="checkbox"
               checked={activeFilter}
               onChange={(e) => setActiveFilter(e.target.checked)}
-              className="w-4 h-4 rounded accent-secondary"
+              className="w-4 h-4 rounded accent-primary"
             />
             <span className="text-sm font-sans text-on-surface-variant">
               {t('employees.filter_active', 'Actifs uniquement')}
@@ -441,7 +451,7 @@ export function EmployeeListPage() {
 
       {/* Bulk action bar */}
       {selected.size > 0 && (
-        <div className="bg-surface-container-low rounded-lg p-3 mb-4 flex items-center gap-3 flex-wrap">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-3 mb-4 flex items-center gap-3 flex-wrap">
           <span className="text-sm font-sans font-medium text-on-surface">
             {t('employees.bulk.selected_count', '{{count}} selectionne(s)', {
               count: selected.size,
@@ -460,15 +470,15 @@ export function EmployeeListPage() {
       )}
 
       {/* Table with select-all header */}
-      <div className="bg-surface-container-lowest rounded-lg overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/10">
         {/* Select-all row above table */}
         {!isLoading && employees.length > 0 && (
-          <div className="px-4 py-2 bg-surface-container flex items-center gap-2">
+          <div className="px-4 py-2 bg-surface-container-low/50 flex items-center gap-2">
             <input
               type="checkbox"
               checked={allSelected}
               onChange={toggleSelectAll}
-              className="w-4 h-4 rounded accent-secondary cursor-pointer"
+              className="w-4 h-4 rounded accent-primary cursor-pointer"
             />
             <span className="text-xs font-sans text-on-surface-variant">
               {allSelected
@@ -528,9 +538,9 @@ export function EmployeeListPage() {
                     <button
                       onClick={() => setPage(p)}
                       className={[
-                        'w-8 h-8 rounded-md text-sm font-sans transition-colors',
+                        'w-8 h-8 rounded-lg text-sm font-sans transition-colors',
                         p === page
-                          ? 'bg-secondary text-on-secondary font-medium'
+                          ? 'bg-primary text-on-primary font-medium'
                           : 'text-on-surface-variant hover:bg-surface-container',
                       ].join(' ')}
                     >

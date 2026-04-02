@@ -35,13 +35,13 @@ function decodePolyline(encoded: string): [number, number][] {
 
 // Color palette for different routes
 const ROUTE_COLORS = [
-  '#006b5c',
+  '#0058be',
   '#d97706',
   '#7c3aed',
   '#dc2626',
-  '#2563eb',
+  '#495e8a',
   '#059669',
-  '#db2777',
+  '#924700',
   '#ca8a04',
 ];
 

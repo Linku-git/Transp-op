@@ -27,8 +27,8 @@ L.Icon.Default.mergeOptions({
 
 function InfoRow({ label, value }: { label: string; value: string | number | null | undefined }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-medium text-on-surface-variant font-sans uppercase tracking-wide">
+    <div className="flex flex-col gap-1">
+      <span className="text-[10px] font-bold text-on-surface-variant font-sans uppercase tracking-widest">
         {label}
       </span>
       <span className="text-sm text-on-surface font-sans">
@@ -119,12 +119,12 @@ export function SiteDetailPage() {
   if (!isLoading && !currentSite) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-2">
-        <p className="font-display text-xl font-semibold text-on-surface">
+        <p className="font-sans text-xl font-semibold text-on-surface">
           {error ?? t('sites.not_found', 'Site introuvable')}
         </p>
         <Link
           to="/sites"
-          className="text-sm text-secondary font-sans hover:underline"
+          className="text-sm text-primary font-sans hover:underline"
         >
           {t('sites.back_to_list', 'Retour a la liste')}
         </Link>
@@ -144,14 +144,23 @@ export function SiteDetailPage() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs font-sans text-on-surface-variant">
+        <Link to="/sites" className="hover:text-on-surface transition-colors">
+          {t('nav.sites')}
+        </Link>
+        <span className="material-symbols-outlined text-sm">chevron_right</span>
+        <span className="text-on-surface font-medium">{currentSite.name}</span>
+      </div>
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-display text-2xl font-bold text-on-surface">
+      <div className="flex items-end justify-between">
+        <div className="flex items-center gap-4 flex-wrap">
+          <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
             {currentSite.name}
           </h1>
-          <span className="text-sm text-on-surface-variant font-sans">
+          <span className="font-mono text-sm text-on-surface-variant bg-surface-container-low rounded-lg px-2.5 py-1">
             {currentSite.code}
           </span>
           {currentSite.zfe_zone && (
@@ -163,28 +172,30 @@ export function SiteDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link to={`/sites/${currentSite.id}/edit`}>
-            <Button variant="secondary">{t('common.edit', 'Modifier')}</Button>
+            <Button variant="secondary">
+              <span className="material-symbols-outlined text-base mr-1.5">edit</span>
+              {t('common.edit', 'Modifier')}
+            </Button>
           </Link>
           <Button variant="danger" onClick={handleDelete}>
+            <span className="material-symbols-outlined text-base mr-1.5">delete</span>
             {t('common.delete', 'Supprimer')}
           </Button>
         </div>
       </div>
 
       {/* Summary stats */}
-      <div className="mb-8">
-        <SiteSummaryCards
-          summary={
-            summary ?? { employee_count: 0, vehicle_count: 0, pmr_count: 0 }
-          }
-          isLoading={summaryLoading}
-        />
-      </div>
+      <SiteSummaryCards
+        summary={
+          summary ?? { employee_count: 0, vehicle_count: 0, pmr_count: 0 }
+        }
+        isLoading={summaryLoading}
+      />
 
       {/* Info grid + Mini-map */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title={t('sites.detail.info', 'Informations')}>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-5">
             <InfoRow label={t('sites.form.code', 'Code')} value={currentSite.code} />
             <InfoRow label={t('sites.form.name', 'Nom')} value={currentSite.name} />
             <InfoRow label={t('sites.form.address', 'Adresse')} value={currentSite.address} />
@@ -218,7 +229,7 @@ export function SiteDetailPage() {
 
         {/* Mini-map */}
         <Card title={t('sites.detail.location', 'Localisation')}>
-          <div className="rounded-lg overflow-hidden" style={{ height: '280px' }}>
+          <div className="rounded-xl overflow-hidden" style={{ height: '300px' }}>
             <MapContainer
               center={[currentSite.lat, currentSite.lng]}
               zoom={14}
@@ -238,21 +249,21 @@ export function SiteDetailPage() {
       </div>
 
       {/* Shift schedule */}
-      <div className="mb-8">
-        <Card>
-          <ShiftConfigPanel site={currentSite} />
-        </Card>
-      </div>
+      <Card>
+        <ShiftConfigPanel site={currentSite} />
+      </Card>
 
       {/* Quick action links */}
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3">
         <Link to={`/employees?site_id=${currentSite.id}`}>
-          <Button variant="ghost">
+          <Button variant="secondary">
+            <span className="material-symbols-outlined text-base mr-1.5">groups</span>
             {t('sites.detail.view_employees', 'Voir les employes')}
           </Button>
         </Link>
         <Link to={`/vehicles?site_id=${currentSite.id}`}>
-          <Button variant="ghost">
+          <Button variant="secondary">
+            <span className="material-symbols-outlined text-base mr-1.5">directions_bus</span>
             {t('sites.detail.view_vehicles', 'Voir les vehicules')}
           </Button>
         </Link>
@@ -260,42 +271,45 @@ export function SiteDetailPage() {
 
       {/* Notes */}
       {hasNotes && (
-        <div className="mb-8">
-          <Card title={t('sites.form.section_notes', 'Notes')}>
-            <div className="flex flex-col gap-4">
-              {currentSite.access_notes && (
-                <InfoRow
-                  label={t('sites.form.access_notes', "Notes d'acces")}
-                  value={currentSite.access_notes}
-                />
-              )}
-              {currentSite.parking_notes && (
-                <InfoRow
-                  label={t('sites.form.parking_notes', 'Notes de parking')}
-                  value={currentSite.parking_notes}
-                />
-              )}
-              {currentSite.observations && (
-                <InfoRow
-                  label={t('sites.form.observations', 'Observations')}
-                  value={currentSite.observations}
-                />
-              )}
-            </div>
-          </Card>
-        </div>
+        <Card title={t('sites.form.section_notes', 'Notes')}>
+          <div className="flex flex-col gap-5">
+            {currentSite.access_notes && (
+              <InfoRow
+                label={t('sites.form.access_notes', "Notes d'acces")}
+                value={currentSite.access_notes}
+              />
+            )}
+            {currentSite.parking_notes && (
+              <InfoRow
+                label={t('sites.form.parking_notes', 'Notes de parking')}
+                value={currentSite.parking_notes}
+              />
+            )}
+            {currentSite.observations && (
+              <InfoRow
+                label={t('sites.form.observations', 'Observations')}
+                value={currentSite.observations}
+              />
+            )}
+          </div>
+        </Card>
       )}
 
       {/* Bottom actions */}
       <div className="flex items-center gap-3">
         <Link to={`/sites/${currentSite.id}/edit`}>
-          <Button variant="secondary">{t('common.edit', 'Modifier')}</Button>
+          <Button variant="secondary">
+            <span className="material-symbols-outlined text-base mr-1.5">edit</span>
+            {t('common.edit', 'Modifier')}
+          </Button>
         </Link>
         <Button variant="danger" onClick={handleDelete}>
+          <span className="material-symbols-outlined text-base mr-1.5">delete</span>
           {t('common.delete', 'Supprimer')}
         </Button>
         <Link to="/sites" className="ml-auto">
           <Button variant="ghost">
+            <span className="material-symbols-outlined text-base mr-1.5">arrow_back</span>
             {t('sites.back_to_list', 'Retour a la liste')}
           </Button>
         </Link>

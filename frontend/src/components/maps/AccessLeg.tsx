@@ -20,7 +20,7 @@ export function AccessLeg({
         [zoneLat, zoneLng],
       ]}
       pathOptions={{
-        color: '#44474c',
+        color: '#495e8a',
         weight: 1.5,
         opacity: 0.5,
         dashArray: '4 8',

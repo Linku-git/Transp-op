@@ -18,7 +18,7 @@ describe('AppLayout', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('app.name')).toBeInTheDocument()
+    expect(screen.getByText('Transpop')).toBeInTheDocument()
     expect(screen.getByRole('navigation')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toBeInTheDocument()
   })

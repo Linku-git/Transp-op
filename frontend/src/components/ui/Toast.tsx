@@ -11,9 +11,9 @@ interface ToastProps {
 }
 
 const typeClasses: Record<ToastType, string> = {
-  success: 'bg-secondary-container text-on-secondary-container',
-  error: 'bg-error-container text-error',
-  info: 'bg-surface-container text-on-surface',
+  success: 'bg-green-50 text-green-700 border border-green-200/50',
+  error: 'bg-error-container/30 text-error border border-error/10',
+  info: 'bg-surface-container-lowest text-on-surface border border-outline-variant/10',
 };
 
 export function Toast({
@@ -34,7 +34,7 @@ export function Toast({
   return (
     <div
       className={[
-        'fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-md shadow-md px-4 py-3 font-sans text-sm',
+        'fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-lg shadow-sm px-4 py-3 font-sans text-sm',
         'animate-[slideUp_200ms_ease-out]',
         typeClasses[type],
       ].join(' ')}

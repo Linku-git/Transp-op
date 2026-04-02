@@ -16,10 +16,10 @@ import type { Site } from '@/types/site';
  * Ordered to maximize contrast between adjacent indices.
  */
 const SITE_COLOR_PALETTE: string[] = [
-  '#006b5c', // teal (secondary)
-  '#b45309', // amber
+  '#0058be', // primary blue
+  '#924700', // tertiary amber
   '#7c3aed', // violet
-  '#0369a1', // sky
+  '#495e8a', // secondary navy
   '#be185d', // pink
   '#4d7c0f', // lime
   '#9333ea', // purple
@@ -58,8 +58,8 @@ function FloatingFilterPanel({
   const { t } = useTranslation();
 
   return (
-    <div className="absolute top-4 left-4 z-[1000] bg-white/80 backdrop-blur-xl rounded-lg shadow-[0_8px_32px_rgba(4,22,39,0.06)] p-4 w-64 flex flex-col gap-3">
-      <p className="font-display text-sm font-semibold text-on-surface">
+    <div className="absolute top-4 left-4 z-[1000] bg-white/90 backdrop-blur-xl rounded-xl shadow-lg border border-white/20 p-4 w-64 flex flex-col gap-3">
+      <p className="font-sans text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
         {t('employees.map.filters', 'Filtres')}
       </p>
 
@@ -67,7 +67,7 @@ function FloatingFilterPanel({
       <select
         value={siteFilter}
         onChange={(e) => onSiteChange(e.target.value)}
-        className="w-full bg-surface-container-high rounded-md p-2 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 appearance-none focus:ring-1 focus:ring-secondary/40"
+        className="w-full bg-surface-container-high/50 border-none rounded-lg p-2 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 appearance-none focus:ring-2 focus:ring-primary/20"
       >
         <option value="">
           {t('employees.filter_site', 'Tous les sites')}
@@ -83,7 +83,7 @@ function FloatingFilterPanel({
       <select
         value={shiftFilter}
         onChange={(e) => onShiftChange(e.target.value)}
-        className="w-full bg-surface-container-high rounded-md p-2 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 appearance-none focus:ring-1 focus:ring-secondary/40"
+        className="w-full bg-surface-container-high/50 border-none rounded-lg p-2 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 appearance-none focus:ring-2 focus:ring-primary/20"
       >
         <option value="">
           {t('employees.filter_shift', 'Toutes les equipes')}
@@ -99,7 +99,7 @@ function FloatingFilterPanel({
           type="checkbox"
           checked={pmrOnly}
           onChange={(e) => onPmrChange(e.target.checked)}
-          className="w-4 h-4 rounded accent-secondary"
+          className="w-4 h-4 rounded accent-primary"
         />
         <span className="text-sm font-sans text-on-surface-variant">
           {t('employees.filter_pmr', 'PMR')}
@@ -112,7 +112,7 @@ function FloatingFilterPanel({
           type="checkbox"
           checked={activeOnly}
           onChange={(e) => onActiveChange(e.target.checked)}
-          className="w-4 h-4 rounded accent-secondary"
+          className="w-4 h-4 rounded accent-primary"
         />
         <span className="text-sm font-sans text-on-surface-variant">
           {t('employees.filter_active', 'Actifs uniquement')}
@@ -132,8 +132,8 @@ function FloatingLegend({
   if (siteColorMap.length === 0) return null;
 
   return (
-    <div className="absolute bottom-4 left-4 z-[1000] bg-white/80 backdrop-blur-xl rounded-lg shadow-[0_8px_32px_rgba(4,22,39,0.06)] p-4 max-w-[240px]">
-      <p className="font-display text-xs font-semibold text-on-surface mb-2">
+    <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-xl rounded-xl shadow-lg border border-white/20 p-4 max-w-[240px]">
+      <p className="font-sans text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">
         {t('employees.map.legend', 'Legende')}
       </p>
       <div className="flex flex-col gap-1.5">
@@ -152,7 +152,7 @@ function FloatingLegend({
         <div className="flex items-center gap-2 mt-1">
           <span
             className="inline-block w-3.5 h-3.5 rounded-full shrink-0"
-            style={{ backgroundColor: '#041627' }}
+            style={{ backgroundColor: '#495e8a' }}
           />
           <span className="text-xs text-on-surface-variant font-sans">
             {t('employees.map.site_marker', 'Site')}
@@ -258,7 +258,7 @@ export function EmployeeMapPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
+        <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
           {t('employees.map.title', 'Carte des employes')}
         </h1>
         <div className="flex items-center gap-2">
@@ -279,7 +279,7 @@ export function EmployeeMapPage() {
       <div className="relative">
         {filteredEmployees.length === 0 && !isLoading ? (
           <div
-            className="flex items-center justify-center bg-surface-container rounded-lg"
+            className="flex items-center justify-center bg-surface-container rounded-xl"
             style={{ height: 'calc(100vh - 8rem)' }}
           >
             <p className="text-sm text-on-surface-variant font-sans">

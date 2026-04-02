@@ -19,6 +19,12 @@ function timeToHours(time: string | null | undefined): number | null {
   return hours + minutes / 60;
 }
 
+const SHIFT_COLORS = [
+  { bg: 'bg-blue-100', fill: 'bg-blue-500', badge: 'bg-blue-100 text-blue-700', letter: 'M' },
+  { bg: 'bg-amber-100', fill: 'bg-amber-500', badge: 'bg-amber-100 text-amber-700', letter: 'A' },
+  { bg: 'bg-indigo-100', fill: 'bg-indigo-500', badge: 'bg-indigo-100 text-indigo-700', letter: 'N' },
+];
+
 function ShiftBar({
   shiftNumber,
   entryTime,
@@ -41,30 +47,37 @@ function ShiftBar({
     ? ((exitHours > entryHours ? exitHours - entryHours : 24 - entryHours + exitHours) / 24) * 100
     : 0;
 
+  const colors = SHIFT_COLORS[(shiftNumber - 1) % SHIFT_COLORS.length];
+
   return (
     <div className="flex items-center gap-4">
-      <span className="text-sm font-medium text-on-surface font-sans w-24 shrink-0">
-        {t('sites.form.shift_n', 'Equipe {{n}}', { n: shiftNumber })}
-      </span>
+      <div className="flex items-center gap-3 w-32 shrink-0">
+        <span className={`w-6 h-6 rounded-full ${colors.badge} flex items-center justify-center text-[10px] font-black`}>
+          {colors.letter}
+        </span>
+        <span className="text-sm font-medium text-on-surface font-sans">
+          {t('sites.form.shift_n', 'Equipe {{n}}', { n: shiftNumber })}
+        </span>
+      </div>
       <div className="flex-1">
         {hasValidTimes ? (
-          <div className="relative bg-secondary/20 rounded h-8">
+          <div className={`relative ${colors.bg} rounded-lg h-9`}>
             <div
-              className="absolute top-0 bottom-0 bg-secondary/60 rounded"
+              className={`absolute top-0 bottom-0 ${colors.fill}/60 rounded-lg`}
               style={{
                 left: `${leftPercent}%`,
                 width: `${widthPercent}%`,
               }}
             />
-            <span className="absolute left-1 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant font-sans tabular-nums">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-bold text-on-surface font-sans tabular-nums">
               {entryTime}
             </span>
-            <span className="absolute right-1 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant font-sans tabular-nums">
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-on-surface font-sans tabular-nums">
               {exitTime}
             </span>
           </div>
         ) : (
-          <div className="bg-surface-container-high rounded h-8 flex items-center px-3">
+          <div className="bg-surface-container-high rounded-lg h-9 flex items-center px-3">
             <span className="text-xs text-on-surface-variant font-sans italic">
               {t('sites.detail.shift_not_configured', 'Non configure')}
             </span>
@@ -102,9 +115,12 @@ export function ShiftConfigPanel({ site }: ShiftConfigPanelProps) {
 
   return (
     <div>
-      <h3 className="font-display text-lg font-semibold text-on-surface mb-4">
-        {t('sites.detail.shifts', 'Horaires')}
-      </h3>
+      <div className="flex items-center gap-2 mb-5">
+        <span className="material-symbols-outlined text-lg text-primary">schedule</span>
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant font-sans">
+          {t('sites.detail.shifts', 'Horaires')}
+        </h3>
+      </div>
       <div className="flex flex-col gap-3">
         {shifts.map((shift) => (
           <ShiftBar

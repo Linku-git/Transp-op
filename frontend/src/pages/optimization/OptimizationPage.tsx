@@ -34,9 +34,9 @@ const ALGORITHM_OPTIONS = [
 
 function MetricCard({ label, value, unit }: { label: string; value: string | number; unit?: string }) {
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-4 flex-1 min-w-[140px]">
-      <p className="text-xs font-sans text-on-surface-variant mb-1">{label}</p>
-      <p className="font-display text-xl font-bold text-on-surface tabular-nums">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-4 flex-1 min-w-[140px]">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{label}</p>
+      <p className="font-sans text-3xl font-black text-on-surface tabular-nums">
         {value}
         {unit && <span className="text-sm font-normal text-on-surface-variant ml-1">{unit}</span>}
       </p>
@@ -55,7 +55,7 @@ function ProgressBar({ progress, step }: { progress: number; step: string }) {
       </div>
       <div className="h-2 bg-surface-container-high rounded-full overflow-hidden">
         <div
-          className="h-full bg-secondary rounded-full transition-all duration-300"
+          className="h-full bg-primary rounded-full transition-all duration-300"
           style={{ width: `${Math.min(progress, 100)}%` }}
         />
       </div>
@@ -199,7 +199,7 @@ export function OptimizationPage() {
     <div className="flex flex-col h-full">
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
+        <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
           {t('optimization.title', 'Optimization')}
         </h1>
         {current && (
@@ -224,7 +224,7 @@ export function OptimizationPage() {
 
       {/* Metrics bar */}
       {metrics && (
-        <div className="flex gap-3 mb-4 overflow-x-auto">
+        <div className="flex gap-4 mb-4 overflow-x-auto">
           <MetricCard
             label={t('optimization.metrics.vehicles', 'Vehicles used')}
             value={metrics.total_vehicles_used}
@@ -255,9 +255,9 @@ export function OptimizationPage() {
       <div className="flex flex-1 gap-4 min-h-0">
         {/* Left panel - Controls */}
         <div
-          className="w-80 flex-shrink-0 bg-surface-container-lowest rounded-lg p-5 overflow-y-auto"
+          className="w-80 flex-shrink-0 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 overflow-y-auto"
         >
-          <h2 className="font-display text-base font-semibold text-on-surface mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-5">
             {t('optimization.controls', 'Run Parameters')}
           </h2>
 
@@ -269,7 +269,7 @@ export function OptimizationPage() {
             <select
               value={siteId}
               onChange={(e) => setSiteId(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-1 focus:ring-secondary/40 appearance-none"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-2 focus:ring-primary/20 appearance-none"
             >
               <option value="">{t('optimization.select_site', '-- Select a site --')}</option>
               {sites.map((site) => (
@@ -289,7 +289,7 @@ export function OptimizationPage() {
               type="date"
               value={targetDate}
               onChange={(e) => setTargetDate(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-1 focus:ring-secondary/40"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -301,7 +301,7 @@ export function OptimizationPage() {
             <select
               value={conditionType}
               onChange={(e) => setConditionType(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-1 focus:ring-secondary/40 appearance-none"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-2 focus:ring-primary/20 appearance-none"
             >
               {CONDITION_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -319,7 +319,7 @@ export function OptimizationPage() {
             <select
               value={algorithm}
               onChange={(e) => setAlgorithm(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-1 focus:ring-secondary/40 appearance-none"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none transition-shadow duration-150 focus:ring-2 focus:ring-primary/20 appearance-none"
             >
               {ALGORITHM_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -332,7 +332,7 @@ export function OptimizationPage() {
           {/* Advanced settings toggle */}
           <button
             onClick={() => setShowAdvanced((v) => !v)}
-            className="flex items-center gap-2 text-sm font-sans text-secondary font-medium mb-3 cursor-pointer"
+            className="flex items-center gap-2 text-sm font-sans text-primary font-medium mb-3 cursor-pointer"
           >
             <svg
               className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
@@ -360,7 +360,7 @@ export function OptimizationPage() {
                   min={100}
                   max={5000}
                   step={50}
-                  className="w-full bg-surface-container-high rounded-md p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 tabular-nums"
+                  className="w-full bg-surface-container-high/50 border-none rounded-lg p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 tabular-nums"
                 />
               </div>
 
@@ -376,7 +376,7 @@ export function OptimizationPage() {
                   min={1}
                   max={20}
                   step={1}
-                  className="w-full bg-surface-container-high rounded-md p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 tabular-nums"
+                  className="w-full bg-surface-container-high/50 border-none rounded-lg p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 tabular-nums"
                 />
               </div>
 
@@ -392,7 +392,7 @@ export function OptimizationPage() {
                   min={100}
                   max={3000}
                   step={50}
-                  className="w-full bg-surface-container-high rounded-md p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 tabular-nums"
+                  className="w-full bg-surface-container-high/50 border-none rounded-lg p-2.5 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 tabular-nums"
                 />
               </div>
 
@@ -402,7 +402,7 @@ export function OptimizationPage() {
                   type="checkbox"
                   checked={includeVolunteers}
                   onChange={(e) => setIncludeVolunteers(e.target.checked)}
-                  className="w-4 h-4 rounded accent-secondary"
+                  className="w-4 h-4 rounded accent-primary"
                 />
                 <span className="text-sm font-sans text-on-surface-variant">
                   {t('optimization.include_volunteers', 'Include volunteers')}
@@ -471,7 +471,7 @@ export function OptimizationPage() {
             <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-surface/60 backdrop-blur-sm rounded-lg">
               <div className="flex flex-col items-center gap-3">
                 <svg
-                  className="animate-spin h-8 w-8 text-secondary"
+                  className="animate-spin h-8 w-8 text-primary"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -503,7 +503,7 @@ export function OptimizationPage() {
                     d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
                   />
                 </svg>
-                <p className="font-display text-base font-semibold text-on-surface mb-1">
+                <p className="font-sans text-base font-semibold text-on-surface mb-1">
                   {t('optimization.empty_title', 'No optimization loaded')}
                 </p>
                 <p className="text-sm font-sans text-on-surface-variant">
@@ -579,7 +579,7 @@ export function OptimizationPage() {
                           {emp.first_name} {emp.last_name}
                         </p>
                         {emp.is_pmr && (
-                          <span className="inline-block mt-1 rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-medium">
+                          <span className="inline-block mt-1 rounded-md bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">
                             PMR
                           </span>
                         )}

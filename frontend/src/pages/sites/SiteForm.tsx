@@ -36,8 +36,8 @@ function TextArea({
   rows?: number;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-on-surface-variant font-sans">
+    <div className="flex flex-col gap-2">
+      <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">
         {label}
       </label>
       <textarea
@@ -45,16 +45,16 @@ function TextArea({
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         className={[
-          'w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm',
-          'placeholder:text-on-surface-variant/60',
-          'outline-none transition-shadow duration-150 resize-y',
+          'w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm',
+          'placeholder:text-on-surface-variant/50',
+          'outline-none transition-all duration-150 resize-y',
           error
             ? 'ring-1 ring-error/40'
-            : 'focus:ring-1 focus:ring-secondary/40',
+            : 'focus:ring-1 focus:ring-primary/20 focus:bg-surface-container-lowest',
         ].join(' ')}
       />
       {error && (
-        <p className="text-sm text-error font-sans" role="alert">
+        <p className="text-xs text-error font-sans" role="alert">
           {error}
         </p>
       )}
@@ -76,19 +76,19 @@ function SelectField({
   error?: string;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-on-surface-variant font-sans">
+    <div className="flex flex-col gap-2">
+      <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={[
-          'w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm',
-          'outline-none transition-shadow duration-150 appearance-none',
+          'w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm',
+          'outline-none transition-all duration-150 appearance-none',
           error
             ? 'ring-1 ring-error/40'
-            : 'focus:ring-1 focus:ring-secondary/40',
+            : 'focus:ring-1 focus:ring-primary/20 focus:bg-surface-container-lowest',
         ].join(' ')}
       >
         {options.map((opt) => (
@@ -98,7 +98,7 @@ function SelectField({
         ))}
       </select>
       {error && (
-        <p className="text-sm text-error font-sans" role="alert">
+        <p className="text-xs text-error font-sans" role="alert">
           {error}
         </p>
       )}
@@ -226,14 +226,15 @@ export function SiteForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       {/* API error banner */}
       {apiError && (
-        <div className="bg-error-container rounded-lg p-4">
+        <div className="bg-error-container rounded-xl p-4 flex items-center gap-3">
+          <span className="material-symbols-outlined text-error text-lg">error</span>
           <p className="text-error text-sm font-sans">{apiError}</p>
         </div>
       )}
 
       {/* Section: Identification */}
       <Card title={t('sites.form.section_id', 'Identification')}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
             label={t('sites.form.code', 'Code') + ' *'}
             value={code}
@@ -253,8 +254,8 @@ export function SiteForm({
 
       {/* Section: Localisation */}
       <Card title={t('sites.form.section_location', 'Localisation')}>
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
               label={t('sites.form.address', 'Adresse') + ' *'}
               value={address}
@@ -268,7 +269,7 @@ export function SiteForm({
               error={errors.city}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
               label={t('sites.form.lat', 'Latitude') + ' *'}
               type="number"
@@ -290,13 +291,15 @@ export function SiteForm({
               max="180"
             />
           </div>
-          <MapPicker lat={lat} lng={lng} onChange={handleMapChange} height="350px" />
+          <div className="rounded-xl overflow-hidden">
+            <MapPicker lat={lat} lng={lng} onChange={handleMapChange} height="350px" />
+          </div>
         </div>
       </Card>
 
       {/* Section: Horaires */}
       <Card title={t('sites.form.section_shifts', 'Horaires')}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           <SelectField
             label={t('sites.form.num_shifts', "Nombre d'equipes")}
             value={numShifts}
@@ -308,11 +311,14 @@ export function SiteForm({
           />
 
           {/* Shift 1 */}
-          <div className="bg-surface-container rounded-lg p-4">
-            <p className="text-sm font-medium text-on-surface font-sans mb-3">
-              {t('sites.form.shift_n', 'Equipe {{n}}', { n: 1 })}
-            </p>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="bg-blue-50/50 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-black">M</span>
+              <p className="text-sm font-bold text-on-surface font-sans">
+                {t('sites.form.shift_n', 'Equipe {{n}}', { n: 1 })}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-5">
               <Input
                 label={t('sites.form.entry_time', 'Heure entree')}
                 type="time"
@@ -330,11 +336,14 @@ export function SiteForm({
 
           {/* Shift 2 */}
           {numShifts >= 2 && (
-            <div className="bg-surface-container rounded-lg p-4">
-              <p className="text-sm font-medium text-on-surface font-sans mb-3">
-                {t('sites.form.shift_n', 'Equipe {{n}}', { n: 2 })}
-              </p>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="bg-amber-50/50 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-black">A</span>
+                <p className="text-sm font-bold text-on-surface font-sans">
+                  {t('sites.form.shift_n', 'Equipe {{n}}', { n: 2 })}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-5">
                 <Input
                   label={t('sites.form.entry_time', 'Heure entree')}
                   type="time"
@@ -353,11 +362,14 @@ export function SiteForm({
 
           {/* Shift 3 */}
           {numShifts >= 3 && (
-            <div className="bg-surface-container rounded-lg p-4">
-              <p className="text-sm font-medium text-on-surface font-sans mb-3">
-                {t('sites.form.shift_n', 'Equipe {{n}}', { n: 3 })}
-              </p>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="bg-indigo-50/50 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-black">N</span>
+                <p className="text-sm font-bold text-on-surface font-sans">
+                  {t('sites.form.shift_n', 'Equipe {{n}}', { n: 3 })}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-5">
                 <Input
                   label={t('sites.form.entry_time', 'Heure entree')}
                   type="time"
@@ -378,8 +390,8 @@ export function SiteForm({
 
       {/* Section: Configuration */}
       <Card title={t('sites.form.section_config', 'Configuration')}>
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
               label={t('sites.form.working_days', 'Jours travailles')}
               value={workingDays}
@@ -396,17 +408,22 @@ export function SiteForm({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-            <label className="flex items-center gap-3 cursor-pointer select-none py-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
+            <label className="flex items-center gap-3 cursor-pointer select-none py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
               <input
                 type="checkbox"
                 checked={zfeZone}
                 onChange={(e) => setZfeZone(e.target.checked)}
-                className="w-4 h-4 rounded accent-secondary"
+                className="w-4 h-4 rounded accent-primary"
               />
-              <span className="text-sm font-sans text-on-surface">
-                {t('sites.form.zfe_zone', 'Zone a Faibles Emissions (ZFE)')}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-sm font-sans font-medium text-on-surface">
+                  {t('sites.form.zfe_zone', 'Zone a Faibles Emissions (ZFE)')}
+                </span>
+                <span className="text-[10px] text-on-surface-variant font-sans">
+                  {t('sites.form.zfe_hint', 'Contraintes vehicules electriques/hybrides')}
+                </span>
+              </div>
             </label>
 
             <SelectField
@@ -429,7 +446,7 @@ export function SiteForm({
 
       {/* Section: Contact */}
       <Card title={t('sites.form.section_contact', 'Contact')}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
             label={t('sites.form.contact_name', 'Nom du contact')}
             value={contactName}
@@ -446,7 +463,7 @@ export function SiteForm({
 
       {/* Section: Notes */}
       <Card title={t('sites.form.section_notes', 'Notes')}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           <TextArea
             label={t('sites.form.access_notes', "Notes d'acces")}
             value={accessNotes}
@@ -471,6 +488,7 @@ export function SiteForm({
           {t('common.cancel')}
         </Button>
         <Button type="submit" isLoading={isSubmitting}>
+          <span className="material-symbols-outlined text-base mr-1.5">save</span>
           {t('common.save')}
         </Button>
       </div>

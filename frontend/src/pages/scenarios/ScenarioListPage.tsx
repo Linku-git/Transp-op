@@ -31,8 +31,8 @@ function ConditionChip({ condition }: { condition: string }) {
       break;
     case 'peak':
     case 'night':
-      bg = 'bg-secondary-container';
-      text = 'text-on-secondary-container';
+      bg = 'bg-amber-50';
+      text = 'text-amber-700';
       break;
     default:
       bg = 'bg-surface-container-high';
@@ -164,7 +164,7 @@ export function ScenarioListPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="animate-spin h-8 w-8 text-secondary"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ export function ScenarioListPage() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
+        <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
           {t('scenarios.title', 'Scenarios')}
         </h1>
         <div className="flex items-center gap-3">
@@ -220,16 +220,16 @@ export function ScenarioListPage() {
       </div>
 
       {/* Site filter */}
-      <div className="bg-surface-container-lowest rounded-lg p-4 mb-6">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6 mb-6">
         <div className="flex flex-wrap items-end gap-4">
           <div className="w-64">
-            <label className="block text-xs font-sans font-medium text-on-surface-variant mb-1.5">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-outline mb-1.5">
               {t('scenarios.filter_site', 'Filtrer par site')}
             </label>
             <select
               value={siteFilter}
               onChange={(e) => setSiteFilter(e.target.value)}
-              className="w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40 appearance-none cursor-pointer"
+              className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
             >
               <option value="">
                 {t('scenarios.all_sites', 'Tous les sites')}
@@ -255,7 +255,7 @@ export function ScenarioListPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-error-container rounded-lg p-4 mb-4 flex items-center justify-between">
+        <div className="bg-error-container rounded-xl p-4 mb-4 flex items-center justify-between">
           <p className="text-error text-sm font-sans">{error}</p>
           <button
             onClick={() => setError(null)}
@@ -270,7 +270,7 @@ export function ScenarioListPage() {
       {!isLoading && scenarios.length === 0 && (
         <div className="flex-1 flex flex-col items-center justify-center">
           <svg
-            className="mx-auto mb-3 w-12 h-12 text-on-surface-variant/40"
+            className="mx-auto mb-3 w-12 h-12 text-primary/30"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -282,7 +282,7 @@ export function ScenarioListPage() {
               d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"
             />
           </svg>
-          <p className="font-display text-base font-semibold text-on-surface mb-1">
+          <p className="font-sans text-base font-semibold text-on-surface mb-1">
             {t('scenarios.empty_title', 'Aucun scenario')}
           </p>
           <p className="text-sm font-sans text-on-surface-variant mb-4">
@@ -303,46 +303,46 @@ export function ScenarioListPage() {
 
       {/* Table */}
       {scenarios.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-lg flex-1 flex flex-col overflow-hidden">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-auto">
             <table className="w-full text-sm font-sans">
               <thead>
-                <tr className="text-xs text-on-surface-variant bg-surface-container-low">
-                  <th className="text-left py-3 px-4 font-medium w-10">
+                <tr className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50">
+                  <th className="text-left py-3 px-4 w-10">
                     <span className="sr-only">
                       {t('scenarios.col_select', 'Selectionner')}
                     </span>
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('scenarios.col_name', 'Nom')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('scenarios.col_site', 'Site')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('scenarios.col_condition', 'Condition')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('scenarios.col_multiplier', 'Multiplicateur')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('scenarios.col_vehicles', 'Vehicules')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('scenarios.col_cost', 'Cout (MAD)')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('scenarios.col_co2', 'CO2 (kg)')}
                   </th>
-                  <th className="text-left py-3 px-4 font-medium">
+                  <th className="text-left py-3 px-4">
                     {t('scenarios.col_date', 'Date')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium">
+                  <th className="text-right py-3 px-4">
                     {t('scenarios.col_actions', 'Actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-outline-variant/10">
                 {scenarios.map((scenario) => {
                   const isSelected = selected.has(scenario.id);
                   const isDeleting = deletingId === scenario.id;
@@ -356,8 +356,8 @@ export function ScenarioListPage() {
                       className={[
                         'transition-colors',
                         isSelected
-                          ? 'bg-secondary-container/30'
-                          : 'hover:bg-surface-container-low',
+                          ? 'bg-primary/5'
+                          : 'hover:bg-surface-bright',
                       ].join(' ')}
                     >
                       {/* Checkbox */}
@@ -367,7 +367,7 @@ export function ScenarioListPage() {
                           checked={isSelected}
                           disabled={!isSelected && selected.size >= 3}
                           onChange={() => handleToggleSelect(scenario.id)}
-                          className="w-4 h-4 rounded accent-secondary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                          className="w-4 h-4 rounded accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                           aria-label={t('scenarios.select_scenario', 'Selectionner {{name}}', {
                             name: scenario.name ?? scenario.id.slice(0, 8),
                           })}

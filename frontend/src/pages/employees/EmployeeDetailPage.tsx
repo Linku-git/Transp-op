@@ -21,7 +21,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-medium text-on-surface-variant font-sans uppercase tracking-wide">
+      <span className="text-[10px] font-bold text-on-surface-variant font-sans uppercase tracking-widest">
         {label}
       </span>
       <span className="text-sm text-on-surface font-sans">
@@ -113,12 +113,12 @@ export function EmployeeDetailPage() {
   if (!isLoading && !currentEmployee) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-2">
-        <p className="font-display text-xl font-semibold text-on-surface">
+        <p className="font-sans text-xl font-semibold text-on-surface">
           {error ?? t('employees.not_found', 'Employe introuvable')}
         </p>
         <Link
           to="/employees"
-          className="text-sm text-secondary font-sans hover:underline"
+          className="text-sm text-primary font-sans hover:underline"
         >
           {t('employees.back_to_list', 'Retour a la liste')}
         </Link>
@@ -148,7 +148,7 @@ export function EmployeeDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-display text-2xl font-bold text-on-surface">
+          <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
             {fullName}
           </h1>
           <span className="text-sm text-on-surface-variant font-sans">
@@ -232,7 +232,7 @@ export function EmployeeDetailPage() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {/* Employee home marker - teal */}
+                {/* Employee home marker - primary blue */}
                 {hasLocation && (
                   <CircleMarker
                     center={[
@@ -241,9 +241,9 @@ export function EmployeeDetailPage() {
                     ]}
                     radius={8}
                     pathOptions={{
-                      fillColor: '#2d9f93',
+                      fillColor: '#0058be',
                       fillOpacity: 0.9,
-                      color: '#1a6b62',
+                      color: '#003d82',
                       weight: 2,
                     }}
                   >
@@ -256,15 +256,15 @@ export function EmployeeDetailPage() {
                     </Popup>
                   </CircleMarker>
                 )}
-                {/* Site marker - slate/navy */}
+                {/* Site marker - secondary navy */}
                 {hasSiteLocation && (
                   <CircleMarker
                     center={[site.lat, site.lng]}
                     radius={10}
                     pathOptions={{
-                      fillColor: '#3b5a7c',
+                      fillColor: '#495e8a',
                       fillOpacity: 0.9,
-                      color: '#253d54',
+                      color: '#323f5e',
                       weight: 2,
                     }}
                   >
@@ -295,7 +295,7 @@ export function EmployeeDetailPage() {
                 <div className="flex items-center gap-2">
                   <span
                     className="inline-block w-3 h-3 rounded-full"
-                    style={{ backgroundColor: '#2d9f93' }}
+                    style={{ backgroundColor: '#0058be' }}
                   />
                   <span className="text-xs text-on-surface-variant font-sans">
                     {t('employees.detail.home', 'Domicile')}
@@ -306,7 +306,7 @@ export function EmployeeDetailPage() {
                 <div className="flex items-center gap-2">
                   <span
                     className="inline-block w-3 h-3 rounded-full"
-                    style={{ backgroundColor: '#3b5a7c' }}
+                    style={{ backgroundColor: '#495e8a' }}
                   />
                   <span className="text-xs text-on-surface-variant font-sans">
                     {t('employees.detail.site_marker', 'Site')}

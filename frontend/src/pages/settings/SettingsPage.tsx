@@ -138,7 +138,7 @@ function extractFormValues(settings: OptimizationSettings): FormValues {
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="font-display text-lg font-semibold text-on-surface mb-4">
+    <h2 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">
       {children}
     </h2>
   );
@@ -235,7 +235,7 @@ export function SettingsPage() {
         return (
           <div key={field.key} className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-sans font-medium text-on-surface-variant">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
                 {t(field.labelKey, field.defaultLabel)}
               </label>
               <span className="text-sm font-sans font-medium text-on-surface tabular-nums">
@@ -252,7 +252,7 @@ export function SettingsPage() {
               onChange={(e) =>
                 handleChange(field.key, parseFloat(e.target.value))
               }
-              className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-secondary bg-surface-container-high"
+              className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary bg-surface-container-high"
             />
             <div className="flex items-center justify-between text-[10px] font-sans text-on-surface-variant">
               <span>
@@ -271,14 +271,14 @@ export function SettingsPage() {
       if (field.type === 'time') {
         return (
           <div key={field.key} className="flex flex-col gap-1.5">
-            <label className="text-xs font-sans font-medium text-on-surface-variant">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
               {t(field.labelKey, field.defaultLabel)}
             </label>
             <input
               type="time"
               value={value}
               onChange={(e) => handleChange(field.key, e.target.value)}
-              className="bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40"
+              className="bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
         );
@@ -287,7 +287,7 @@ export function SettingsPage() {
       // number
       return (
         <div key={field.key} className="flex flex-col gap-1.5">
-          <label className="text-xs font-sans font-medium text-on-surface-variant">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-outline">
             {t(field.labelKey, field.defaultLabel)}
           </label>
           <div className="flex items-center gap-2">
@@ -300,7 +300,7 @@ export function SettingsPage() {
               onChange={(e) =>
                 handleChange(field.key, parseFloat(e.target.value) || 0)
               }
-              className="flex-1 bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm outline-none focus:ring-1 focus:ring-secondary/40"
+              className="flex-1 bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none focus:ring-2 focus:ring-primary/20"
             />
             {field.unit && (
               <span className="text-xs font-sans text-on-surface-variant whitespace-nowrap">
@@ -320,7 +320,7 @@ export function SettingsPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="animate-spin h-8 w-8 text-secondary"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -351,7 +351,7 @@ export function SettingsPage() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold text-on-surface">
+        <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
           {t('settings.title', 'Parametres')}
         </h1>
         <Button
@@ -366,7 +366,7 @@ export function SettingsPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-error-container rounded-lg p-4 mb-4 flex items-center justify-between">
+        <div className="bg-error-container rounded-xl p-4 mb-4 flex items-center justify-between">
           <p className="text-error text-sm font-sans">{error}</p>
           <button
             onClick={() => setError(null)}
@@ -379,13 +379,13 @@ export function SettingsPage() {
 
       {/* Success banner */}
       {successMsg && (
-        <div className="bg-secondary-container rounded-lg p-4 mb-4 flex items-center justify-between">
-          <p className="text-on-secondary-container text-sm font-sans">
+        <div className="bg-green-50 rounded-xl p-4 mb-4 flex items-center justify-between">
+          <p className="text-green-700 text-sm font-sans">
             {successMsg}
           </p>
           <button
             onClick={() => setSuccessMsg(null)}
-            className="text-on-secondary-container text-sm font-sans font-medium hover:underline ml-4 cursor-pointer"
+            className="text-green-700 text-sm font-sans font-medium hover:underline ml-4 cursor-pointer"
           >
             {t('common.dismiss', 'Fermer')}
           </button>
@@ -395,7 +395,7 @@ export function SettingsPage() {
       {/* Form */}
       <div className="flex flex-col gap-6 pb-8">
         {/* Optimization Parameters */}
-        <div className="bg-surface-container-lowest rounded-lg p-6">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
           <SectionHeading>
             {t('settings.section_optimization', 'Parametres d\'optimisation')}
           </SectionHeading>
@@ -405,7 +405,7 @@ export function SettingsPage() {
         </div>
 
         {/* Cost Parameters */}
-        <div className="bg-surface-container-lowest rounded-lg p-6">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
           <SectionHeading>
             {t('settings.section_cost', 'Parametres de cout')}
           </SectionHeading>
@@ -415,7 +415,7 @@ export function SettingsPage() {
         </div>
 
         {/* RTI */}
-        <div className="bg-surface-container-lowest rounded-lg p-6">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
           <SectionHeading>
             {t('settings.section_rti', 'Information Temps Reel (RTI)')}
           </SectionHeading>
@@ -423,7 +423,7 @@ export function SettingsPage() {
         </div>
 
         {/* Night Mode */}
-        <div className="bg-surface-container-lowest rounded-lg p-6">
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
           <SectionHeading>
             {t('settings.section_night', 'Mode Nuit')}
           </SectionHeading>

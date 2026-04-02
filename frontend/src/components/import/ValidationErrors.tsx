@@ -15,7 +15,7 @@ interface ValidationErrorsProps {
 function CheckIcon() {
   return (
     <svg
-      className="h-5 w-5 text-secondary"
+      className="h-5 w-5 text-primary"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -38,13 +38,13 @@ function ErrorTable({ errors }: { errors: ValidationError[] }) {
       <table className="w-full text-sm font-sans">
         <thead>
           <tr>
-            <th className="px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container text-right w-20">
+            <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container text-right w-20">
               Ligne
             </th>
-            <th className="px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container text-left">
+            <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container text-left">
               Colonne
             </th>
-            <th className="px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container text-left">
+            <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container text-left">
               Message
             </th>
           </tr>
@@ -112,7 +112,7 @@ export function ValidationErrors({ errors }: ValidationErrorsProps) {
 
         return (
           <div key={sheet} className="flex flex-col gap-2">
-            <h4 className="font-display text-base font-semibold text-on-surface px-4">
+            <h4 className="font-sans text-base font-semibold text-on-surface px-4">
               {sheet}
               <span className="ml-2 text-sm font-normal text-on-surface-variant font-sans">
                 ({sheetErrors.length} erreur{sheetErrors.length > 1 ? 's' : ''})

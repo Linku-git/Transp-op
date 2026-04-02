@@ -20,7 +20,7 @@ export function SiteMarker({ site, color = '#041627' }: SiteMarkerProps) {
       }}
     >
       <Popup>
-        <div className="font-sans text-sm text-on-surface min-w-[140px]">
+        <div className="font-sans text-sm text-on-surface min-w-[140px] rounded-lg">
           <p className="font-medium text-on-surface">{site.name}</p>
           <p className="text-xs text-on-surface-variant mt-0.5">{site.code}</p>
           <p className="text-xs text-on-surface-variant mt-1">{site.city}</p>

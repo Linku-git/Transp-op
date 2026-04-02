@@ -16,10 +16,10 @@ const LAYER_CONFIG: {
 }[] = [
   { key: 'siteMarker', label: 'Site', color: '#041627' },
   { key: 'employees', label: 'Employees', color: '#2563eb' },
-  { key: 'clusters', label: 'Clusters', color: '#006b5c' },
+  { key: 'clusters', label: 'Clusters', color: '#0058be' },
   { key: 'routes', label: 'Routes', color: '#d97706' },
-  { key: 'meetingZones', label: 'Meeting Zones', color: '#68fadd' },
-  { key: 'accessLegs', label: 'Access Legs', color: '#44474c' },
+  { key: 'meetingZones', label: 'Meeting Zones', color: '#0058be' },
+  { key: 'accessLegs', label: 'Access Legs', color: '#495e8a' },
 ];
 
 export function MapLegend({
@@ -32,10 +32,10 @@ export function MapLegend({
 }: MapLegendProps) {
   return (
     <div
-      className="absolute top-4 right-4 z-[1000] bg-surface-container-lowest/90 backdrop-blur-xl rounded-lg p-4 min-w-52"
-      style={{ backdropFilter: 'blur(12px)' }}
+      className="absolute top-4 right-4 z-[1000] bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4 min-w-52"
+      style={{ backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.2)' }}
     >
-      <p className="font-display font-semibold text-on-surface text-sm mb-3">
+      <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
         Layers
       </p>
       <div className="space-y-2">
@@ -48,7 +48,7 @@ export function MapLegend({
               type="checkbox"
               checked={layers[key]}
               onChange={() => onToggle(key)}
-              className="rounded accent-secondary"
+              className="rounded accent-primary focus:ring-primary"
             />
             <span
               className="inline-block w-3 h-3 rounded-sm"
@@ -64,7 +64,7 @@ export function MapLegend({
           className="mt-3 pt-3"
           style={{ borderTop: '1px solid rgba(196,198,205,0.15)' }}
         >
-          <p className="font-display font-semibold text-on-surface text-sm mb-2">
+          <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">
             Routes ({routeCount})
           </p>
           <button

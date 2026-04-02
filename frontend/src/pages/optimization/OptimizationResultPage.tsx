@@ -65,9 +65,9 @@ function MetricCard({
   unit?: string;
 }) {
   return (
-    <div className="bg-surface-container-lowest rounded-lg p-4 flex-1 min-w-[130px]">
-      <p className="text-xs font-sans text-on-surface-variant mb-1">{label}</p>
-      <p className="font-display text-xl font-bold text-on-surface tabular-nums">
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-4 flex-1 min-w-[130px]">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{label}</p>
+      <p className="font-sans text-3xl font-black text-on-surface tabular-nums">
         {value}
         {unit && (
           <span className="text-sm font-normal text-on-surface-variant ml-1">
@@ -108,8 +108,8 @@ function RouteList({
             onClick={() => onSelectRoute(isSelected ? null : route.id)}
             className={`w-full text-left rounded-lg p-3 transition-colors cursor-pointer ${
               isSelected
-                ? 'bg-secondary-container'
-                : 'bg-surface-container hover:bg-surface-container-high'
+                ? 'bg-primary/10'
+                : 'bg-surface-container hover:bg-surface-bright'
             }`}
           >
             <div className="flex items-center justify-between mb-1">
@@ -158,13 +158,13 @@ function ClusterTable({
     <div className="overflow-x-auto">
       <table className="w-full text-sm font-sans">
         <thead>
-          <tr className="text-xs text-on-surface-variant">
-            <th className="text-left py-2 px-2 font-medium">#</th>
-            <th className="text-right py-2 px-2 font-medium">
+          <tr>
+            <th className="text-left py-2 px-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">#</th>
+            <th className="text-right py-2 px-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
               {t('optimization.employees', 'Employees')}
             </th>
-            <th className="text-right py-2 px-2 font-medium">PMR</th>
-            <th className="text-right py-2 px-2 font-medium">
+            <th className="text-right py-2 px-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">PMR</th>
+            <th className="text-right py-2 px-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
               {t('optimization.centroid', 'Centroid')}
             </th>
           </tr>
@@ -173,7 +173,7 @@ function ClusterTable({
           {clusters.map((cluster, idx) => (
             <tr
               key={cluster.id}
-              className="hover:bg-surface-container-low transition-colors"
+              className="hover:bg-surface-bright transition-colors"
             >
               <td className="py-2 px-2 text-on-surface">{idx + 1}</td>
               <td className="py-2 px-2 text-right text-on-surface tabular-nums">
@@ -209,7 +209,7 @@ function SiteBreakdown({
   return (
     <div className="space-y-4">
       <div className="bg-surface-container rounded-lg p-4">
-        <p className="text-xs font-sans text-on-surface-variant mb-2 font-medium">
+        <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-2">
           {t('optimization.run_info', 'Run Information')}
         </p>
         <div className="space-y-1.5 text-sm font-sans">
@@ -240,7 +240,7 @@ function SiteBreakdown({
 
       {metrics && (
         <div className="bg-surface-container rounded-lg p-4">
-          <p className="text-xs font-sans text-on-surface-variant mb-2 font-medium">
+          <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-2">
             {t('optimization.detailed_metrics', 'Detailed Metrics')}
           </p>
           <div className="space-y-1.5 text-sm font-sans">
@@ -392,7 +392,7 @@ export function OptimizationResultPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="animate-spin h-8 w-8 text-secondary"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -428,7 +428,7 @@ export function OptimizationResultPage() {
           <div className="flex gap-3 justify-center">
             <Link
               to="/optimization"
-              className="text-sm font-sans font-medium text-secondary hover:underline"
+              className="text-sm font-sans font-medium text-primary hover:underline"
             >
               {t('optimization.back_to_optimization', 'Back to Optimization')}
             </Link>
@@ -448,12 +448,12 @@ export function OptimizationResultPage() {
   if (!current) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
-        <p className="font-display text-base font-semibold text-on-surface">
+        <p className="font-sans text-base font-semibold text-on-surface">
           {t('optimization.not_found', 'Optimization result not found')}
         </p>
         <Link
           to="/optimization"
-          className="text-sm font-sans font-medium text-secondary hover:underline"
+          className="text-sm font-sans font-medium text-primary hover:underline"
         >
           {t('optimization.back_to_optimization', 'Back to Optimization')}
         </Link>
@@ -468,14 +468,14 @@ export function OptimizationResultPage() {
         <div className="flex items-center gap-4">
           <Link
             to="/optimization"
-            className="text-sm font-sans text-secondary font-medium hover:underline flex items-center gap-1"
+            className="text-sm font-sans text-primary font-medium hover:underline flex items-center gap-1"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
             {t('common.back', 'Back')}
           </Link>
-          <h1 className="font-display text-2xl font-bold text-on-surface">
+          <h1 className="font-sans text-3xl font-black tracking-tight text-on-surface">
             {t('optimization.result_title', 'Optimization Result')}
           </h1>
         </div>
@@ -580,7 +580,7 @@ export function OptimizationResultPage() {
                           {emp.first_name} {emp.last_name}
                         </p>
                         {emp.is_pmr && (
-                          <span className="inline-block mt-1 rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-medium">
+                          <span className="inline-block mt-1 rounded-md bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">
                             PMR
                           </span>
                         )}
@@ -633,7 +633,7 @@ export function OptimizationResultPage() {
         </div>
 
         {/* Right: Tabbed panel (40%) */}
-        <div className="flex-1 bg-surface-container-lowest rounded-lg flex flex-col min-h-0 overflow-hidden">
+        <div className="flex-1 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 flex flex-col min-h-0 overflow-hidden">
           {/* Tab bar */}
           <div className="flex bg-surface-container-low">
             {tabs.map((tab) => (
@@ -642,7 +642,7 @@ export function OptimizationResultPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 py-3 text-sm font-sans font-medium text-center transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? 'text-secondary bg-surface-container-lowest'
+                    ? 'text-primary bg-surface-container-lowest border-b-2 border-primary'
                     : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
                 }`}
               >

@@ -9,7 +9,7 @@ interface EmployeeMarkerProps {
 
 export function EmployeeMarker({
   employee,
-  color = '#006b5c',
+  color = '#0058be',
 }: EmployeeMarkerProps) {
   const { t } = useTranslation();
 
@@ -32,7 +32,7 @@ export function EmployeeMarker({
       }}
     >
       <Popup>
-        <div className="font-sans text-sm text-on-surface min-w-[160px]">
+        <div className="font-sans text-sm text-on-surface min-w-[160px] rounded-lg">
           <p className="font-medium text-on-surface">{fullName}</p>
           <p className="text-xs text-on-surface-variant mt-0.5">
             {employee.matricule}
@@ -53,7 +53,7 @@ export function EmployeeMarker({
             </p>
           )}
           {employee.is_pmr && (
-            <span className="inline-block mt-1.5 rounded-md bg-secondary-container text-on-secondary-container px-2 py-0.5 text-xs font-medium">
+            <span className="inline-block mt-1.5 rounded-md bg-primary-container text-on-primary-container px-2 py-0.5 text-xs font-medium">
               {t('employees.badges.pmr', 'PMR')}
             </span>
           )}

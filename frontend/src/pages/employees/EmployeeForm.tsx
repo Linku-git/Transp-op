@@ -48,18 +48,18 @@ function SelectField({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-on-surface-variant font-sans">
+      <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={[
-          'w-full bg-surface-container-high rounded-md p-3 text-on-surface font-sans text-sm',
+          'w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm',
           'outline-none transition-shadow duration-150 appearance-none',
           error
-            ? 'ring-1 ring-error/40'
-            : 'focus:ring-1 focus:ring-secondary/40',
+            ? 'ring-2 ring-error/30'
+            : 'focus:ring-2 focus:ring-primary/20',
         ].join(' ')}
       >
         {placeholder && (
@@ -97,7 +97,7 @@ function ToggleField({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 rounded accent-secondary mt-0.5"
+        className="w-4 h-4 rounded accent-primary mt-0.5"
       />
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-sans text-on-surface">{label}</span>
@@ -459,7 +459,7 @@ export function EmployeeForm({
             />
           </div>
 
-          <div className="bg-surface-container rounded-lg p-4">
+          <div className="bg-surface-container-low/50 rounded-xl p-5">
             <div className="flex flex-col gap-3">
               <ToggleField
                 label={t(

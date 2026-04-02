@@ -44,35 +44,37 @@ export function DataTable<T>({
 
   if (isLoading) {
     return (
-      <div className="w-full overflow-x-auto">
-        <table className="w-full text-sm font-sans">
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  className={[
-                    'px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container',
-                    col.align === 'right' ? 'text-right' : 'text-left',
-                  ].join(' ')}
-                >
-                  {col.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: SKELETON_ROWS }).map((_, rowIdx) => (
-              <tr key={rowIdx}>
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-sm font-sans">
+            <thead>
+              <tr>
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3">
-                    <Skeleton variant="text" className="w-3/4" />
-                  </td>
+                  <th
+                    key={col.key}
+                    className={[
+                      'px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50',
+                      col.align === 'right' ? 'text-right' : 'text-left',
+                    ].join(' ')}
+                  >
+                    {col.label}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-outline-variant/10">
+              {Array.from({ length: SKELETON_ROWS }).map((_, rowIdx) => (
+                <tr key={rowIdx}>
+                  {columns.map((col) => (
+                    <td key={col.key} className="px-4 py-3">
+                      <Skeleton variant="text" className="w-3/4" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -86,67 +88,69 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full text-sm font-sans">
-        <thead>
-          <tr>
-            {columns.map((col) => {
-              const isSorted = sortKey === col.key;
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+      <div className="w-full overflow-x-auto">
+        <table className="w-full text-sm font-sans">
+          <thead>
+            <tr>
+              {columns.map((col) => {
+                const isSorted = sortKey === col.key;
+                return (
+                  <th
+                    key={col.key}
+                    className={[
+                      'px-4 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant bg-surface-container-low/50',
+                      col.align === 'right' ? 'text-right' : 'text-left',
+                      onSort ? 'cursor-pointer select-none' : '',
+                    ].join(' ')}
+                    onClick={onSort ? () => onSort(col.key) : undefined}
+                    aria-sort={
+                      isSorted
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : undefined
+                    }
+                  >
+                    {col.label}
+                    <SortIndicator active={isSorted} dir={sortDir} />
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-outline-variant/10">
+            {data.map((row, idx) => {
+              const key = rowKey ? rowKey(row, idx) : idx;
               return (
-                <th
-                  key={col.key}
-                  className={[
-                    'px-4 py-3 text-sm font-medium text-on-surface-variant bg-surface-container',
-                    col.align === 'right' ? 'text-right' : 'text-left',
-                    onSort ? 'cursor-pointer select-none' : '',
-                  ].join(' ')}
-                  onClick={onSort ? () => onSort(col.key) : undefined}
-                  aria-sort={
-                    isSorted
-                      ? sortDir === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : undefined
-                  }
+                <tr
+                  key={key}
+                  className="transition-colors duration-150 hover:bg-surface-bright"
                 >
-                  {col.label}
-                  <SortIndicator active={isSorted} dir={sortDir} />
-                </th>
+                  {columns.map((col) => {
+                    const value = col.render
+                      ? col.render(row)
+                      : (row as Record<string, unknown>)[col.key];
+                    return (
+                      <td
+                        key={col.key}
+                        className={[
+                          'px-4 py-3',
+                          col.align === 'right'
+                            ? 'text-right tabular-nums'
+                            : 'text-left',
+                        ].join(' ')}
+                      >
+                        {value as ReactNode}
+                      </td>
+                    );
+                  })}
+                </tr>
               );
             })}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, idx) => {
-            const key = rowKey ? rowKey(row, idx) : idx;
-            return (
-              <tr
-                key={key}
-                className="transition-colors duration-150 hover:bg-surface-container-low"
-              >
-                {columns.map((col) => {
-                  const value = col.render
-                    ? col.render(row)
-                    : (row as Record<string, unknown>)[col.key];
-                  return (
-                    <td
-                      key={col.key}
-                      className={[
-                        'px-4 py-3',
-                        col.align === 'right'
-                          ? 'text-right tabular-nums'
-                          : 'text-left',
-                      ].join(' ')}
-                    >
-                      {value as ReactNode}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

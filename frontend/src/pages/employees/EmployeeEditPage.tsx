@@ -62,12 +62,12 @@ export function EmployeeEditPage() {
   if (!isLoading && !currentEmployee) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-2">
-        <p className="font-display text-xl font-semibold text-on-surface">
+        <p className="font-sans text-xl font-semibold text-on-surface">
           {error ?? t('employees.not_found', 'Employe introuvable')}
         </p>
         <button
           onClick={() => navigate('/employees')}
-          className="text-sm text-secondary font-sans hover:underline"
+          className="text-sm text-primary font-sans hover:underline"
         >
           {t('employees.back_to_list', 'Retour a la liste')}
         </button>
@@ -77,7 +77,7 @@ export function EmployeeEditPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-on-surface mb-8">
+      <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight mb-8">
         {t('employees.edit_title', "Modifier l'employe")}:{' '}
         {currentEmployee?.first_name} {currentEmployee?.last_name}
       </h1>

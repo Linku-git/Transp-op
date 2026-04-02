@@ -6,7 +6,7 @@ interface ClusterRegionProps {
   color?: string;
 }
 
-export function ClusterRegion({ cluster, color = '#006b5c' }: ClusterRegionProps) {
+export function ClusterRegion({ cluster, color = '#0058be' }: ClusterRegionProps) {
   // Radius based on employee count (min 200m, max 2000m)
   const radius = Math.min(200 + cluster.employee_count * 50, 2000);
 

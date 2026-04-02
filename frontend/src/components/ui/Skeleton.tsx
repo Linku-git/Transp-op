@@ -22,7 +22,7 @@ export function Skeleton({
   return (
     <div
       className={[
-        'bg-surface-container-high animate-pulse',
+        'bg-surface-container-low/50 animate-pulse',
         variantClasses[variant],
         className,
       ].join(' ')}

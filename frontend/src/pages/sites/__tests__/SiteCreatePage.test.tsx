@@ -34,7 +34,7 @@ describe('SiteCreatePage', () => {
   it('renders form with required fields', async () => {
     const { SiteCreatePage } = await import('../SiteCreatePage');
     render(<MemoryRouter><SiteCreatePage /></MemoryRouter>);
-    expect(screen.getByText('Nouveau site')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Nouveau site' })).toBeInTheDocument();
     expect(screen.getByText('Enregistrer')).toBeInTheDocument();
   });
 });
