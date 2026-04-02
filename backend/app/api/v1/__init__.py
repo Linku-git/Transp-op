@@ -17,6 +17,7 @@ from app.api.v1.routes import router as routes_router
 from app.api.v1.vehicle_assignments import router as vehicle_assignments_router
 from app.api.v1.optimization import router as optimization_router
 from app.api.v1.vehicles import router as vehicles_router
+from app.api.v1.scenarios import router as scenarios_router
 from app.api.v1.weather import router as weather_router
 
 api_router = APIRouter(prefix="/api/v1")
@@ -36,4 +37,5 @@ api_router.include_router(optimization_router, tags=["optimization"])
 api_router.include_router(vehicles_router, tags=["vehicles"])
 api_router.include_router(vehicle_assignments_router, tags=["vehicle-assignments"])
 api_router.include_router(routes_router, tags=["routes"])
+api_router.include_router(scenarios_router, tags=["scenarios"])
 api_router.include_router(weather_router, tags=["weather"])

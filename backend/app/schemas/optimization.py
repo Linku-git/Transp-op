@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # ---------------------------------------------------------------------------
 
 CLUSTERING_ALGORITHMS = ["dbscan", "kmeans", "hierarchical"]
-CONDITION_TYPES = ["normal", "rain", "strike", "peak", "night"]
+CONDITION_TYPES = ["normal", "rain", "strike", "peak", "night", "transit_failure"]
 OPTIMIZATION_STATUSES = ["pending", "running", "completed", "failed"]
 
 
