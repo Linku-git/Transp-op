@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-44] — 2026-04-02
+### Added
+- KPISnapshot SQLAlchemy model (tenant_id, site_id, snapshot_date, kpi_type, value JSONB) + Alembic migration
+- KPI service: capture 6 KPI types per site (mobility_coverage, modal_distribution, occupancy_rate, co2_saved, rti_compliance, security_score)
+- POST `/kpis/snapshot` endpoint — single site or all sites snapshot
+- GET `/kpis/trend` endpoint — historical trend with kpi_type, site_id, date range filters (max 365 points)
+- Celery scheduled task `daily_kpi_snapshot` for automated daily capture across all tenants/sites
+- Reuses existing analytics (hr_analytics.compute_mobility_coverage, rse_analytics.compute_co2_savings)
+- rti_compliance and security_score as placeholders (return 0 until Sessions 58/62)
+- 7 tests in `backend/tests/test_kpi_snapshot.py`
+
+### Changed
+- `backend/app/api/v1/kpis.py` — Added snapshot + trend endpoints
+- `backend/app/models/__init__.py` — Added KPISnapshot
+
+---
+
 ## [Session-43] — 2026-04-02
 ### Added
 - GET `/export/history` endpoint with pagination and report_type filter

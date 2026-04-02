@@ -337,7 +337,8 @@
 | GET | `/kpis/security` | Security metrics | Yes | DRH, Admin | 64 |
 | GET | `/kpis/financial` | Financial KPIs | Yes | DAF, Admin | 35 |
 | GET | `/kpis/valorization` | Valorization KPIs | Yes | DRH, DAF, Admin | 76 |
-| POST | `/kpis/snapshot` | Save KPI snapshot | Yes | Admin | 44 |
+| POST | `/kpis/snapshot` | Capture KPI snapshot (6 types, single/all sites) | Yes | DRH, Admin | 44 |
+| GET | `/kpis/trend` | Historical KPI trend (type, site, date range) | Yes | DRH, DAF, Admin | 44 |
 
 ---
 
