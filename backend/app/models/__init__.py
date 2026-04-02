@@ -8,6 +8,7 @@ from app.models.financial import (
     VehicleReference,
 )
 from app.models.generated_report import GeneratedReport
+from app.models.kpi_snapshot import KPISnapshot
 from app.models.leave import EmployeeLeave
 from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization, Route
@@ -31,6 +32,7 @@ __all__ = [
     "EmployeeModal",
     "FinancialScenario",
     "GeneratedReport",
+    "KPISnapshot",
     "TCOEntry",
     "ROICalculation",
     "VehicleReference",
