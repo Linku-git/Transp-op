@@ -10,7 +10,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.middleware.rbac import require_role
 from app.models.auth import User
-from app.models.financial import FinancialScenario, TCOEntry, VehicleReference
+from app.models.financial import (
+    FinancialScenario,
+    ROICalculation,
+    TCOEntry,
+    VehicleReference,
+)
 from app.schemas.financial import (
     FinancialScenarioCreate,
     FinancialScenarioUpdate,
@@ -19,8 +24,11 @@ from app.schemas.financial import (
     TCOEntryResponse,
     TCOCalculateRequest,
     TCOCalculateResponse,
+    ROICalculateRequest,
+    ROICalculateResponse,
     VehicleReferenceResponse,
 )
+from app.services.roi_calculator import calculate_roi
 from app.services.tco_calculator import calculate_tco
 
 logger = logging.getLogger(__name__)
@@ -299,6 +307,75 @@ async def tco_calculate(
         current_user.id,
     )
     return TCOCalculateResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /financial/roi/calculate — compute ROI
+# ---------------------------------------------------------------------------
+
+
+@router.post("/roi/calculate", response_model=ROICalculateResponse)
+async def roi_calculate(
+    body: ROICalculateRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> ROICalculateResponse:
+    """Calculate ROI across 4 levers with optional DB persistence."""
+    result = calculate_roi(
+        headcount=body.headcount,
+        daily_cost=body.daily_cost,
+        baseline_absence_rate=body.baseline_absence_rate,
+        target_absence_rate=body.target_absence_rate,
+        replacement_cost=body.replacement_cost,
+        turnover_rate_before=body.turnover_rate_before,
+        turnover_rate_after=body.turnover_rate_after,
+        annual_travel_hours=body.annual_travel_hours,
+        engagement_rate=body.engagement_rate,
+        training_hour_cost=body.training_hour_cost,
+        total_investment=body.total_investment,
+        current_fleet_annual_cost=body.current_fleet_annual_cost,
+        optimized_fleet_annual_cost=body.optimized_fleet_annual_cost,
+    )
+
+    stored_id = None
+
+    # Persist to DB if scenario_id is provided
+    if body.scenario_id is not None:
+        scenario = await _get_scenario_or_404(
+            body.scenario_id, current_user.tenant_id, db
+        )
+        roi_record = ROICalculation(
+            financial_scenario_id=scenario.id,
+            baseline_absence_rate=body.baseline_absence_rate,
+            target_absence_rate=body.target_absence_rate,
+            headcount=body.headcount,
+            daily_cost=body.daily_cost,
+            replacement_cost=body.replacement_cost,
+            turnover_rate_before=body.turnover_rate_before,
+            turnover_rate_after=body.turnover_rate_after,
+            training_hour_cost=body.training_hour_cost,
+            engagement_rate=body.engagement_rate,
+            annual_travel_hours=body.annual_travel_hours,
+            roi_absenteeism=result["roi_absenteeism"],
+            roi_retention=result["roi_retention"],
+            roi_journey=result["roi_journey"],
+            roi_fleet_optimization=result["roi_fleet_optimization"],
+            roi_total=result["roi_total"],
+            payback_months=result["payback_months"],
+        )
+        db.add(roi_record)
+        await db.flush()
+        await db.refresh(roi_record)
+        stored_id = roi_record.id
+        logger.info(
+            "ROI calculation %s stored for scenario %s by user %s",
+            roi_record.id,
+            body.scenario_id,
+            current_user.id,
+        )
+
+    logger.info("ROI calculated for %d headcount by user %s", body.headcount, current_user.id)
+    return ROICalculateResponse(**result, stored_id=stored_id)
 
 
 # ---------------------------------------------------------------------------

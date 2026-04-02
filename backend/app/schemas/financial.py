@@ -292,6 +292,52 @@ class TCOCalculateResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# ROI Calculation schemas
+# ---------------------------------------------------------------------------
+
+
+class ROICalculateRequest(BaseModel):
+    """Request body for ROI calculation."""
+
+    scenario_id: uuid.UUID | None = Field(
+        default=None,
+        description="Optional scenario ID to persist results",
+    )
+    headcount: int = Field(..., ge=1)
+    daily_cost: Decimal = Field(..., ge=0)
+    baseline_absence_rate: Decimal = Field(..., ge=0, le=1)
+    target_absence_rate: Decimal = Field(..., ge=0, le=1)
+    replacement_cost: Decimal = Field(..., ge=0)
+    turnover_rate_before: Decimal = Field(..., ge=0, le=1)
+    turnover_rate_after: Decimal = Field(..., ge=0, le=1)
+    annual_travel_hours: Decimal = Field(..., ge=0)
+    engagement_rate: Decimal = Field(..., ge=0, le=1)
+    training_hour_cost: Decimal = Field(..., ge=0)
+    total_investment: Decimal = Field(..., ge=0)
+    current_fleet_annual_cost: Decimal = Field(default=Decimal("0"), ge=0)
+    optimized_fleet_annual_cost: Decimal = Field(default=Decimal("0"), ge=0)
+
+
+class ROICalculateResponse(BaseModel):
+    """Full ROI calculation response with all 4 levers."""
+
+    roi_absenteeism: float
+    roi_retention: float
+    roi_fleet_optimization: float
+    roi_journey: float
+    roi_total: float
+    roi_percentage: float
+    payback_months: float | None
+    total_investment: float
+    headcount: int
+    working_days_per_year: int
+    stored_id: uuid.UUID | None = Field(
+        default=None,
+        description="ROICalculation record ID if persisted to DB",
+    )
+
+
+# ---------------------------------------------------------------------------
 # VehicleReference schemas
 # ---------------------------------------------------------------------------
 
