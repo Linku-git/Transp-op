@@ -23,7 +23,7 @@ You are the system architect for Transpop (Employee Transport Optimization platf
 
 ## Context Files to Read
 - `Docs/ARCHITECTURE.md` — system architecture
-- `Docs/DATABASE_SCHEMA.md` — data model (37 tables)
+- `Docs/DATABASE_SCHEMA.md` — data model (38 tables)
 - `Docs/API_ENDPOINTS.md` — API surface (~125 endpoints)
 - `agents.md` — coding conventions
 

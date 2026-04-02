@@ -147,7 +147,7 @@ flutter run
 ## Documentation
 
 - [[ARCHITECTURE]] — System architecture
-- [[DATABASE_SCHEMA]] — Complete database schema (37 tables)
+- [[DATABASE_SCHEMA]] — Complete database schema (38 tables)
 - [[API_ENDPOINTS]] — All API endpoints (~125 endpoints)
 - [[FRONTEND_PAGES]] — Web dashboard pages & components
 - [[MOBILE_PAGES]] — Flutter mobile app screens

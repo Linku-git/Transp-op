@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-27] — 2026-04-02
+### Added
+- Scenario SQLAlchemy model with tenant_id, site_id, baseline_optimization_id FK, condition_type, demand_multiplier, custom_params (JSONB), estimated_metrics (JSONB), name (`backend/app/models/scenario.py`)
+- Alembic migration for scenario table with idx_scenario_tenant and idx_scenario_site indexes
+- Scenario engine service with demand multipliers (normal=1.0, rain=1.15, strike=1.5, peak=1.3, night=0.8, transit_failure=1.4), metric estimation, and comparison delta calculation (`backend/app/services/scenarios.py`)
+- Pydantic schemas: ScenarioRequest, ScenarioResponse, ScenarioComparisonRequest, MetricDelta, ScenarioComparisonResponse with French alias support (pluie, greve_transport, pic_activite, nuit, defaillance_tc) (`backend/app/schemas/scenario.py`)
+- 5 API endpoints: POST `/scenarios/simulate`, GET `/scenarios`, GET `/scenarios/{id}`, DELETE `/scenarios/{id}`, POST `/scenarios/compare` (`backend/app/api/v1/scenarios.py`)
+- 6 backend tests in `test_scenarios.py` (144 total passing)
+
+### Changed
+- `backend/app/schemas/optimization.py` — Added "transit_failure" to CONDITION_TYPES
+- `backend/app/models/__init__.py` — Added Scenario import
+- `backend/app/api/v1/__init__.py` — Registered scenarios router
+
+---
+
 ## [Session-26] — 2026-04-02
 ### Added
 - WeatherForecast model with unique constraint on (site_id, date, source)

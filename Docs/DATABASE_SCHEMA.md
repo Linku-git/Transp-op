@@ -15,7 +15,7 @@
 | Core — Employees | Employee, EmployeeModal, EmployeeLeave | [[sessions/session-09\|09]], [[sessions/session-12\|12]], [[sessions/session-15\|15]] |
 | Core — Vehicles | Vehicle | [[sessions/session-20\|20]] |
 | Core — Constraints | Constraint, Settings | [[sessions/session-29\|29]] |
-| Optimization | Cluster, Route, Optimization | [[sessions/session-18\|18]], [[sessions/session-22\|22]], [[sessions/session-23\|23]] |
+| Optimization | Cluster, Route, Optimization, Scenario | [[sessions/session-18\|18]], [[sessions/session-22\|22]], [[sessions/session-23\|23]], [[sessions/session-27\|27]] |
 | Weather | WeatherForecast | [[sessions/session-26\|26]] |
 | Financial | FinancialScenario, TCOEntry, ROICalculation, VehicleReference | [[sessions/session-31\|31]] |
 | Content | Content, ContentDelivery, TrainingModule, Survey, SurveyResponse | [[sessions/session-67\|67]], [[sessions/session-69\|69]], [[sessions/session-72\|72]] |
@@ -26,7 +26,7 @@
 | Operator | Operator, SizingPlanExport | [[sessions/session-82\|82]] |
 | Reporting | GeneratedReport, KPISnapshot | [[sessions/session-42\|42]], [[sessions/session-44\|44]] |
 
-**Total: 37 tables**
+**Total: 38 tables**
 
 ---
 
@@ -306,7 +306,7 @@ CREATE TABLE optimization (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id       UUID NOT NULL REFERENCES tenant(id),
     site_id         UUID REFERENCES site(id),       -- null for global
-    condition_type  VARCHAR(30) DEFAULT 'normal',    -- normal, rain, strike, peak, night
+    condition_type  VARCHAR(30) DEFAULT 'normal',    -- normal, rain, strike, peak, night, transit_failure
     status          VARCHAR(20) DEFAULT 'pending',   -- pending, running, completed, failed
     params          JSONB DEFAULT '{}',
     metrics         JSONB DEFAULT '{}',
@@ -351,6 +351,24 @@ CREATE TABLE route (
     created_at          TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX idx_route_optimization ON route(optimization_id);
+```
+
+### Scenario
+```sql
+CREATE TABLE scenario (
+    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id               UUID NOT NULL REFERENCES tenant(id),
+    site_id                 UUID REFERENCES site(id),
+    baseline_optimization_id UUID REFERENCES optimization(id),
+    name                    VARCHAR(255),
+    condition_type          VARCHAR(30) NOT NULL DEFAULT 'normal',  -- normal, rain, strike, peak, night, transit_failure
+    demand_multiplier       DECIMAL(4,2) DEFAULT 1.0,
+    custom_params           JSONB DEFAULT '{}',
+    estimated_metrics       JSONB DEFAULT '{}',
+    created_at              TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX idx_scenario_tenant ON scenario(tenant_id);
+CREATE INDEX idx_scenario_site ON scenario(site_id);
 ```
 
 ---
@@ -834,6 +852,7 @@ Employee 1──* EmergencyAlert
 
 Optimization 1──* Cluster
 Optimization 1──* Route
+Optimization 1──* Scenario (baseline)
 Route *──1 Vehicle
 
 FinancialScenario 1──* TCOEntry

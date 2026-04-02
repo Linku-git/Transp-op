@@ -30,7 +30,7 @@ Docs/       — Project documentation (Obsidian vault with wikilinks)
 @agents.md
 
 ## Key Reference Documents
-- Database schema (37 tables): `Docs/DATABASE_SCHEMA.md`
+- Database schema (38 tables): `Docs/DATABASE_SCHEMA.md`
 - API endpoints (~125): `Docs/API_ENDPOINTS.md`
 - Frontend pages: `Docs/FRONTEND_PAGES.md`
 - Mobile screens: `Docs/MOBILE_PAGES.md`

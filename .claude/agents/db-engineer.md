@@ -21,7 +21,7 @@ You are a PostgreSQL + PostGIS specialist for Transpop.
 4. Ensure data integrity (constraints, foreign keys, unique indexes)
 
 ## Context
-- Full schema: `Docs/DATABASE_SCHEMA.md` (37 tables, 15 groups)
+- Full schema: `Docs/DATABASE_SCHEMA.md` (38 tables, 15 groups)
 - Spatial operations: ST_Distance, ST_DWithin, ST_MakePoint, ST_Buffer
 - All UUIDs as primary keys (`gen_random_uuid()`)
 - Timestamp columns: `created_at`, `updated_at` (TIMESTAMPTZ)
