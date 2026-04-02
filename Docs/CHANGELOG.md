@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-33] — 2026-04-02
+### Added
+- ROI calculator engine with 4 levers: absenteeism (rate × daily_cost × headcount × 220 working days), retention (turnover reduction × replacement cost), fleet optimization (current vs optimized fleet cost), journey productivity (travel hours × engagement × training cost) (`backend/app/services/roi_calculator.py`)
+- Payback period in months: `(total_investment / annual_roi_total) × 12`
+- ROI percentage: `(roi_total / total_investment) × 100`
+- Edge case handling: zero investment returns 0% ROI, negative savings clamped to 0
+- Pydantic schemas: `ROICalculateRequest` (13 input params), `ROICalculateResponse` (10 output fields + stored_id)
+- POST `/financial/roi/calculate` endpoint with optional `scenario_id` to persist results in `ROICalculation` table
+- 9 tests in `backend/tests/test_roi_calculator.py` (7 unit + 2 integration, including DB persistence)
+
+### Changed
+- `backend/app/schemas/financial.py` — Added 2 ROI calculation schemas
+- `backend/app/api/v1/financial.py` — Added ROI calculate endpoint with DB persistence
+
+---
+
 ## [Session-32] — 2026-04-02
 ### Added
 - TCO calculator engine with core formula: `TCO = Purchase + (Maintenance × Duration) + (Energy/km × Annual_km × Duration) − Residual` (`backend/app/services/tco_calculator.py`)
