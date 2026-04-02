@@ -10,13 +10,13 @@
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | COMPLETE | 25/25 |
-| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 5/14 |
+| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 6/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **35/92** |
+| **Total** | **92** | | **36/92** |
 
 ---
 
@@ -69,7 +69,7 @@
 | 33 | [[sessions/session-33|ROI Calculator Engine]] | COMPLETE | 2026-04-02 | 4 ROI levers, payback, DB persistence, 9 tests |
 | 34 | [[sessions/session-34|Investment Model Comparator]] | COMPLETE | 2026-04-02 | CAPEX/MaD/OPEX comparison, sensitivity analysis, 11 tests |
 | 35 | [[sessions/session-35|Financial Dashboard — TCO]] | COMPLETE | 2026-04-02 | TCO calculator page, 5 chart/table components, dashboard tabs, 7 tests |
-| 36 | [[sessions/session-36|Financial Dashboard — ROI]] | NOT STARTED | | |
+| 36 | [[sessions/session-36|Financial Dashboard — ROI]] | COMPLETE | 2026-04-02 | WaterfallChart, PaybackSlider, CostPerTripGauge, InvestmentComparatorCards, DAFExportButton, 7 tests |
 | 37 | [[sessions/session-37|Cost-per-Trip & Breakeven]] | NOT STARTED | | |
 | 38 | [[sessions/session-38|DAF Export (ERP Format)]] | NOT STARTED | | |
 | 39 | [[sessions/session-39|HR Dashboard KPIs Backend]] | NOT STARTED | | |

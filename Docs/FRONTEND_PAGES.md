@@ -336,19 +336,17 @@
 - Results: FleetAggregation card, TCOComparisonCards, TCOEvolutionChart (Recharts LineChart), MotorizationTable, VehicleTCOBreakdown (stacked BarChart)
 - Components: `TCOComparisonCards`, `TCOEvolutionChart`, `MotorizationTable`, `VehicleTCOBreakdown`, `FleetAggregation`
 
-#### ROICalculatorPage `/financial/roi`
-- Baseline metrics inputs (absence rate, turnover, training cost)
-- Target metrics sliders
-- ROI waterfall chart (4 levers)
-- Payback period display
-- DAF export button
+#### ROICalculatorTab (within `/financial` ROI tab) ✅ Session 36
+- 11-field form: headcount, daily cost, absence rates, turnover rates, travel hours, engagement, training cost, total investment
+- "Calculer ROI" button → POST `/financial/roi/calculate`
+- Results: WaterfallChart (4 levers + total), PaybackSlider (color-coded), summary cards (ROI total, %, payback)
+- Components: `WaterfallChart`, `PaybackSlider`, `CostPerTripGauge`, `DAFExportButton`
 
-#### InvestmentComparatorPage `/financial/comparator`
-- Three-column comparison (CAPEX, mise-a-dispo, OPEX)
-- Configurable parameters per model
-- Duration slider
-- Key indicators comparison table
-- Recommendation highlight
+#### InvestmentComparatorTab (within `/financial` Comparator tab) ✅ Session 36
+- 4-field form: vehicle count, headcount, annual trips, duration
+- "Comparer" button → POST `/financial/compare`
+- Results: InvestmentComparatorCards (3 models + recommendation badge)
+- Components: `InvestmentComparatorCards`
 
 ---
 

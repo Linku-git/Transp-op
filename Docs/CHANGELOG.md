@@ -6,6 +6,25 @@
 
 ---
 
+## [Session-36] — 2026-04-02
+### Added
+- WaterfallChart: Recharts BarChart showing 4 ROI levers (absenteisme, retention, flotte, trajet) + total
+- PaybackSlider: color-coded payback indicator (green <12mo, yellow 12-24mo, red >24mo)
+- CostPerTripGauge: SVG semicircle gauge with actual vs target cost per trip
+- InvestmentComparatorCards: 3 model cards (CAPEX/MaD/OPEX) with recommended badge
+- DAFExportButton: dropdown for CSV/Excel/PDF export (placeholder for Session 38)
+- ROICalculatorTab: full 11-field form + results (waterfall, payback, summary cards)
+- InvestmentComparatorTab: 4-field form + comparison cards + recommendation banner
+- ROI and comparator TypeScript types + API functions (calculateROI, compareInvestments)
+- 7 tests in `frontend/src/pages/financial/__tests__/FinancialROI.test.tsx`
+
+### Changed
+- `FinancialDashboardPage` — ROI and Comparator tabs now show real content (replaced placeholders)
+- `frontend/src/types/financial.ts` — Added ROI + comparator interfaces
+- `frontend/src/api/financial.ts` — Added 2 new API functions
+
+---
+
 ## [Session-35] — 2026-04-02
 ### Added
 - TypeScript interfaces for TCO calculation types (`frontend/src/types/financial.ts`)
