@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-31] — 2026-04-02
+### Added
+- FinancialScenario, TCOEntry, ROICalculation, VehicleReference SQLAlchemy models (`backend/app/models/financial.py`)
+- Alembic migration for 4 financial tables (`backend/alembic/versions/c3d4e5f6a7b8_add_financial_tables.py`)
+- Pydantic v2 schemas with validation: investment model types, vehicle types, positive costs, rate ranges (`backend/app/schemas/financial.py`)
+- 8 API endpoints under `/financial/`: scenario CRUD (5), TCO entries (2), vehicle reference catalog (1) (`backend/app/api/v1/financial.py`)
+- Vehicle reference seed script with 5 PRD vehicle types (minibus, midibus, bus_standard, grand_bus, vehicule_leger), idempotent, runs at app startup (`backend/app/db/seed_vehicles.py`)
+- 7 tests in `backend/tests/test_financial_models.py` covering scenario CRUD, TCO entries, schema validation, vehicle catalog
+
+### Changed
+- `backend/app/api/v1/__init__.py` — Registered financial router with tags=["financial"]
+- `backend/app/models/__init__.py` — Added 4 financial model exports
+- `backend/app/main.py` — Added lifespan hook to seed vehicle references on startup
+
+---
+
 ## [Session-30] — 2026-04-02
 ### Added
 - ExportEngine service with 5 format generators: PDF, Excel, CSV stops, CSV employees, GeoJSON (`backend/app/services/export_engine.py`)

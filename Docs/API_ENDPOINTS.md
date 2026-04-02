@@ -204,15 +204,17 @@
 
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
-| POST | `/financial/scenarios` | Create financial scenario | Yes | DRH, DAF | 31 |
-| GET | `/financial/scenarios` | List scenarios | Yes | DRH, DAF, Admin | 31 |
-| GET | `/financial/scenarios/{id}` | Get with results | Yes | DRH, DAF, Admin | 31 |
-| PUT | `/financial/scenarios/{id}` | Update scenario | Yes | DRH, DAF | 31 |
-| DELETE | `/financial/scenarios/{id}` | Delete scenario | Yes | DRH, DAF | 31 |
+| POST | `/financial/scenarios` | Create financial scenario | Yes | DRH, DAF, Admin | 31 |
+| GET | `/financial/scenarios` | List scenarios (paginated) | Yes | DRH, DAF, Admin | 31 |
+| GET | `/financial/scenarios/{id}` | Get single scenario | Yes | DRH, DAF, Admin | 31 |
+| PUT | `/financial/scenarios/{id}` | Update scenario | Yes | DRH, DAF, Admin | 31 |
+| DELETE | `/financial/scenarios/{id}` | Delete scenario (cascade) | Yes | DRH, Admin | 31 |
+| POST | `/financial/scenarios/{id}/tco-entries` | Create TCO entry | Yes | DRH, DAF, Admin | 31 |
+| GET | `/financial/scenarios/{id}/tco-entries` | List TCO entries for scenario | Yes | DRH, DAF, Admin | 31 |
 | POST | `/financial/tco/calculate` | Calculate TCO | Yes | DRH, DAF | 32 |
 | POST | `/financial/roi/calculate` | Calculate ROI | Yes | DRH, DAF | 33 |
 | POST | `/financial/compare` | Compare investment models | Yes | DRH, DAF | 34 |
-| GET | `/financial/vehicle-references` | Vehicle reference catalog | Yes | DRH, DAF, Admin | 31 |
+| GET | `/financial/vehicles` | Vehicle reference catalog | Yes | DRH, DAF, Admin | 31 |
 | POST | `/financial/export/daf` | DAF-compatible export | Yes | DAF, Admin | 38 |
 
 ---

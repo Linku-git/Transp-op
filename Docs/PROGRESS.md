@@ -10,13 +10,13 @@
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | COMPLETE | 25/25 |
-| Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
+| Phase 2 — Financial & Reporting | 31-44 | IN PROGRESS | 1/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **30/92** |
+| **Total** | **92** | | **31/92** |
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Session | Title | Status | Date | Notes |
 |---------|-------|--------|------|-------|
-| 31 | [[sessions/session-31|Financial Models & API]] | NOT STARTED | | |
+| 31 | [[sessions/session-31|Financial Models & API]] | COMPLETE | 2026-04-02 | 4 models, 8 endpoints, 5 vehicle refs seeded, 7 tests |
 | 32 | [[sessions/session-32|TCO Calculator Engine]] | NOT STARTED | | |
 | 33 | [[sessions/session-33|ROI Calculator Engine]] | NOT STARTED | | |
 | 34 | [[sessions/session-34|Investment Model Comparator]] | NOT STARTED | | |
