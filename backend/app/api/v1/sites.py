@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import csv
+import io
 import logging
 import math
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -80,6 +83,216 @@ async def list_sites(
             page_size=page_size,
         ),
     )
+
+
+# ---------------------------------------------------------------------------
+# CSV column definitions — single source of truth for export + import
+# ---------------------------------------------------------------------------
+
+CSV_COLUMNS = [
+    "code", "name", "address", "city", "lat", "lng",
+    "num_shifts",
+    "shift_1_entry", "shift_1_exit",
+    "shift_2_entry", "shift_2_exit",
+    "shift_3_entry", "shift_3_exit",
+    "working_days", "days_per_week",
+    "contact_name", "contact_phone",
+    "zfe_zone", "security_profile", "timezone", "observations",
+]
+
+
+def _site_to_row(site: Site) -> dict:
+    def fmt_time(t):
+        return t.strftime("%H:%M") if t else ""
+
+    return {
+        "code": site.code,
+        "name": site.name,
+        "address": site.address or "",
+        "city": site.city,
+        "lat": str(site.lat),
+        "lng": str(site.lng),
+        "num_shifts": str(site.num_shifts),
+        "shift_1_entry": fmt_time(site.shift_1_entry),
+        "shift_1_exit": fmt_time(site.shift_1_exit),
+        "shift_2_entry": fmt_time(site.shift_2_entry),
+        "shift_2_exit": fmt_time(site.shift_2_exit),
+        "shift_3_entry": fmt_time(site.shift_3_entry),
+        "shift_3_exit": fmt_time(site.shift_3_exit),
+        "working_days": site.working_days or "",
+        "days_per_week": str(site.days_per_week),
+        "contact_name": site.contact_name or "",
+        "contact_phone": site.contact_phone or "",
+        "zfe_zone": "true" if site.zfe_zone else "false",
+        "security_profile": site.security_profile,
+        "timezone": site.timezone,
+        "observations": site.observations or "",
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /sites/export/csv — download all sites as CSV (headers-only if empty)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/export/csv")
+async def export_sites_csv(
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> StreamingResponse:
+    """Export all sites for the tenant as a UTF-8 CSV file.
+
+    Returns only the header row when there are no sites, so the user can
+    fill in data manually and re-import the file.
+    """
+    stmt = (
+        select(Site)
+        .where(Site.tenant_id == current_user.tenant_id)
+        .order_by(Site.name.asc())
+    )
+    result = await db.execute(stmt)
+    sites = list(result.scalars().all())
+
+    buf = io.StringIO()
+    writer = csv.DictWriter(buf, fieldnames=CSV_COLUMNS)
+    writer.writeheader()
+    for site in sites:
+        writer.writerow(_site_to_row(site))
+
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=sites.csv"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST /sites/import/csv — upsert sites from a CSV file (no duplicates)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/import/csv")
+async def import_sites_csv(
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Import sites from a CSV file using upsert logic.
+
+    - Rows whose ``code`` already exists for this tenant are **updated**.
+    - Rows with a new ``code`` are **inserted**.
+    - Returns a summary: created, updated, skipped (bad rows), errors list.
+    """
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be a .csv file",
+        )
+
+    raw = await file.read()
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        text = raw.decode("latin-1")
+
+    reader = csv.DictReader(io.StringIO(text))
+
+    if reader.fieldnames is None or "code" not in reader.fieldnames:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="CSV must contain at least a 'code' column",
+        )
+
+    created = 0
+    updated = 0
+    skipped = 0
+    errors: list[str] = []
+
+    for i, row in enumerate(reader, start=2):
+        code = (row.get("code") or "").strip()
+        if not code:
+            skipped += 1
+            errors.append(f"Row {i}: missing code — skipped")
+            continue
+
+        try:
+            lat = float(row.get("lat") or 0)
+            lng = float(row.get("lng") or 0)
+            num_shifts = int(row.get("num_shifts") or 1)
+            days_per_week = int(row.get("days_per_week") or 5)
+        except ValueError as exc:
+            skipped += 1
+            errors.append(f"Row {i} ({code}): invalid numeric value — {exc}")
+            continue
+
+        def parse_time(val: str):
+            val = (val or "").strip()
+            if not val:
+                return None
+            try:
+                from datetime import time as dt_time
+                parts = val.split(":")
+                return dt_time(int(parts[0]), int(parts[1]))
+            except Exception:
+                return None
+
+        zfe_raw = (row.get("zfe_zone") or "").strip().lower()
+        zfe_zone = zfe_raw in ("true", "1", "yes", "oui")
+
+        security_profile = (row.get("security_profile") or "normal").strip()
+        if security_profile not in ("normal", "elevated", "critical"):
+            security_profile = "normal"
+
+        stmt = select(Site).where(
+            Site.code == code,
+            Site.tenant_id == current_user.tenant_id,
+        )
+        result = await db.execute(stmt)
+        site = result.scalar_one_or_none()
+
+        if site is None:
+            site = Site(tenant_id=current_user.tenant_id, code=code)
+            db.add(site)
+            created += 1
+        else:
+            updated += 1
+
+        site.name = (row.get("name") or code).strip()
+        site.address = (row.get("address") or "").strip()
+        site.city = (row.get("city") or "").strip()
+        site.lat = lat
+        site.lng = lng
+        site.geom = func.ST_SetSRID(func.ST_MakePoint(lng, lat), 4326)
+        site.num_shifts = max(1, min(3, num_shifts))
+        site.shift_1_entry = parse_time(row.get("shift_1_entry"))
+        site.shift_1_exit = parse_time(row.get("shift_1_exit"))
+        site.shift_2_entry = parse_time(row.get("shift_2_entry"))
+        site.shift_2_exit = parse_time(row.get("shift_2_exit"))
+        site.shift_3_entry = parse_time(row.get("shift_3_entry"))
+        site.shift_3_exit = parse_time(row.get("shift_3_exit"))
+        site.working_days = (row.get("working_days") or "Lundi-Vendredi").strip()
+        site.days_per_week = max(1, min(7, days_per_week))
+        site.contact_name = (row.get("contact_name") or "").strip() or None
+        site.contact_phone = (row.get("contact_phone") or "").strip() or None
+        site.zfe_zone = zfe_zone
+        site.security_profile = security_profile
+        site.timezone = (row.get("timezone") or "Europe/Paris").strip()
+        site.observations = (row.get("observations") or "").strip() or None
+
+    await db.flush()
+
+    logger.info(
+        "CSV import by user %s: %d created, %d updated, %d skipped",
+        current_user.id, created, updated, skipped,
+    )
+
+    return {
+        "created": created,
+        "updated": updated,
+        "skipped": skipped,
+        "errors": errors,
+    }
 
 
 # ---------------------------------------------------------------------------

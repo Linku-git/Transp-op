@@ -3,6 +3,9 @@
 ## Overview
 **Transpop** (Plateforme d'Orchestration Mobilité RH) is an enterprise SaaS platform for HR mobility orchestration. It manages employee transport optimization, route planning, clustering, vehicle assignments, and KPI tracking.
 
+## Recent Changes
+- **CSV Export/Import (Sites):** `GET /api/v1/sites/export/csv` streams a UTF-8 CSV (headers-only when empty). `POST /api/v1/sites/import/csv` accepts a `.csv` file and upserts by `code` (no duplicates on re-import). Frontend: "Import CSV" + "Export CSV" buttons in SiteListPage header; result/error banners shown after import.
+
 ## Architecture
 - **Backend:** Python 3.12 / FastAPI / SQLAlchemy 2.0 (async) / PostgreSQL + PostGIS / Redis + Celery / OR-Tools
 - **Frontend:** React 19 / TypeScript / Vite / TailwindCSS v4 / Zustand / Google Maps (`@vis.gl/react-google-maps`) / Recharts

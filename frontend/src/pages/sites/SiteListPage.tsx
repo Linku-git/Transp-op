@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSiteStore } from '@/stores/siteStore';
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { DataTable, type Column } from '@/components/ui/DataTable';
 import type { Site, SecurityProfile } from '@/types/site';
+import { exportSitesCSV, importSitesCSV, type ImportCSVResult } from '@/api/sites';
 
 const PAGE_SIZE = 20;
 
@@ -83,9 +84,49 @@ export function SiteListPage() {
   const [zfeFilter, setZfeFilter] = useState(false);
   const [page, setPage] = useState(1);
 
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importResult, setImportResult] = useState<ImportCSVResult | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const importFileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     fetchSites({ page, page_size: PAGE_SIZE });
   }, [fetchSites, page]);
+
+  const handleExportCSV = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      await exportSitesCSV();
+    } catch {
+      // silent — browser will show nothing downloaded
+    } finally {
+      setIsExporting(false);
+    }
+  }, []);
+
+  const handleImportFile = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      e.target.value = '';
+      setImportResult(null);
+      setImportError(null);
+      setIsImporting(true);
+      try {
+        const result = await importSitesCSV(file);
+        setImportResult(result);
+        fetchSites({ page: 1, page_size: PAGE_SIZE });
+        setPage(1);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Import failed';
+        setImportError(msg);
+      } finally {
+        setIsImporting(false);
+      }
+    },
+    [fetchSites],
+  );
 
   const filteredSites = useMemo(() => {
     let result = sites;
@@ -211,10 +252,39 @@ export function SiteListPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="secondary" size="md">
-            <span className="material-symbols-outlined text-base mr-1.5">download</span>
-            {t('common.export_csv', 'Export CSV')}
+          {/* Hidden file input for CSV import */}
+          <input
+            ref={importFileRef}
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={handleImportFile}
+          />
+
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() => importFileRef.current?.click()}
+            disabled={isImporting}
+          >
+            <span className="material-symbols-outlined text-base mr-1.5">
+              {isImporting ? 'sync' : 'upload'}
+            </span>
+            {isImporting ? t('common.importing', 'Import...') : t('common.import_csv', 'Import CSV')}
           </Button>
+
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={handleExportCSV}
+            disabled={isExporting}
+          >
+            <span className="material-symbols-outlined text-base mr-1.5">
+              {isExporting ? 'sync' : 'download'}
+            </span>
+            {isExporting ? t('common.exporting', 'Export...') : t('common.export_csv', 'Export CSV')}
+          </Button>
+
           <Link to="/sites/new">
             <Button>
               <span className="material-symbols-outlined text-base mr-1.5">add_location</span>
@@ -223,6 +293,53 @@ export function SiteListPage() {
           </Link>
         </div>
       </div>
+
+      {/* Import result banner */}
+      {importResult && (
+        <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+          <span className="material-symbols-outlined text-green-600 text-lg mt-0.5">check_circle</span>
+          <div className="flex-1">
+            <p className="text-sm font-sans font-semibold text-green-800">
+              {t('sites.import_success', 'Import terminé')}
+            </p>
+            <p className="text-xs text-green-700 font-sans mt-0.5">
+              {importResult.created} {t('sites.import_created', 'créé(s)')},&nbsp;
+              {importResult.updated} {t('sites.import_updated', 'mis à jour')},&nbsp;
+              {importResult.skipped} {t('sites.import_skipped', 'ignoré(s)')}
+            </p>
+            {importResult.errors.length > 0 && (
+              <ul className="mt-1 list-disc list-inside text-xs text-amber-700 font-sans">
+                {importResult.errors.slice(0, 5).map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+                {importResult.errors.length > 5 && (
+                  <li>…et {importResult.errors.length - 5} autre(s)</li>
+                )}
+              </ul>
+            )}
+          </div>
+          <button
+            onClick={() => setImportResult(null)}
+            className="text-green-600 hover:text-green-800 transition-colors"
+          >
+            <span className="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      )}
+
+      {/* Import error banner */}
+      {importError && (
+        <div className="flex items-start gap-3 bg-error-container border border-error/20 rounded-xl px-4 py-3">
+          <span className="material-symbols-outlined text-error text-lg mt-0.5">error</span>
+          <p className="flex-1 text-sm font-sans text-error">{importError}</p>
+          <button
+            onClick={() => setImportError(null)}
+            className="text-error hover:opacity-70 transition-opacity"
+          >
+            <span className="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      )}
 
       {/* Bento grid: mini stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
