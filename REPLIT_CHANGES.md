@@ -4,12 +4,48 @@
 > Do NOT delete this file. Claude Code will process it in the next session.
 
 ## Summary
-- Total files modified: 5
-- Categories: Replit initialization, configuration, host/proxy setup
+- Total files modified: 14 (5 config + 9 map components)
+- Categories: Replit initialization, configuration, host/proxy setup, seed data, Google Maps migration
 
 ---
 
 ## Changes
+
+### [2026-04-02] Data: Comprehensive seed data inserted
+- **Files:** `backend/app/db/seed_all.py` (new)
+- **What:** Created and ran a full seed script populating all tables:
+  - 4 sites (Casablanca industrial zones: Ain Sebaa, Bouskoura, Moulay Rachid, Ain Chock)
+  - 100 employees distributed 25 per site with realistic Moroccan names/neighborhoods/coordinates
+  - 15 vehicles (minibus/midibus/bus/voiture) across all site types
+  - 3 completed optimization runs with clusters and route stops per site
+  - 2 financial scenarios (own fleet 5yr + leasing 3yr) with TCO entries and ROI calculations
+  - Weather forecasts (30 days × 4 sites)
+  - KPI snapshots (90 days of trend data across 8 KPI types)
+  - 3 transport scenarios (Standard, Intempéries, Réduit)
+  - Optimization settings and 5 constraint parameters
+  - 20 employee leave records
+  - 5 generated report metadata entries
+  - 3 extra users (drh@transpop.dev, daf@transpop.dev, operateur@transpop.dev)
+  - 4 extra roles (drh, daf, salarie, operateur)
+- **Why:** Platform needed realistic demo data for all views
+- **Risk:** None — idempotent checks prevent duplicate inserts on re-run
+
+### [2026-04-02] Maps: Replaced all Leaflet/react-leaflet with Google Maps
+- **Files:** `frontend/src/components/maps/MapView.tsx`, `MapPicker.tsx`, `EmployeeMarker.tsx`, `SiteMarker.tsx`, `RoutePolyline.tsx`, `ClusterRegion.tsx`, `MeetingZoneMarker.tsx`, `AccessLeg.tsx`
+- **Packages added:** `@react-google-maps/api`, `@types/google.maps`
+- **What:** Rewrote all 8 map components to use `@react-google-maps/api`:
+  - `MapView`: `MapContainer + TileLayer` → `GoogleMap` with `useJsApiLoader` (lazy-loads Google Maps script, shows pulse skeleton while loading)
+  - `MapPicker`: `MapContainer + useMapEvents + Marker` → `GoogleMap + Marker(draggable) + onClick`
+  - `EmployeeMarker`: `CircleMarker + Popup` → `Marker(SVG circle icon) + InfoWindow`
+  - `SiteMarker`: `CircleMarker + Popup` → `Marker(SVG circle icon) + InfoWindow`
+  - `RoutePolyline`: `Polyline + Popup` → `Polyline + InfoWindow`
+  - `ClusterRegion`: `Circle + Popup` → `Circle + InfoWindow`
+  - `MeetingZoneMarker`: `CircleMarker + Popup` → `Marker(SVG icon) + InfoWindow`
+  - `AccessLeg`: `Polyline` → `Polyline` (with dashed-line icon pattern)
+- **Interface preserved:** All components keep identical TypeScript props; `MapView.center` still accepts `[lat, lng]` tuples for backward compat with existing pages — converted to `{lat, lng}` internally
+- **API key:** `VITE_GOOGLE_MAPS_API_KEY` must be set as a Replit secret (see below)
+- **Why:** User requested Google Maps replacement
+- **Risk:** Maps show loading skeleton until `VITE_GOOGLE_MAPS_API_KEY` is configured
 
 ### [2026-04-02 20:35] Config: Vite allowedHosts corrected to boolean true
 - **Files:** `frontend/vite.config.ts`

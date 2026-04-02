@@ -1,73 +1,25 @@
-import { useCallback, useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { useCallback } from 'react';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { useTranslation } from 'react-i18next';
-import L from 'leaflet';
-import type { LeafletMouseEvent, Marker as LeafletMarker } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
-/* Fix default marker icons — Leaflet loses them when bundled by Vite */
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
-L.Icon.Default.mergeOptions({
-  iconUrl,
-  iconRetinaUrl,
-  shadowUrl,
-});
-
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
 const CASABLANCA_LAT = 33.57;
 const CASABLANCA_LNG = -7.59;
-const DEFAULT_ZOOM = 12;
+const DEFAULT_ZOOM = 14;
+
+const MAP_OPTIONS: google.maps.MapOptions = {
+  disableDefaultUI: false,
+  zoomControl: true,
+  streetViewControl: false,
+  mapTypeControl: false,
+  fullscreenControl: false,
+};
 
 interface MapPickerProps {
   lat: number;
   lng: number;
   onChange: (lat: number, lng: number) => void;
   height?: string;
-}
-
-function ClickHandler({ onChange }: { onChange: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click(e: LeafletMouseEvent) {
-      onChange(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
-}
-
-function DraggableMarker({
-  lat,
-  lng,
-  onChange,
-}: {
-  lat: number;
-  lng: number;
-  onChange: (lat: number, lng: number) => void;
-}) {
-  const markerRef = useRef<LeafletMarker>(null);
-
-  const eventHandlers = useMemo(
-    () => ({
-      dragend() {
-        const marker = markerRef.current;
-        if (marker) {
-          const position = marker.getLatLng();
-          onChange(position.lat, position.lng);
-        }
-      },
-    }),
-    [onChange],
-  );
-
-  return (
-    <Marker
-      draggable
-      eventHandlers={eventHandlers}
-      position={[lat, lng]}
-      ref={markerRef}
-    />
-  );
 }
 
 export function MapPicker({
@@ -77,6 +29,11 @@ export function MapPicker({
   height = '300px',
 }: MapPickerProps) {
   const { t } = useTranslation();
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+
   const centerLat = lat || CASABLANCA_LAT;
   const centerLng = lng || CASABLANCA_LNG;
 
@@ -90,22 +47,64 @@ export function MapPicker({
     [onChange],
   );
 
+  const handleMapClick = useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) {
+        handleChange(e.latLng.lat(), e.latLng.lng());
+      }
+    },
+    [handleChange],
+  );
+
+  const handleDragEnd = useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) {
+        handleChange(e.latLng.lat(), e.latLng.lng());
+      }
+    },
+    [handleChange],
+  );
+
+  if (loadError) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div
+          className="rounded-lg overflow-hidden flex items-center justify-center bg-surface-container font-sans text-sm text-on-surface-variant"
+          style={{ height }}
+        >
+          Erreur de chargement de la carte
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div
+          className="rounded-lg overflow-hidden bg-surface-container/30 animate-pulse"
+          style={{ height }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="rounded-lg overflow-hidden" style={{ height }}>
-        <MapContainer
-          center={[centerLat, centerLng]}
+        <GoogleMap
+          mapContainerStyle={{ height: '100%', width: '100%' }}
+          center={{ lat: centerLat, lng: centerLng }}
           zoom={DEFAULT_ZOOM}
-          style={{ height: '100%', width: '100%' }}
-          scrollWheelZoom
+          options={MAP_OPTIONS}
+          onClick={handleMapClick}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          <Marker
+            position={{ lat: centerLat, lng: centerLng }}
+            draggable
+            onDragEnd={handleDragEnd}
           />
-          <DraggableMarker lat={centerLat} lng={centerLng} onChange={handleChange} />
-          <ClickHandler onChange={handleChange} />
-        </MapContainer>
+        </GoogleMap>
       </div>
       <p className="text-sm text-on-surface-variant font-sans">
         {t('sites.form.map_hint', 'Cliquez sur la carte ou deplacez le marqueur pour definir la position')}

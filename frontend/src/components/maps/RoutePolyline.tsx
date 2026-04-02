@@ -1,9 +1,10 @@
-import { Polyline, Popup } from 'react-leaflet';
+import { useState } from 'react';
+import { Polyline, InfoWindow } from '@react-google-maps/api';
 import type { OptimizationRoute } from '@/types/optimization';
 
-// Simple polyline decoder (Google's encoded polyline format)
-function decodePolyline(encoded: string): [number, number][] {
-  const points: [number, number][] = [];
+// Google encoded polyline decoder
+function decodePolyline(encoded: string): google.maps.LatLngLiteral[] {
+  const points: google.maps.LatLngLiteral[] = [];
   let index = 0;
   let lat = 0;
   let lng = 0;
@@ -28,12 +29,11 @@ function decodePolyline(encoded: string): [number, number][] {
     } while (byte >= 0x20);
     lng += result & 1 ? ~(result >> 1) : result >> 1;
 
-    points.push([lat / 1e5, lng / 1e5]);
+    points.push({ lat: lat / 1e5, lng: lng / 1e5 });
   }
   return points;
 }
 
-// Color palette for different routes
 const ROUTE_COLORS = [
   '#0058be',
   '#d97706',
@@ -56,81 +56,60 @@ export function RoutePolyline({
   index,
   isSelected = false,
 }: RoutePolylineProps) {
+  const [infoPos, setInfoPos] = useState<google.maps.LatLngLiteral | null>(null);
   const color = ROUTE_COLORS[index % ROUTE_COLORS.length];
 
-  if (!route.polyline) {
-    // Fallback: draw straight lines between stops
-    const positions: [number, number][] = route.ordered_stops.map(
-      (stop) => [stop.lat, stop.lng] as [number, number],
-    );
-    if (positions.length < 2) return null;
+  const path: google.maps.LatLngLiteral[] = route.polyline
+    ? decodePolyline(route.polyline)
+    : route.ordered_stops.map((s) => ({ lat: s.lat, lng: s.lng }));
 
-    return (
+  if (path.length < 2) return null;
+
+  const midpoint = path[Math.floor(path.length / 2)];
+
+  return (
+    <>
       <Polyline
-        positions={positions}
-        pathOptions={{
-          color,
-          weight: isSelected ? 5 : 3,
-          opacity: isSelected ? 1 : 0.7,
+        path={path}
+        options={{
+          strokeColor: color,
+          strokeWeight: isSelected ? 5 : 3,
+          strokeOpacity: isSelected ? 1 : 0.75,
+          clickable: true,
         }}
-      >
-        <Popup>
-          <RoutePopupContent route={route} color={color} />
-        </Popup>
-      </Polyline>
-    );
-  }
-
-  const positions = decodePolyline(route.polyline);
-
-  return (
-    <Polyline
-      positions={positions}
-      pathOptions={{
-        color,
-        weight: isSelected ? 5 : 3,
-        opacity: isSelected ? 1 : 0.7,
-      }}
-    >
-      <Popup>
-        <RoutePopupContent route={route} color={color} />
-      </Popup>
-    </Polyline>
-  );
-}
-
-function RoutePopupContent({
-  route,
-  color,
-}: {
-  route: OptimizationRoute;
-  color: string;
-}) {
-  return (
-    <div className="font-sans text-sm min-w-48">
-      <div className="flex items-center gap-2 mb-1">
-        <span
-          className="inline-block w-3 h-3 rounded-sm"
-          style={{ backgroundColor: color }}
-        />
-        <span className="font-semibold text-on-surface">
-          {route.vehicle_type ?? 'Vehicle'} ({route.vehicle_capacity ?? '?'}{' '}
-          places)
-        </span>
-      </div>
-      <p className="text-on-surface-variant">
-        Stops: {route.ordered_stops.filter((s) => s.is_pickup).length}
-      </p>
-      {route.total_distance_km != null && (
-        <p className="text-on-surface-variant">
-          Distance: {route.total_distance_km.toFixed(1)} km
-        </p>
+        onClick={() => setInfoPos(midpoint)}
+      />
+      {infoPos && (
+        <InfoWindow
+          position={infoPos}
+          onCloseClick={() => setInfoPos(null)}
+        >
+          <div className="font-sans text-sm min-w-[180px] p-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span
+                className="inline-block w-3 h-3 rounded-sm flex-shrink-0"
+                style={{ backgroundColor: color }}
+              />
+              <span className="font-semibold text-on-surface">
+                {route.vehicle_type ?? 'Véhicule'} ({route.vehicle_capacity ?? '?'} places)
+              </span>
+            </div>
+            <p className="text-on-surface-variant">
+              Arrêts: {route.ordered_stops.filter((s) => s.is_pickup).length}
+            </p>
+            {route.total_distance_km != null && (
+              <p className="text-on-surface-variant">
+                Distance: {Number(route.total_distance_km).toFixed(1)} km
+              </p>
+            )}
+            {route.total_time_minutes != null && (
+              <p className="text-on-surface-variant">
+                Durée: {Number(route.total_time_minutes).toFixed(0)} min
+              </p>
+            )}
+          </div>
+        </InfoWindow>
       )}
-      {route.total_time_minutes != null && (
-        <p className="text-on-surface-variant">
-          Duration: {route.total_time_minutes.toFixed(0)} min
-        </p>
-      )}
-    </div>
+    </>
   );
 }

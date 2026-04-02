@@ -1,4 +1,4 @@
-import { Polyline } from 'react-leaflet';
+import { Polyline } from '@react-google-maps/api';
 
 interface AccessLegProps {
   employeeLat: number;
@@ -15,15 +15,21 @@ export function AccessLeg({
 }: AccessLegProps) {
   return (
     <Polyline
-      positions={[
-        [employeeLat, employeeLng],
-        [zoneLat, zoneLng],
+      path={[
+        { lat: employeeLat, lng: employeeLng },
+        { lat: zoneLat, lng: zoneLng },
       ]}
-      pathOptions={{
-        color: '#495e8a',
-        weight: 1.5,
-        opacity: 0.5,
-        dashArray: '4 8',
+      options={{
+        strokeColor: '#495e8a',
+        strokeWeight: 1.5,
+        strokeOpacity: 0.5,
+        icons: [
+          {
+            icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 4 },
+            offset: '0',
+            repeat: '20px',
+          },
+        ],
       }}
     />
   );
