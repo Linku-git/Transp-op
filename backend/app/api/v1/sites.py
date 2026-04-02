@@ -92,9 +92,12 @@ async def list_sites(
 CSV_COLUMNS = [
     "code", "name", "address", "city", "lat", "lng",
     "num_shifts",
-    "shift_1_entry", "shift_1_exit",
-    "shift_2_entry", "shift_2_exit",
-    "shift_3_entry", "shift_3_exit",
+    # Equipe 1
+    "shift_1_type", "shift_1_depart_h1", "shift_1_retour_h1", "shift_1_depart_h2", "shift_1_retour_h2",
+    # Equipe 2
+    "shift_2_type", "shift_2_depart_h1", "shift_2_retour_h1", "shift_2_depart_h2", "shift_2_retour_h2",
+    # Equipe 3
+    "shift_3_type", "shift_3_depart_h1", "shift_3_retour_h1", "shift_3_depart_h2", "shift_3_retour_h2",
     "working_days", "days_per_week",
     "contact_name", "contact_phone",
     "zfe_zone", "security_profile", "timezone", "observations",
@@ -113,12 +116,24 @@ def _site_to_row(site: Site) -> dict:
         "lat": str(site.lat),
         "lng": str(site.lng),
         "num_shifts": str(site.num_shifts),
-        "shift_1_entry": fmt_time(site.shift_1_entry),
-        "shift_1_exit": fmt_time(site.shift_1_exit),
-        "shift_2_entry": fmt_time(site.shift_2_entry),
-        "shift_2_exit": fmt_time(site.shift_2_exit),
-        "shift_3_entry": fmt_time(site.shift_3_entry),
-        "shift_3_exit": fmt_time(site.shift_3_exit),
+        # Equipe 1
+        "shift_1_type": site.shift_1_type or "",
+        "shift_1_depart_h1": fmt_time(site.shift_1_entry),
+        "shift_1_retour_h1": fmt_time(site.shift_1_exit),
+        "shift_1_depart_h2": fmt_time(site.shift_1_depart_h2),
+        "shift_1_retour_h2": fmt_time(site.shift_1_retour_h2),
+        # Equipe 2
+        "shift_2_type": site.shift_2_type or "",
+        "shift_2_depart_h1": fmt_time(site.shift_2_entry),
+        "shift_2_retour_h1": fmt_time(site.shift_2_exit),
+        "shift_2_depart_h2": fmt_time(site.shift_2_depart_h2),
+        "shift_2_retour_h2": fmt_time(site.shift_2_retour_h2),
+        # Equipe 3
+        "shift_3_type": site.shift_3_type or "",
+        "shift_3_depart_h1": fmt_time(site.shift_3_entry),
+        "shift_3_retour_h1": fmt_time(site.shift_3_exit),
+        "shift_3_depart_h2": fmt_time(site.shift_3_depart_h2),
+        "shift_3_retour_h2": fmt_time(site.shift_3_retour_h2),
         "working_days": site.working_days or "",
         "days_per_week": str(site.days_per_week),
         "contact_name": site.contact_name or "",
@@ -258,6 +273,11 @@ async def import_sites_csv(
         else:
             updated += 1
 
+        def valid_type(val: str | None) -> str | None:
+            allowed = ("Poste 1", "Poste 2", "Poste 3", "Normal", "Sirène", "Personnalisé")
+            v = (val or "").strip()
+            return v if v in allowed else None
+
         site.name = (row.get("name") or code).strip()
         site.address = (row.get("address") or "").strip()
         site.city = (row.get("city") or "").strip()
@@ -265,19 +285,31 @@ async def import_sites_csv(
         site.lng = lng
         site.geom = func.ST_SetSRID(func.ST_MakePoint(lng, lat), 4326)
         site.num_shifts = max(1, min(3, num_shifts))
-        site.shift_1_entry = parse_time(row.get("shift_1_entry"))
-        site.shift_1_exit = parse_time(row.get("shift_1_exit"))
-        site.shift_2_entry = parse_time(row.get("shift_2_entry"))
-        site.shift_2_exit = parse_time(row.get("shift_2_exit"))
-        site.shift_3_entry = parse_time(row.get("shift_3_entry"))
-        site.shift_3_exit = parse_time(row.get("shift_3_exit"))
+        # Equipe 1
+        site.shift_1_type = valid_type(row.get("shift_1_type"))
+        site.shift_1_entry = parse_time(row.get("shift_1_depart_h1") or row.get("shift_1_entry"))
+        site.shift_1_exit = parse_time(row.get("shift_1_retour_h1") or row.get("shift_1_exit"))
+        site.shift_1_depart_h2 = parse_time(row.get("shift_1_depart_h2"))
+        site.shift_1_retour_h2 = parse_time(row.get("shift_1_retour_h2"))
+        # Equipe 2
+        site.shift_2_type = valid_type(row.get("shift_2_type"))
+        site.shift_2_entry = parse_time(row.get("shift_2_depart_h1") or row.get("shift_2_entry"))
+        site.shift_2_exit = parse_time(row.get("shift_2_retour_h1") or row.get("shift_2_exit"))
+        site.shift_2_depart_h2 = parse_time(row.get("shift_2_depart_h2"))
+        site.shift_2_retour_h2 = parse_time(row.get("shift_2_retour_h2"))
+        # Equipe 3
+        site.shift_3_type = valid_type(row.get("shift_3_type"))
+        site.shift_3_entry = parse_time(row.get("shift_3_depart_h1") or row.get("shift_3_entry"))
+        site.shift_3_exit = parse_time(row.get("shift_3_retour_h1") or row.get("shift_3_exit"))
+        site.shift_3_depart_h2 = parse_time(row.get("shift_3_depart_h2"))
+        site.shift_3_retour_h2 = parse_time(row.get("shift_3_retour_h2"))
         site.working_days = (row.get("working_days") or "Lundi-Vendredi").strip()
         site.days_per_week = max(1, min(7, days_per_week))
         site.contact_name = (row.get("contact_name") or "").strip() or None
         site.contact_phone = (row.get("contact_phone") or "").strip() or None
         site.zfe_zone = zfe_zone
         site.security_profile = security_profile
-        site.timezone = (row.get("timezone") or "Europe/Paris").strip()
+        site.timezone = (row.get("timezone") or "Africa/Casablanca").strip()
         site.observations = (row.get("observations") or "").strip() or None
 
     await db.flush()
@@ -385,12 +417,21 @@ async def create_site(
         lng=body.lng,
         geom=func.ST_SetSRID(func.ST_MakePoint(body.lng, body.lat), 4326),
         num_shifts=body.num_shifts,
+        shift_1_type=body.shift_1_type,
         shift_1_entry=body.shift_1_entry,
         shift_1_exit=body.shift_1_exit,
+        shift_1_depart_h2=body.shift_1_depart_h2,
+        shift_1_retour_h2=body.shift_1_retour_h2,
+        shift_2_type=body.shift_2_type,
         shift_2_entry=body.shift_2_entry,
         shift_2_exit=body.shift_2_exit,
+        shift_2_depart_h2=body.shift_2_depart_h2,
+        shift_2_retour_h2=body.shift_2_retour_h2,
+        shift_3_type=body.shift_3_type,
         shift_3_entry=body.shift_3_entry,
         shift_3_exit=body.shift_3_exit,
+        shift_3_depart_h2=body.shift_3_depart_h2,
+        shift_3_retour_h2=body.shift_3_retour_h2,
         working_days=body.working_days,
         days_per_week=body.days_per_week,
         contact_name=body.contact_name,

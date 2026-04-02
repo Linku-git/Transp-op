@@ -21,14 +21,26 @@ class SiteCreate(BaseModel):
     lat: float = Field(..., ge=-90, le=90)
     lng: float = Field(..., ge=-180, le=180)
 
-    # Shift configuration
+    # Shift configuration — up to 3 equipes, each with a type + 4 times
     num_shifts: int = Field(default=1, ge=1, le=3)
-    shift_1_entry: time | None = None
-    shift_1_exit: time | None = None
+
+    shift_1_type: str | None = Field(default=None, max_length=50)
+    shift_1_entry: time | None = None       # depart_h1
+    shift_1_exit: time | None = None        # retour_h1
+    shift_1_depart_h2: time | None = None
+    shift_1_retour_h2: time | None = None
+
+    shift_2_type: str | None = Field(default=None, max_length=50)
     shift_2_entry: time | None = None
     shift_2_exit: time | None = None
+    shift_2_depart_h2: time | None = None
+    shift_2_retour_h2: time | None = None
+
+    shift_3_type: str | None = Field(default=None, max_length=50)
     shift_3_entry: time | None = None
     shift_3_exit: time | None = None
+    shift_3_depart_h2: time | None = None
+    shift_3_retour_h2: time | None = None
 
     # Working schedule
     working_days: str = Field(default="Lundi-Vendredi", max_length=100)
@@ -43,7 +55,7 @@ class SiteCreate(BaseModel):
     # Constraints & metadata
     zfe_zone: bool = False
     security_profile: str = Field(default="normal", max_length=20)
-    timezone: str = Field(default="Europe/Paris", max_length=50)
+    timezone: str = Field(default="Africa/Casablanca", max_length=50)
     observations: str | None = None
 
     @field_validator("security_profile")
@@ -53,6 +65,15 @@ class SiteCreate(BaseModel):
         if v not in allowed:
             raise ValueError(f"Must be one of {allowed}")
         return v
+
+    @field_validator("shift_1_type", "shift_2_type", "shift_3_type")
+    @classmethod
+    def validate_shift_type(cls, v: str | None) -> str | None:
+        if v is not None and v != "":
+            allowed = ("Poste 1", "Poste 2", "Poste 3", "Normal", "Sirène", "Personnalisé")
+            if v not in allowed:
+                raise ValueError(f"Type horaire must be one of {allowed}")
+        return v or None
 
 
 class SiteUpdate(BaseModel):
@@ -67,26 +88,34 @@ class SiteUpdate(BaseModel):
     lat: float | None = Field(default=None, ge=-90, le=90)
     lng: float | None = Field(default=None, ge=-180, le=180)
 
-    # Shift configuration
     num_shifts: int | None = Field(default=None, ge=1, le=3)
+
+    shift_1_type: str | None = None
     shift_1_entry: time | None = None
     shift_1_exit: time | None = None
+    shift_1_depart_h2: time | None = None
+    shift_1_retour_h2: time | None = None
+
+    shift_2_type: str | None = None
     shift_2_entry: time | None = None
     shift_2_exit: time | None = None
+    shift_2_depart_h2: time | None = None
+    shift_2_retour_h2: time | None = None
+
+    shift_3_type: str | None = None
     shift_3_entry: time | None = None
     shift_3_exit: time | None = None
+    shift_3_depart_h2: time | None = None
+    shift_3_retour_h2: time | None = None
 
-    # Working schedule
     working_days: str | None = Field(default=None, max_length=100)
     days_per_week: int | None = Field(default=None, ge=1, le=7)
 
-    # Contact & logistics
     contact_name: str | None = Field(default=None, max_length=100)
     contact_phone: str | None = Field(default=None, max_length=50)
     access_notes: str | None = None
     parking_notes: str | None = None
 
-    # Constraints & metadata
     zfe_zone: bool | None = None
     security_profile: str | None = Field(default=None, max_length=20)
     timezone: str | None = Field(default=None, max_length=50)
@@ -121,36 +150,41 @@ class SiteResponse(BaseModel):
     lat: float
     lng: float
 
-    # Shift configuration
     num_shifts: int
+
+    shift_1_type: str | None
     shift_1_entry: time | None
     shift_1_exit: time | None
+    shift_1_depart_h2: time | None
+    shift_1_retour_h2: time | None
+
+    shift_2_type: str | None
     shift_2_entry: time | None
     shift_2_exit: time | None
+    shift_2_depart_h2: time | None
+    shift_2_retour_h2: time | None
+
+    shift_3_type: str | None
     shift_3_entry: time | None
     shift_3_exit: time | None
+    shift_3_depart_h2: time | None
+    shift_3_retour_h2: time | None
 
-    # Working schedule
     working_days: str | None
     days_per_week: int | None
 
-    # Contact & logistics
     contact_name: str | None
     contact_phone: str | None
     access_notes: str | None
     parking_notes: str | None
 
-    # Constraints & metadata
     zfe_zone: bool
     security_profile: str
     timezone: str
     observations: str | None
 
-    # Timestamps
     created_at: datetime
     updated_at: datetime
-
-    # Note: geom (PostGIS internal column) is intentionally excluded.
 
 
 class SiteSummary(BaseModel):
