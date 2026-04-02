@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Tabs } from '@/components/ui/Tabs';
 import { TCOCalculatorPage } from './TCOCalculatorPage';
+import { ROICalculatorTab } from './ROICalculatorTab';
+import { InvestmentComparatorTab } from './InvestmentComparatorTab';
 
 const TAB_KEYS = {
   TCO: 'tco',
@@ -52,33 +54,9 @@ export function FinancialDashboardPage() {
       <div className="flex-1 overflow-hidden">
         {activeTab === TAB_KEYS.TCO && <TCOCalculatorPage />}
 
-        {activeTab === TAB_KEYS.ROI && (
-          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-            <span className="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-4">
-              trending_up
-            </span>
-            <h2 className="text-lg font-bold text-on-surface mb-2">
-              {t('financial.roi_title', 'Calculateur ROI')}
-            </h2>
-            <p className="text-sm text-on-surface-variant">
-              {t('financial.coming_soon', 'Bientot disponible')}
-            </p>
-          </div>
-        )}
+        {activeTab === TAB_KEYS.ROI && <ROICalculatorTab />}
 
-        {activeTab === TAB_KEYS.COMPARATOR && (
-          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-            <span className="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-4">
-              compare_arrows
-            </span>
-            <h2 className="text-lg font-bold text-on-surface mb-2">
-              {t('financial.comparator_title', 'Comparateur de modeles')}
-            </h2>
-            <p className="text-sm text-on-surface-variant">
-              {t('financial.coming_soon', 'Bientot disponible')}
-            </p>
-          </div>
-        )}
+        {activeTab === TAB_KEYS.COMPARATOR && <InvestmentComparatorTab />}
       </div>
     </div>
   );

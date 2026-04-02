@@ -100,3 +100,76 @@ export const MOTORIZATIONS = [
 
 export type VehicleType = (typeof VEHICLE_TYPES)[number];
 export type Motorization = (typeof MOTORIZATIONS)[number];
+
+// ROI types
+export interface ROICalculateRequest {
+  scenario_id?: string;
+  headcount: number;
+  daily_cost: number;
+  baseline_absence_rate: number;
+  target_absence_rate: number;
+  replacement_cost: number;
+  turnover_rate_before: number;
+  turnover_rate_after: number;
+  annual_travel_hours: number;
+  engagement_rate: number;
+  training_hour_cost: number;
+  total_investment: number;
+  current_fleet_annual_cost?: number;
+  optimized_fleet_annual_cost?: number;
+}
+
+export interface ROICalculateResponse {
+  roi_absenteeism: number;
+  roi_retention: number;
+  roi_fleet_optimization: number;
+  roi_journey: number;
+  roi_total: number;
+  roi_percentage: number;
+  payback_months: number | null;
+  total_investment: number;
+  headcount: number;
+  working_days_per_year: number;
+  stored_id: string | null;
+}
+
+// Investment Comparator types
+export interface InvestmentCompareRequest {
+  vehicle_count: number;
+  headcount: number;
+  annual_trips: number;
+  duration_years: number;
+  capex_purchase_price?: number;
+  capex_annual_maintenance?: number;
+  capex_annual_fuel?: number;
+  capex_annual_insurance?: number;
+  capex_annual_driver_cost?: number;
+  capex_residual_value?: number;
+  mad_monthly_rental?: number;
+  mad_annual_fuel?: number;
+  mad_management_overhead_rate?: number;
+  opex_cost_per_km?: number;
+  opex_annual_km?: number;
+}
+
+export interface InvestmentModelResult {
+  model: string;
+  label: string;
+  total_cost: number;
+  annual_cost: number;
+  cost_per_employee: number;
+  cost_per_trip: number;
+  duration_years: number;
+  vehicle_count: number;
+  breakdown: Record<string, number>;
+}
+
+export interface InvestmentRecommendation {
+  recommended_model: string;
+  reason: string;
+}
+
+export interface InvestmentCompareResponse {
+  models: InvestmentModelResult[];
+  recommendation: InvestmentRecommendation;
+}
