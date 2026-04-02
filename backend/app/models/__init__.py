@@ -1,6 +1,12 @@
 from app.models.auth import Permission, Role, RolePermission, Tenant, User
 from app.models.base import BaseModel, TimestampMixin
 from app.models.employee import Employee
+from app.models.financial import (
+    FinancialScenario,
+    ROICalculation,
+    TCOEntry,
+    VehicleReference,
+)
 from app.models.leave import EmployeeLeave
 from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization, Route
@@ -22,6 +28,10 @@ __all__ = [
     "Employee",
     "EmployeeLeave",
     "EmployeeModal",
+    "FinancialScenario",
+    "TCOEntry",
+    "ROICalculation",
+    "VehicleReference",
     "Optimization",
     "Cluster",
     "Route",

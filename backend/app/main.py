@@ -9,7 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import api_router
 from app.config import settings
-from app.database import engine
+from app.database import async_session_factory, engine
+from app.db.seed_vehicles import seed_vehicle_references
 
 logging.basicConfig(level=settings.log_level)
 logger = logging.getLogger(__name__)
@@ -18,6 +19,10 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting Transpop API (%s)", settings.environment)
+    # Seed vehicle reference catalog
+    async with async_session_factory() as session:
+        async with session.begin():
+            await seed_vehicle_references(session)
     yield
     logger.info("Shutting down Transpop API")
     await engine.dispose()
