@@ -23,6 +23,7 @@ from app.api.v1.constraints import router as constraints_router
 from app.api.v1.weather import router as weather_router
 from app.api.v1.exports import router as exports_router
 from app.api.v1.financial import router as financial_router
+from app.api.v1.kpis import router as kpis_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -47,3 +48,4 @@ api_router.include_router(constraints_router, tags=["constraints"])
 api_router.include_router(weather_router, tags=["weather"])
 api_router.include_router(exports_router, tags=["exports"])
 api_router.include_router(financial_router, tags=["financial"])
+api_router.include_router(kpis_router, tags=["kpis"])
