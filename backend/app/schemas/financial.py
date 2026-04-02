@@ -470,6 +470,52 @@ class CostAnalysisResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# DAF Export schemas
+# ---------------------------------------------------------------------------
+
+ERP_FORMAT_CHOICES = ["sap_fi", "sage", "cegid"]
+OUTPUT_FORMAT_CHOICES = ["csv", "xml"]
+REPORT_FORMAT_CHOICES = ["pdf", "excel"]
+
+
+class DAFExportRequest(BaseModel):
+    """Request for DAF ERP export."""
+
+    erp_format: str = Field(default="sage")
+    output_format: str = Field(default="csv")
+    tco_data: dict | None = None
+    roi_data: dict | None = None
+
+    @field_validator("erp_format")
+    @classmethod
+    def validate_erp_format(cls, v: str) -> str:
+        if v not in ERP_FORMAT_CHOICES:
+            raise ValueError(f"erp_format must be one of {ERP_FORMAT_CHOICES}")
+        return v
+
+    @field_validator("output_format")
+    @classmethod
+    def validate_output_format(cls, v: str) -> str:
+        if v not in OUTPUT_FORMAT_CHOICES:
+            raise ValueError(f"output_format must be one of {OUTPUT_FORMAT_CHOICES}")
+        return v
+
+
+class FinancialReportRequest(BaseModel):
+    """Request for TCO or ROI report generation."""
+
+    report_format: str = Field(default="pdf")
+    data: dict = Field(...)
+
+    @field_validator("report_format")
+    @classmethod
+    def validate_report_format(cls, v: str) -> str:
+        if v not in REPORT_FORMAT_CHOICES:
+            raise ValueError(f"report_format must be one of {REPORT_FORMAT_CHOICES}")
+        return v
+
+
+# ---------------------------------------------------------------------------
 # VehicleReference schemas
 # ---------------------------------------------------------------------------
 
