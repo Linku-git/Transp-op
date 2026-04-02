@@ -5,7 +5,7 @@
 
 ## Architecture
 - **Backend:** Python 3.12 / FastAPI / SQLAlchemy 2.0 (async) / PostgreSQL + PostGIS / Redis + Celery / OR-Tools
-- **Frontend:** React 18 / TypeScript / Vite / TailwindCSS v4 / Zustand / Leaflet / Recharts
+- **Frontend:** React 18 / TypeScript / Vite / TailwindCSS v4 / Zustand / Google Maps (`@vis.gl/react-google-maps`) / Recharts
 - **Database:** Replit managed PostgreSQL (host: helium, db: heliumdb)
 
 ## Project Structure

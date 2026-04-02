@@ -1,16 +1,6 @@
 import { useState } from 'react';
-import { Marker, InfoWindow } from '@react-google-maps/api';
+import { AdvancedMarker, InfoWindow } from '@vis.gl/react-google-maps';
 import type { MeetingZone } from '@/types/optimization';
-
-function meetingZoneIcon(pmrAccessible: boolean): google.maps.Icon {
-  const fill = pmrAccessible ? '%2393c5fd' : '%230058be';
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"><circle cx="9" cy="9" r="7" fill="${fill}" fill-opacity="0.85" stroke="%230058be" stroke-width="2"/></svg>`;
-  return {
-    url: `data:image/svg+xml;charset=UTF-8,${svg}`,
-    scaledSize: new window.google.maps.Size(18, 18),
-    anchor: new window.google.maps.Point(9, 9),
-  };
-}
 
 interface MeetingZoneMarkerProps {
   zone: MeetingZone;
@@ -18,28 +8,32 @@ interface MeetingZoneMarkerProps {
 
 export function MeetingZoneMarker({ zone }: MeetingZoneMarkerProps) {
   const [open, setOpen] = useState(false);
-  const pos: google.maps.LatLngLiteral = { lat: zone.lat, lng: zone.lng };
+  const pos = { lat: zone.lat, lng: zone.lng };
 
   return (
     <>
-      <Marker
-        position={pos}
-        icon={meetingZoneIcon(zone.pmr_accessible)}
-        onClick={() => setOpen(true)}
-        zIndex={5}
-      />
+      <AdvancedMarker position={pos} onClick={() => setOpen(true)} zIndex={5}>
+        <div
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: '50%',
+            background: zone.pmr_accessible ? '#93c5fd' : '#0058be',
+            opacity: 0.85,
+            border: '2px solid #0058be',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+          }}
+        />
+      </AdvancedMarker>
+
       {open && (
-        <InfoWindow
-          position={pos}
-          onCloseClick={() => setOpen(false)}
-        >
+        <InfoWindow position={pos} onCloseClick={() => setOpen(false)}>
           <div className="font-sans text-sm p-1">
             <p className="font-semibold text-on-surface">
               Zone de Rencontre {zone.cluster_index + 1}
             </p>
-            <p className="text-on-surface-variant">
-              {zone.employee_count} employés
-            </p>
+            <p className="text-on-surface-variant">{zone.employee_count} employés</p>
             {zone.road_name && (
               <p className="text-on-surface-variant">{zone.road_name}</p>
             )}
