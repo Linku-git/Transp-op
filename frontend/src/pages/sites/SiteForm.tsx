@@ -4,12 +4,10 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MapPicker } from '@/components/maps/MapPicker';
-import type { SiteCreate, SecurityProfile, ShiftType } from '@/types/site';
-import { SHIFT_PRESETS, ALL_SHIFT_TYPES } from '@/types/site';
+import { ShiftsEditorTable } from '@/components/shifts/ShiftsEditorTable';
+import type { SiteCreate, SecurityProfile } from '@/types/site';
 
-interface FieldErrors {
-  [field: string]: string;
-}
+interface FieldErrors { [field: string]: string; }
 
 interface SiteFormProps {
   initialData?: Partial<SiteCreate>;
@@ -19,29 +17,9 @@ interface SiteFormProps {
   apiError?: string | null;
 }
 
-interface ShiftState {
-  type: string;
-  depart_h1: string;
-  retour_h1: string;
-  depart_h2: string;
-  retour_h2: string;
-}
-
-const EMPTY_SHIFT: ShiftState = { type: '', depart_h1: '', retour_h1: '', depart_h2: '', retour_h2: '' };
-
 const SECURITY_OPTIONS: SecurityProfile[] = ['normal', 'elevated', 'critical'];
-const SHIFT_OPTIONS = [1, 2, 3];
-const DEFAULT_WORKING_DAYS = 'Lun-Ven';
 
-const SHIFT_COLORS = [
-  { bg: 'bg-blue-50/60', badge: 'bg-blue-100 text-blue-700', label: 'M' },
-  { bg: 'bg-amber-50/60', badge: 'bg-amber-100 text-amber-700', label: 'A' },
-  { bg: 'bg-indigo-50/60', badge: 'bg-indigo-100 text-indigo-700', label: 'N' },
-];
-
-function TextArea({
-  label, value, onChange, rows = 3,
-}: {
+function TextArea({ label, value, onChange, rows = 3 }: {
   label: string; value: string; onChange: (v: string) => void; rows?: number;
 }) {
   return (
@@ -57,9 +35,7 @@ function TextArea({
   );
 }
 
-function SelectField({
-  label, value, onChange, options, error,
-}: {
+function SelectField({ label, value, onChange, options, error }: {
   label: string; value: string | number; onChange: (v: string) => void;
   options: { value: string | number; label: string }[]; error?: string;
 }) {
@@ -81,140 +57,7 @@ function SelectField({
   );
 }
 
-function TimeInput({
-  label, value, onChange, hint,
-}: {
-  label: string; value: string; onChange: (v: string) => void; hint?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">{label}</label>
-      {hint && <span className="text-[9px] text-on-surface-variant font-sans uppercase tracking-wider">{hint}</span>}
-      <input
-        type="time"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-surface-container-high/50 border-none rounded-lg p-3 text-on-surface font-sans text-sm outline-none transition-all duration-150 focus:ring-1 focus:ring-primary/20 focus:bg-surface-container-lowest"
-      />
-    </div>
-  );
-}
-
-function ShiftCard({
-  index, shift, onChange,
-}: {
-  index: number; shift: ShiftState; onChange: (s: ShiftState) => void;
-}) {
-  const { t } = useTranslation();
-  const colors = SHIFT_COLORS[index];
-
-  const handleTypeChange = (type: string) => {
-    if (type && type !== 'Personnalisé' && type in SHIFT_PRESETS) {
-      const preset = SHIFT_PRESETS[type as ShiftType];
-      onChange({
-        type,
-        depart_h1: preset.depart_h1,
-        retour_h1: preset.retour_h1,
-        depart_h2: preset.depart_h2 ?? '',
-        retour_h2: preset.retour_h2 ?? '',
-      });
-    } else {
-      onChange({ ...shift, type });
-    }
-  };
-
-  const showDepartH2 = shift.type === 'Sirène' || shift.type === 'Personnalisé' || shift.depart_h2 !== '';
-  const showRetourH2 = shift.type === 'Poste 1' || shift.type === 'Poste 2' || shift.type === 'Poste 3' ||
-    shift.type === 'Sirène' || shift.type === 'Personnalisé' || shift.retour_h2 !== '';
-
-  return (
-    <div className={`${colors.bg} rounded-xl p-5`}>
-      <div className="flex items-center gap-2 mb-4">
-        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${colors.badge}`}>
-          {colors.label}
-        </span>
-        <p className="text-sm font-bold text-on-surface font-sans">
-          {t('sites.form.shift_n', 'Equipe {{n}}', { n: index + 1 })}
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <SelectField
-          label={t('sites.form.shift_type', 'Type horaire')}
-          value={shift.type}
-          onChange={handleTypeChange}
-          options={[
-            { value: '', label: t('sites.form.shift_type_select', '— Sélectionner un type —') },
-            ...ALL_SHIFT_TYPES.map((st) => ({ value: st, label: st })),
-          ]}
-        />
-
-        {shift.type && (
-          <>
-            <div className="border-t border-outline-variant/20 pt-3">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant font-sans mb-3">
-                {t('sites.form.premier_horaire', 'Premier Horaire')}
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <TimeInput
-                  label={t('sites.form.horaire_depart', 'Horaire départ')}
-                  value={shift.depart_h1}
-                  onChange={(v) => onChange({ ...shift, depart_h1: v })}
-                />
-                <TimeInput
-                  label={t('sites.form.horaire_retour', 'Horaire retour')}
-                  value={shift.retour_h1}
-                  onChange={(v) => onChange({ ...shift, retour_h1: v })}
-                />
-              </div>
-            </div>
-
-            {(showDepartH2 || showRetourH2) && (
-              <div className="border-t border-outline-variant/20 pt-3">
-                <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant font-sans mb-3">
-                  {t('sites.form.deuxieme_horaire', 'Deuxième Horaire')}
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <TimeInput
-                    label={t('sites.form.horaire_depart', 'Horaire départ')}
-                    value={shift.depart_h2}
-                    onChange={(v) => onChange({ ...shift, depart_h2: v })}
-                    hint={!showDepartH2 ? t('sites.form.na', 'N/A') : undefined}
-                  />
-                  <TimeInput
-                    label={t('sites.form.horaire_retour', 'Horaire retour')}
-                    value={shift.retour_h2}
-                    onChange={(v) => onChange({ ...shift, retour_h2: v })}
-                  />
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function initShift(
-  type: string | null | undefined,
-  entry: string | null | undefined,
-  exit_: string | null | undefined,
-  dh2: string | null | undefined,
-  rh2: string | null | undefined,
-): ShiftState {
-  return {
-    type: type ?? '',
-    depart_h1: entry ?? '',
-    retour_h1: exit_ ?? '',
-    depart_h2: dh2 ?? '',
-    retour_h2: rh2 ?? '',
-  };
-}
-
-export function SiteForm({
-  initialData, onSubmit, onCancel, isSubmitting, apiError,
-}: SiteFormProps) {
+export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiError }: SiteFormProps) {
   const { t } = useTranslation();
 
   const [code, setCode] = useState(initialData?.code ?? '');
@@ -223,23 +66,8 @@ export function SiteForm({
   const [city, setCity] = useState(initialData?.city ?? '');
   const [lat, setLat] = useState(initialData?.lat ?? 33.57);
   const [lng, setLng] = useState(initialData?.lng ?? -7.59);
-  const [numShifts, setNumShifts] = useState(initialData?.num_shifts ?? 1);
 
-  const [shifts, setShifts] = useState<[ShiftState, ShiftState, ShiftState]>([
-    initShift(initialData?.shift_1_type, initialData?.shift_1_entry, initialData?.shift_1_exit, initialData?.shift_1_depart_h2, initialData?.shift_1_retour_h2),
-    initShift(initialData?.shift_2_type, initialData?.shift_2_entry, initialData?.shift_2_exit, initialData?.shift_2_depart_h2, initialData?.shift_2_retour_h2),
-    initShift(initialData?.shift_3_type, initialData?.shift_3_entry, initialData?.shift_3_exit, initialData?.shift_3_depart_h2, initialData?.shift_3_retour_h2),
-  ]);
-
-  const updateShift = (idx: number, s: ShiftState) => {
-    setShifts((prev) => {
-      const next: [ShiftState, ShiftState, ShiftState] = [...prev] as [ShiftState, ShiftState, ShiftState];
-      next[idx] = s;
-      return next;
-    });
-  };
-
-  const [workingDays, setWorkingDays] = useState(initialData?.working_days ?? DEFAULT_WORKING_DAYS);
+  const [workingDays, setWorkingDays] = useState(initialData?.working_days ?? 'Lun-Ven');
   const [daysPerWeek, setDaysPerWeek] = useState(initialData?.days_per_week ?? 5);
   const [zfeZone, setZfeZone] = useState(initialData?.zfe_zone ?? false);
   const [securityProfile, setSecurityProfile] = useState<SecurityProfile>(initialData?.security_profile ?? 'normal');
@@ -267,28 +95,10 @@ export function SiteForm({
     ev.preventDefault();
     if (!validate()) return;
 
-    const s1 = shifts[0];
-    const s2 = shifts[1];
-    const s3 = shifts[2];
-
     const data: SiteCreate = {
       code: code.trim(), name: name.trim(), address: address.trim(), city: city.trim(),
-      lat, lng, num_shifts: numShifts,
-      shift_1_type: s1.type || null,
-      shift_1_entry: s1.depart_h1 || null,
-      shift_1_exit: s1.retour_h1 || null,
-      shift_1_depart_h2: s1.depart_h2 || null,
-      shift_1_retour_h2: s1.retour_h2 || null,
-      shift_2_type: numShifts >= 2 ? s2.type || null : null,
-      shift_2_entry: numShifts >= 2 ? s2.depart_h1 || null : null,
-      shift_2_exit: numShifts >= 2 ? s2.retour_h1 || null : null,
-      shift_2_depart_h2: numShifts >= 2 ? s2.depart_h2 || null : null,
-      shift_2_retour_h2: numShifts >= 2 ? s2.retour_h2 || null : null,
-      shift_3_type: numShifts >= 3 ? s3.type || null : null,
-      shift_3_entry: numShifts >= 3 ? s3.depart_h1 || null : null,
-      shift_3_exit: numShifts >= 3 ? s3.retour_h1 || null : null,
-      shift_3_depart_h2: numShifts >= 3 ? s3.depart_h2 || null : null,
-      shift_3_retour_h2: numShifts >= 3 ? s3.retour_h2 || null : null,
+      lat, lng,
+      num_shifts: 1,
       working_days: workingDays.trim(),
       days_per_week: daysPerWeek,
       zfe_zone: zfeZone,
@@ -301,7 +111,7 @@ export function SiteForm({
     };
     await onSubmit(data);
   }, [
-    validate, onSubmit, code, name, address, city, lat, lng, numShifts, shifts,
+    validate, onSubmit, code, name, address, city, lat, lng,
     workingDays, daysPerWeek, zfeZone, securityProfile,
     contactName, contactPhone, accessNotes, parkingNotes, observations,
   ]);
@@ -344,54 +154,9 @@ export function SiteForm({
         </div>
       </Card>
 
-      {/* Horaires */}
+      {/* Horaires — company-wide, managed via HoraireTravail API */}
       <Card title={t('sites.form.section_shifts', 'Horaires')}>
-        <div className="flex flex-col gap-5">
-          <SelectField
-            label={t('sites.form.num_shifts', "Nombre d'equipes")}
-            value={numShifts}
-            onChange={(v) => setNumShifts(parseInt(v, 10))}
-            options={SHIFT_OPTIONS.map((n) => ({ value: n, label: `${n} ${t('sites.form.shift_label', 'equipe(s)')}` }))}
-          />
-
-          {/* Reference table */}
-          <div className="rounded-xl overflow-hidden border border-outline-variant/20">
-            <table className="w-full text-xs font-sans">
-              <thead>
-                <tr className="bg-surface-container-low">
-                  <th className="text-left p-2.5 font-bold text-on-surface-variant uppercase tracking-wider text-[10px]">Type Horaire</th>
-                  <th className="text-center p-2.5 font-bold text-on-surface-variant uppercase tracking-wider text-[10px]">Départ H1</th>
-                  <th className="text-center p-2.5 font-bold text-on-surface-variant uppercase tracking-wider text-[10px]">Retour H1</th>
-                  <th className="text-center p-2.5 font-bold text-on-surface-variant uppercase tracking-wider text-[10px]">Départ H2</th>
-                  <th className="text-center p-2.5 font-bold text-on-surface-variant uppercase tracking-wider text-[10px]">Retour H2</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(Object.entries(SHIFT_PRESETS) as [ShiftType, typeof SHIFT_PRESETS[ShiftType]][])
-                  .filter(([t]) => t !== 'Personnalisé')
-                  .map(([type, preset], i) => (
-                    <tr key={type} className={i % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low/30'}>
-                      <td className="p-2.5 font-semibold text-on-surface">{type}</td>
-                      <td className="p-2.5 text-center font-mono text-on-surface">{preset.depart_h1}</td>
-                      <td className="p-2.5 text-center font-mono text-on-surface">{preset.retour_h1}</td>
-                      <td className="p-2.5 text-center font-mono text-on-surface-variant">{preset.depart_h2 ?? '—'}</td>
-                      <td className="p-2.5 text-center font-mono text-on-surface">{preset.retour_h2 ?? '—'}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Equipe cards */}
-          {Array.from({ length: numShifts }, (_, i) => (
-            <ShiftCard
-              key={i}
-              index={i}
-              shift={shifts[i] ?? EMPTY_SHIFT}
-              onChange={(s) => updateShift(i, s)}
-            />
-          ))}
-        </div>
+        <ShiftsEditorTable siteId={null} />
       </Card>
 
       {/* Configuration */}

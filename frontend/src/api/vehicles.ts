@@ -144,3 +144,8 @@ export const updateHoraireTravail = async (id: string, data: HoraireTravailUpdat
 export const deleteHoraireTravail = async (id: string): Promise<void> => {
   await api.delete(`${HT_PATH}/${id}`);
 };
+
+export const seedDefaultHoraires = async (): Promise<{ created: number; message: string }> => {
+  const response = await api.post<{ created: number; message: string }>(`${HT_PATH}/seed-defaults`);
+  return response.data;
+};

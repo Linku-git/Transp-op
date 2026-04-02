@@ -109,3 +109,39 @@ async def delete_horaire(
         raise HTTPException(status_code=404, detail="Horaire introuvable")
     await db.delete(obj)
     await db.commit()
+
+
+# ---------------------------------------------------------------------------
+# POST /horaires-travail/seed-defaults — seed 5 standard shifts for the tenant
+# ---------------------------------------------------------------------------
+
+_DEFAULTS = [
+    {"type_horaire": "Poste 1",  "depart_h1": "05:50", "retour_h1": "14:45", "depart_h2": None,    "retour_h2": "15:45"},
+    {"type_horaire": "Poste 2",  "depart_h1": "13:50", "retour_h1": "22:45", "depart_h2": None,    "retour_h2": "23:45"},
+    {"type_horaire": "Poste 3",  "depart_h1": "21:50", "retour_h1": "06:45", "depart_h2": None,    "retour_h2": "07:45"},
+    {"type_horaire": "Normal",   "depart_h1": "07:00", "retour_h1": "16:00", "depart_h2": None,    "retour_h2": None},
+    {"type_horaire": "Sirène",   "depart_h1": "07:00", "retour_h1": "12:00", "depart_h2": "14:00", "retour_h2": "18:00"},
+]
+
+
+@router.post("/seed-defaults", status_code=status.HTTP_200_OK)
+async def seed_defaults(
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Create the 5 standard company shifts if none exist for this tenant."""
+    stmt = select(HoraireTravail).where(
+        HoraireTravail.tenant_id == current_user.tenant_id,
+        HoraireTravail.site_id.is_(None),
+    )
+    result = await db.execute(stmt)
+    existing = {obj.type_horaire for obj in result.scalars().all()}
+
+    created = 0
+    for d in _DEFAULTS:
+        if d["type_horaire"] not in existing:
+            db.add(HoraireTravail(tenant_id=current_user.tenant_id, site_id=None, **d))
+            created += 1
+
+    await db.commit()
+    return {"created": created, "message": f"{created} horaire(s) ajouté(s)"}
