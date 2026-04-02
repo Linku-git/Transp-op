@@ -6,6 +6,23 @@
 
 ---
 
+## [Session-43] — 2026-04-02
+### Added
+- GET `/export/history` endpoint with pagination and report_type filter
+- ReportListPage (`/reports`): history table with type filter, download buttons, pagination, empty state
+- ReportGeneratorPage (`/reports/generate`): 2-step flow — select type → configure format → generate + download
+- ReportTypeSelector: 7 report types in responsive card grid with selection state
+- ParameterConfigPanel: PDF/Excel radio selector + generate button with loading spinner
+- TypeScript types + API client for report history and generation
+- i18n translations (fr + en)
+- 6 frontend tests
+
+### Changed
+- `backend/app/api/v1/exports.py` — Added history endpoint
+- `frontend/src/routes.tsx` — Added `/reports` and `/reports/generate` routes
+
+---
+
 ## [Session-42] — 2026-04-02
 ### Added
 - GeneratedReport SQLAlchemy model (tenant_id, report_type, params, file_url, format, generated_by) + Alembic migration
