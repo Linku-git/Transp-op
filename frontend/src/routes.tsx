@@ -120,6 +120,12 @@ const ConstraintsPage = lazy(() =>
   }))
 );
 
+const HRDashboardPage = lazy(() =>
+  import('@/pages/dashboard/HRDashboardPage').then((m) => ({
+    default: m.HRDashboardPage,
+  }))
+);
+
 const FinancialDashboardPage = lazy(() =>
   import('@/pages/financial/FinancialDashboardPage').then((m) => ({
     default: m.FinancialDashboardPage,
@@ -323,6 +329,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ConstraintsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'dashboard/hr',
+        element: (
+          <SuspenseWrapper>
+            <HRDashboardPage />
           </SuspenseWrapper>
         ),
       },
