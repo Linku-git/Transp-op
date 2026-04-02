@@ -56,9 +56,27 @@ GET /api/v1/health
 ```
 
 ## Database
-- 15 Alembic migrations applied (sessions 1–44)
+- 16 Alembic migrations applied (sessions 1–44 + fleet migration `f1a2b3c4d5e6`)
 - Extensions: PostGIS, pg_trgm
-- 38 tables across 10 groups
+- 41 tables across 10 groups
+- New fleet tables: `vehicle` (extended), `km_consommation`, `point_arret`, `configuration_transport`
+
+## Fleet Module (XLSX schemas 2–6)
+### Backend
+- `backend/app/models/vehicle.py` — Vehicle, KmConsommation, PointArret, ConfigurationTransport models
+- `backend/app/schemas/vehicle.py` — Pydantic schemas for all 4 entities
+- `backend/app/api/v1/vehicles.py` — CRUD for Vehicle (paginated list, get, create, update, delete)
+- `backend/app/api/v1/km_consommation.py` — CRUD for Km & Consommation (list, create, update, delete)
+- `backend/app/api/v1/point_arret.py` — CRUD for Points d'Arrêt SOTREG
+- `backend/app/api/v1/configuration_transport.py` — CRUD for Configuration Transport-Véhicule
+
+### Frontend
+- `frontend/src/types/vehicle.ts` — TypeScript types for all 4 entities
+- `frontend/src/api/vehicles.ts` — API client for all 4 entity CRUD operations
+- Pages: VehicleListPage, VehicleCreatePage, VehicleDetailPage, VehicleEditPage (with shared VehicleForm)
+- Fleet pages: KmConsommationPage, PointArretPage, ConfigurationTransportPage (modal CRUD with inline table)
+- Routes: `/vehicles`, `/vehicles/new`, `/vehicles/:id`, `/vehicles/:id/edit`, `/fleet/consumption`, `/fleet/stops`, `/fleet/config`
+- Sidebar: fleet sub-nav auto-expands under Parc Véhicule when on `/vehicles*` or `/fleet*` paths
 
 ## Design System: "Azure Velocity"
 - Primary: `#0058be` (Azure Blue)

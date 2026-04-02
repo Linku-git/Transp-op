@@ -24,6 +24,9 @@ from app.api.v1.weather import router as weather_router
 from app.api.v1.exports import router as exports_router
 from app.api.v1.financial import router as financial_router
 from app.api.v1.kpis import router as kpis_router
+from app.api.v1.km_consommation import router as km_consommation_router
+from app.api.v1.point_arret import router as point_arret_router
+from app.api.v1.configuration_transport import router as configuration_transport_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -49,3 +52,6 @@ api_router.include_router(weather_router, tags=["weather"])
 api_router.include_router(exports_router, tags=["exports"])
 api_router.include_router(financial_router, tags=["financial"])
 api_router.include_router(kpis_router, tags=["kpis"])
+api_router.include_router(km_consommation_router, tags=["km-consommation"])
+api_router.include_router(point_arret_router, tags=["points-arret"])
+api_router.include_router(configuration_transport_router, tags=["configuration-transport"])

@@ -1,5 +1,6 @@
 from app.models.auth import Permission, Role, RolePermission, Tenant, User
 from app.models.base import BaseModel, TimestampMixin
+from app.models.configuration_transport import ConfigurationTransport
 from app.models.employee import Employee
 from app.models.financial import (
     FinancialScenario,
@@ -8,10 +9,12 @@ from app.models.financial import (
     VehicleReference,
 )
 from app.models.generated_report import GeneratedReport
+from app.models.km_consommation import KmConsommation
 from app.models.kpi_snapshot import KPISnapshot
 from app.models.leave import EmployeeLeave
 from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization, Route
+from app.models.point_arret import PointArret
 from app.models.site import Site
 from app.models.scenario import Scenario
 from app.models.settings import ConstraintParam, OptimizationSettings
@@ -32,7 +35,10 @@ __all__ = [
     "EmployeeModal",
     "FinancialScenario",
     "GeneratedReport",
+    "KmConsommation",
     "KPISnapshot",
+    "PointArret",
+    "ConfigurationTransport",
     "TCOEntry",
     "ROICalculation",
     "VehicleReference",

@@ -156,6 +156,48 @@ const ReportGeneratorPage = lazy(() =>
   }))
 );
 
+const VehicleListPage = lazy(() =>
+  import('@/pages/vehicles/VehicleListPage').then((m) => ({
+    default: m.VehicleListPage,
+  }))
+);
+
+const VehicleCreatePage = lazy(() =>
+  import('@/pages/vehicles/VehicleCreatePage').then((m) => ({
+    default: m.VehicleCreatePage,
+  }))
+);
+
+const VehicleDetailPage = lazy(() =>
+  import('@/pages/vehicles/VehicleDetailPage').then((m) => ({
+    default: m.VehicleDetailPage,
+  }))
+);
+
+const VehicleEditPage = lazy(() =>
+  import('@/pages/vehicles/VehicleEditPage').then((m) => ({
+    default: m.VehicleEditPage,
+  }))
+);
+
+const KmConsommationPage = lazy(() =>
+  import('@/pages/fleet/KmConsommationPage').then((m) => ({
+    default: m.KmConsommationPage,
+  }))
+);
+
+const PointArretPage = lazy(() =>
+  import('@/pages/fleet/PointArretPage').then((m) => ({
+    default: m.PointArretPage,
+  }))
+);
+
+const ConfigurationTransportPage = lazy(() =>
+  import('@/pages/fleet/ConfigurationTransportPage').then((m) => ({
+    default: m.ConfigurationTransportPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -395,6 +437,62 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ReportGeneratorPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'vehicles',
+        element: (
+          <SuspenseWrapper>
+            <VehicleListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'vehicles/new',
+        element: (
+          <SuspenseWrapper>
+            <VehicleCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'vehicles/:id',
+        element: (
+          <SuspenseWrapper>
+            <VehicleDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'vehicles/:id/edit',
+        element: (
+          <SuspenseWrapper>
+            <VehicleEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'fleet/consumption',
+        element: (
+          <SuspenseWrapper>
+            <KmConsommationPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'fleet/stops',
+        element: (
+          <SuspenseWrapper>
+            <PointArretPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'fleet/config',
+        element: (
+          <SuspenseWrapper>
+            <ConfigurationTransportPage />
           </SuspenseWrapper>
         ),
       },

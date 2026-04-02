@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import uuid
+from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import (
     Boolean,
+    Date,
     ForeignKey,
     Index,
     Integer,
@@ -30,11 +32,14 @@ class Vehicle(BaseModel):
     tenant_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("tenant.id"), nullable=False
     )
+    matricule: Mapped[str | None] = mapped_column(String(30), nullable=True)
     type: Mapped[str] = mapped_column(String(50), nullable=False)
     brand_model: Mapped[str | None] = mapped_column(String(100), nullable=True)
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
     year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    circulation_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     owner_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    prestataire: Mapped[str | None] = mapped_column(String(100), nullable=True)
     monthly_cost_mad: Mapped[Decimal | None] = mapped_column(
         Numeric(12, 2), nullable=True
     )

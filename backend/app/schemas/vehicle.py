@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -37,11 +37,14 @@ OWNER_TYPES = ["proprietaire", "loueur", "sous-traitant"]
 class VehicleCreate(BaseModel):
     """Schema for creating a vehicle."""
 
+    matricule: str | None = Field(default=None, max_length=30)
     type: str = Field(..., max_length=50)
     brand_model: str | None = Field(default=None, max_length=100)
-    capacity: int = Field(..., ge=1, le=100)
-    year: int | None = Field(default=None, ge=1990, le=2035)
+    capacity: int = Field(..., ge=1, le=200)
+    year: int | None = Field(default=None, ge=1980, le=2035)
+    circulation_date: date | None = None
     owner_type: str | None = Field(default=None, max_length=50)
+    prestataire: str | None = Field(default=None, max_length=100)
     monthly_cost_mad: Decimal | None = None
     monthly_km: Decimal | None = None
     condition: str = Field(default="Bon", max_length=20)
@@ -79,11 +82,14 @@ class VehicleCreate(BaseModel):
 class VehicleUpdate(BaseModel):
     """Schema for updating a vehicle. All fields optional."""
 
+    matricule: str | None = Field(default=None, max_length=30)
     type: str | None = Field(default=None, max_length=50)
     brand_model: str | None = Field(default=None, max_length=100)
-    capacity: int | None = Field(default=None, ge=1, le=100)
-    year: int | None = Field(default=None, ge=1990, le=2035)
+    capacity: int | None = Field(default=None, ge=1, le=200)
+    year: int | None = Field(default=None, ge=1980, le=2035)
+    circulation_date: date | None = None
     owner_type: str | None = Field(default=None, max_length=50)
+    prestataire: str | None = Field(default=None, max_length=100)
     monthly_cost_mad: Decimal | None = None
     monthly_km: Decimal | None = None
     condition: str | None = Field(default=None, max_length=20)
@@ -123,11 +129,14 @@ class VehicleResponse(BaseModel):
 
     id: uuid.UUID
     tenant_id: uuid.UUID
+    matricule: str | None
     type: str
     brand_model: str | None
     capacity: int
     year: int | None
+    circulation_date: date | None
     owner_type: str | None
+    prestataire: str | None
     monthly_cost_mad: Decimal | None
     monthly_km: Decimal | None
     condition: str

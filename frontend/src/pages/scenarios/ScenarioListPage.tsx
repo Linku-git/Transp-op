@@ -151,7 +151,8 @@ export function ScenarioListPage() {
     });
   };
 
-  const formatNumber = (value: number, decimals = 0) => {
+  const formatNumber = (value: number | null | undefined, decimals = 0) => {
+    if (value == null) return '—';
     return value.toLocaleString('fr-FR', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,

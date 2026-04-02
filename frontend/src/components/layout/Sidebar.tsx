@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 
 interface NavItem {
@@ -7,6 +7,7 @@ interface NavItem {
   path: string;
   labelKey: string;
   icon: string;
+  exact?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -15,7 +16,7 @@ const navItems: NavItem[] = [
   { key: 'employees', path: '/employees', labelKey: 'nav.employees', icon: 'group' },
   { key: 'modal-analysis', path: '/modal-analysis', labelKey: 'nav.modal_analysis', icon: 'bar_chart' },
   { key: 'import', path: '/import', labelKey: 'nav.import', icon: 'upload_file' },
-  { key: 'vehicles', path: '/vehicles', labelKey: 'nav.vehicles', icon: 'directions_car' },
+  { key: 'vehicles', path: '/vehicles', labelKey: 'nav.vehicles', icon: 'directions_car', exact: true },
   { key: 'optimization', path: '/optimization', labelKey: 'nav.optimization', icon: 'route' },
   { key: 'scenarios', path: '/scenarios', labelKey: 'nav.scenarios', icon: 'cloud' },
   { key: 'financial', path: '/financial', labelKey: 'nav.financial', icon: 'payments' },
@@ -23,9 +24,17 @@ const navItems: NavItem[] = [
   { key: 'settings', path: '/settings', labelKey: 'nav.settings', icon: 'settings' },
 ];
 
+const fleetSubItems = [
+  { key: 'fleet-consumption', path: '/fleet/consumption', label: 'Km & Consommation', icon: 'local_gas_station' },
+  { key: 'fleet-stops', path: '/fleet/stops', label: "Points d'Arrêt", icon: 'directions_bus' },
+  { key: 'fleet-config', path: '/fleet/config', label: 'Config. Transport', icon: 'settings_applications' },
+];
+
 export function Sidebar() {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   const user = useAuthStore((s) => s.user);
+  const isFleetActive = pathname.startsWith('/vehicles') || pathname.startsWith('/fleet');
 
   const displayName = user
     ? `${user.first_name} ${user.last_name}`
@@ -58,33 +67,73 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 flex flex-col gap-0.5 px-3 py-3 overflow-y-auto">
         {navItems.map((item) => (
-          <NavLink
-            key={item.key}
-            to={item.path}
-            className={({ isActive }) =>
-              [
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900',
-              ].join(' ')
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <span
-                  className={[
-                    'material-symbols-outlined text-xl leading-none',
-                    isActive ? 'text-blue-700' : 'text-slate-400',
-                  ].join(' ')}
-                  style={isActive ? { fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24" } : undefined}
-                >
-                  {item.icon}
-                </span>
-                <span>{t(item.labelKey)}</span>
-              </>
+          <div key={item.key}>
+            <NavLink
+              to={item.path}
+              end={item.exact}
+              className={({ isActive }) =>
+                [
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isActive || (item.key === 'vehicles' && isFleetActive)
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900',
+                ].join(' ')
+              }
+            >
+              {({ isActive }) => {
+                const active = isActive || (item.key === 'vehicles' && isFleetActive);
+                return (
+                  <>
+                    <span
+                      className={[
+                        'material-symbols-outlined text-xl leading-none',
+                        active ? 'text-blue-700' : 'text-slate-400',
+                      ].join(' ')}
+                      style={active ? { fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24" } : undefined}
+                    >
+                      {item.icon}
+                    </span>
+                    <span>{t(item.labelKey)}</span>
+                  </>
+                );
+              }}
+            </NavLink>
+
+            {/* Fleet sub-items — visible when on any /vehicles or /fleet page */}
+            {item.key === 'vehicles' && isFleetActive && (
+              <div className="ml-8 mt-0.5 flex flex-col gap-0.5">
+                {fleetSubItems.map((sub) => (
+                  <NavLink
+                    key={sub.key}
+                    to={sub.path}
+                    className={({ isActive }) =>
+                      [
+                        'flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                        isActive
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800',
+                      ].join(' ')
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <span
+                          className={[
+                            'material-symbols-outlined text-sm leading-none',
+                            isActive ? 'text-blue-600' : 'text-slate-400',
+                          ].join(' ')}
+                          style={isActive ? { fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20" } : undefined}
+                        >
+                          {sub.icon}
+                        </span>
+                        <span>{sub.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                ))}
+              </div>
             )}
-          </NavLink>
+          </div>
         ))}
       </nav>
 
