@@ -390,21 +390,25 @@
 
 ### Settings & Admin (Sessions 04, 29)
 
-#### SettingsPage `/settings`
-- Meeting radius slider
-- Max walking distance
-- Max route duration
-- Fuel cost input
-- RTI threshold (default 90s)
-- Night mode hours
-- Min night group size
-- Save button
+#### SettingsPage `/settings` (Session 29)
+- Meeting radius slider (range input, meters)
+- Max walking distance slider (range input, meters)
+- Max route duration slider (range input, seconds)
+- Fuel cost per liter input (number)
+- Fuel consumption L/100km input (number)
+- CO2 kg per liter input (number)
+- RTI threshold input (minutes)
+- Night mode start/end time inputs
+- Min night group size input (number)
+- Save button with success/error feedback
 
-#### ConstraintsPage `/settings/constraints`
-- Constraints table (key, value, category)
-- Add/edit/delete inline
-- Category filter
-- Import from Excel button
+#### ConstraintsPage `/settings/constraints` (Session 29)
+- Data table: key, value, category, description, is_active status
+- Category filter dropdown (duree, accessibilite, budget, saisonnalite, securite, rti, zfe)
+- Inline add row with form fields
+- Inline edit with save/cancel actions
+- Delete action per row
+- Bulk import from Excel button
 
 #### UserManagementPage `/admin/users`
 - User table (name, email, role, last login, MFA)

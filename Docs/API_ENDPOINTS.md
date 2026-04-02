@@ -117,11 +117,11 @@
 
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
-| GET | `/constraints` | List (optional category filter) | Yes | DRH, Admin | 29 |
-| POST | `/constraints` | Create constraint | Yes | DRH, Admin | 29 |
-| PUT | `/constraints/{id}` | Update constraint | Yes | DRH, Admin | 29 |
-| DELETE | `/constraints/{id}` | Delete constraint | Yes | DRH, Admin | 29 |
-| POST | `/constraints/bulk` | Bulk import | Yes | DRH, Admin | 29 |
+| GET | `/constraints` | List (optional category filter) | Yes | Admin, DRH | 29 |
+| POST | `/constraints` | Create constraint | Yes | Admin | 29 |
+| PUT | `/constraints/{id}` | Update constraint | Yes | Admin | 29 |
+| DELETE | `/constraints/{id}` | Delete constraint | Yes | Admin | 29 |
+| POST | `/constraints/bulk` | Bulk import | Yes | Admin | 29 |
 
 ---
 
@@ -338,8 +338,8 @@
 
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
-| GET | `/settings` | Get current parameters | Yes | DRH, Admin | 29 |
-| PUT | `/settings` | Update parameters | Yes | DRH, Admin | 29 |
+| GET | `/settings` | Get or create default optimization settings | Yes | Admin, DRH | 29 |
+| PUT | `/settings` | Partial update optimization settings | Yes | Admin | 29 |
 
 ---
 

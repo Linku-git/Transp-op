@@ -14,7 +14,7 @@
 | Core — Sites | Site | [[sessions/session-06\|06]] |
 | Core — Employees | Employee, EmployeeModal, EmployeeLeave | [[sessions/session-09\|09]], [[sessions/session-12\|12]], [[sessions/session-15\|15]] |
 | Core — Vehicles | Vehicle | [[sessions/session-20\|20]] |
-| Core — Constraints | Constraint, Settings | [[sessions/session-29\|29]] |
+| Core — Constraints | OptimizationSettings, ConstraintParam | [[sessions/session-29\|29]] |
 | Optimization | Cluster, Route, Optimization, Scenario | [[sessions/session-18\|18]], [[sessions/session-22\|22]], [[sessions/session-23\|23]], [[sessions/session-27\|27]] |
 | Weather | WeatherForecast | [[sessions/session-26\|26]] |
 | Financial | FinancialScenario, TCOEntry, ROICalculation, VehicleReference | [[sessions/session-31\|31]] |
@@ -26,7 +26,7 @@
 | Operator | Operator, SizingPlanExport | [[sessions/session-82\|82]] |
 | Reporting | GeneratedReport, KPISnapshot | [[sessions/session-42\|42]], [[sessions/session-44\|44]] |
 
-**Total: 38 tables**
+**Total: 40 tables**
 
 ---
 
@@ -262,37 +262,38 @@ CREATE INDEX idx_vehicle_site ON vehicle(site_id);
 
 ## Group 5: Core — Constraints & Settings
 
-### Constraint
+### OptimizationSettings
+```sql
+CREATE TABLE optimization_settings (
+    id                              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id                       UUID UNIQUE NOT NULL REFERENCES tenant(id),
+    meeting_radius_meters           INTEGER DEFAULT 500,
+    max_walking_distance_meters     INTEGER DEFAULT 800,
+    max_route_duration_seconds      INTEGER DEFAULT 5400,       -- 90 minutes
+    fuel_cost_per_liter             DECIMAL(6,2) DEFAULT 12.0,
+    fuel_consumption_l_per_100km    DECIMAL(6,2) DEFAULT 15.0,
+    co2_kg_per_liter                DECIMAL(6,3) DEFAULT 2.31,
+    rti_threshold_minutes           INTEGER DEFAULT 90,
+    night_mode_start                TIME DEFAULT '20:00',
+    night_mode_end                  TIME DEFAULT '06:30',
+    min_night_group_size            INTEGER DEFAULT 3,
+    created_at                      TIMESTAMPTZ DEFAULT now(),
+    updated_at                      TIMESTAMPTZ DEFAULT now()
+);
+```
+
+### ConstraintParam
 ```sql
 CREATE TABLE constraint_param (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id       UUID NOT NULL REFERENCES tenant(id),
     key             VARCHAR(100) NOT NULL,
     value           TEXT NOT NULL,
-    description     TEXT,
     category        VARCHAR(50) NOT NULL,  -- duree, accessibilite, budget, saisonnalite, securite, rti, zfe
+    description     TEXT,
+    is_active       BOOLEAN DEFAULT true,
     created_at      TIMESTAMPTZ DEFAULT now(),
     UNIQUE(tenant_id, key)
-);
-```
-
-### Settings
-```sql
-CREATE TABLE settings (
-    id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id                   UUID UNIQUE NOT NULL REFERENCES tenant(id),
-    meeting_radius_meters       INTEGER DEFAULT 500,
-    max_walking_distance_meters INTEGER DEFAULT 800,
-    max_route_duration_minutes  INTEGER DEFAULT 90,
-    fuel_cost_per_liter         DECIMAL(6,2) DEFAULT 12.0,
-    company_lat                 DOUBLE PRECISION,
-    company_lng                 DOUBLE PRECISION,
-    company_name                VARCHAR(255),
-    rti_max_wait_seconds        INTEGER DEFAULT 90,
-    night_mode_start            TIME DEFAULT '20:00',
-    night_mode_end              TIME DEFAULT '06:30',
-    min_night_group_size        INTEGER DEFAULT 3,
-    updated_at                  TIMESTAMPTZ DEFAULT now()
 );
 ```
 
@@ -829,7 +830,8 @@ Tenant 1──* User
 Tenant 1──* Site
 Tenant 1──* Employee
 Tenant 1──* Vehicle
-Tenant 1──* Settings (1:1)
+Tenant 1──1 OptimizationSettings (1:1)
+Tenant 1──* ConstraintParam
 Tenant 1──* Role
 
 Role  *──* Permission (via RolePermission)

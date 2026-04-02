@@ -6,6 +6,29 @@
 
 ---
 
+## [Session-29] — 2026-04-02
+### Added
+- OptimizationSettings SQLAlchemy model with tenant-scoped one-row-per-tenant pattern (UniqueConstraint on tenant_id), fields: meeting_radius_meters, max_walking_distance_meters, max_route_duration_seconds, fuel_cost_per_liter, fuel_consumption_l_per_100km, co2_kg_per_liter, rti_threshold_minutes, night_mode_start, night_mode_end, min_night_group_size (`backend/app/models/settings.py`)
+- ConstraintParam SQLAlchemy model with UniqueConstraint on (tenant_id, key), fields: key, value, category, description, is_active (`backend/app/models/settings.py`)
+- Alembic migration for optimization_settings and constraint_param tables (`backend/alembic/versions/b2c3d4e5f6a7_add_settings_tables.py`)
+- Pydantic v2 schemas for settings and constraints CRUD (`backend/app/schemas/settings.py`)
+- 2 settings API endpoints: GET `/settings` (get-or-create default), PUT `/settings` (partial update) (`backend/app/api/v1/settings.py`)
+- 5 constraints API endpoints: GET `/constraints` (category filter), POST `/constraints`, PUT `/constraints/{id}`, DELETE `/constraints/{id}`, POST `/constraints/bulk` (`backend/app/api/v1/constraints.py`)
+- Settings TypeScript interfaces (`frontend/src/types/settings.ts`)
+- Settings API client with 7 functions (`frontend/src/api/settings.ts`)
+- SettingsPage (`/settings`): form with range sliders for distance/duration, number inputs for costs, time inputs for night mode (`frontend/src/pages/settings/SettingsPage.tsx`)
+- ConstraintsPage (`/settings/constraints`): data table with category filter, inline add/edit/delete, bulk import (`frontend/src/pages/settings/ConstraintsPage.tsx`)
+- 6 backend tests in `test_settings.py` (150 total passing)
+- 16 frontend tests across 2 test files (6 SettingsPage + 10 ConstraintsPage)
+
+### Changed
+- `backend/app/api/v1/__init__.py` -- Registered settings and constraints routers
+- `backend/app/models/__init__.py` -- Added OptimizationSettings and ConstraintParam imports
+- `frontend/src/routes.tsx` -- Added lazy imports and routes for `/settings` and `/settings/constraints`
+- `frontend/src/i18n/fr.json` and `en.json` -- Added settings/constraints translations
+
+---
+
 ## [Session-28] — 2026-04-02
 ### Added
 - Scenario TypeScript types: Scenario, ScenarioMetrics, MetricDelta, ScenarioComparison, WeatherForecast, ScenarioSuggestion, WeatherSuggestions (`frontend/src/types/scenario.ts`)
