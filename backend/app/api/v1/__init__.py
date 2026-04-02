@@ -21,6 +21,7 @@ from app.api.v1.scenarios import router as scenarios_router
 from app.api.v1.settings import router as settings_router
 from app.api.v1.constraints import router as constraints_router
 from app.api.v1.weather import router as weather_router
+from app.api.v1.exports import router as exports_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -43,3 +44,4 @@ api_router.include_router(scenarios_router, tags=["scenarios"])
 api_router.include_router(settings_router, tags=["settings"])
 api_router.include_router(constraints_router, tags=["constraints"])
 api_router.include_router(weather_router, tags=["weather"])
+api_router.include_router(exports_router, tags=["exports"])
