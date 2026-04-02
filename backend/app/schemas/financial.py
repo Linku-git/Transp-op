@@ -184,6 +184,118 @@ class ROICalculationResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# TCO Calculation schemas
+# ---------------------------------------------------------------------------
+
+
+class TCOFleetItem(BaseModel):
+    """A single vehicle spec within a fleet for TCO calculation."""
+
+    vehicle_type: str = Field(..., max_length=50)
+    motorization: str = Field(default="diesel", max_length=30)
+    quantity: int = Field(default=1, ge=1)
+    purchase_price: Decimal | None = Field(default=None, ge=0)
+    annual_maintenance_cost: Decimal | None = Field(default=None, ge=0)
+    energy_cost_per_km: Decimal | None = Field(default=None, ge=0)
+    annual_km: Decimal | None = Field(default=None, ge=0)
+    residual_value: Decimal | None = Field(default=None, ge=0)
+
+    @field_validator("vehicle_type")
+    @classmethod
+    def validate_vehicle_type(cls, v: str) -> str:
+        if v not in FINANCIAL_VEHICLE_TYPES:
+            raise ValueError(f"vehicle_type must be one of {FINANCIAL_VEHICLE_TYPES}")
+        return v
+
+    @field_validator("motorization")
+    @classmethod
+    def validate_motorization(cls, v: str) -> str:
+        if v not in MOTORIZATIONS:
+            raise ValueError(f"motorization must be one of {MOTORIZATIONS}")
+        return v
+
+
+class TCOCalculateRequest(BaseModel):
+    """Request body for TCO calculation."""
+
+    fleet: list[TCOFleetItem] = Field(..., min_length=1)
+    duration_years: int = Field(default=5, ge=1, le=10)
+    include_evolution: bool = Field(default=True)
+    include_comparison: bool = Field(default=True)
+
+
+class TCOVehicleResult(BaseModel):
+    """TCO result for a single vehicle specification."""
+
+    vehicle_type: str
+    motorization: str
+    purchase_price: float
+    annual_maintenance_cost: float
+    energy_cost_per_km: float
+    annual_km: float
+    residual_value: float
+    duration_years: int
+    quantity: int
+    maintenance_total: float
+    energy_total: float
+    tco_per_vehicle: float
+    tco_total: float
+
+
+class TCOFleetResult(BaseModel):
+    """Aggregate fleet TCO breakdown."""
+
+    duration_years: int
+    vehicles: list[TCOVehicleResult]
+    fleet_tco_total: float
+    vehicle_count: int
+
+
+class TCOYearlyPoint(BaseModel):
+    """Single year in the TCO evolution series."""
+
+    year: int
+    fleet_tco_total: float
+
+
+class TCOMotorizationItem(BaseModel):
+    """TCO for one motorization in a comparison."""
+
+    motorization: str
+    purchase_price: float
+    annual_maintenance_cost: float
+    energy_cost_per_km: float
+    annual_km: float
+    residual_value: float
+    duration_years: int
+    quantity: int
+    maintenance_total: float
+    energy_total: float
+    tco_per_vehicle: float
+    tco_total: float
+
+
+class TCOMotorizationComparison(BaseModel):
+    """Motorization comparison for a vehicle type."""
+
+    vehicle_type: str
+    motorizations: list[TCOMotorizationItem]
+
+
+class TCOCalculateResponse(BaseModel):
+    """Full TCO calculation response."""
+
+    fleet_tco: TCOFleetResult
+    evolution: list[TCOYearlyPoint] | None = None
+    motorization_comparisons: list[TCOMotorizationComparison] | None = None
+
+
+# ---------------------------------------------------------------------------
+# VehicleReference schemas
+# ---------------------------------------------------------------------------
+
+
 class VehicleReferenceResponse(BaseModel):
     """Vehicle reference catalog entry returned by the API."""
 

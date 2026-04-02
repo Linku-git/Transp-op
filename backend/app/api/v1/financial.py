@@ -17,8 +17,11 @@ from app.schemas.financial import (
     FinancialScenarioResponse,
     TCOEntryCreate,
     TCOEntryResponse,
+    TCOCalculateRequest,
+    TCOCalculateResponse,
     VehicleReferenceResponse,
 )
+from app.services.tco_calculator import calculate_tco
 
 logger = logging.getLogger(__name__)
 
@@ -268,6 +271,34 @@ async def list_tco_entries(
     entries = list(result.scalars().all())
 
     return [TCOEntryResponse.model_validate(e) for e in entries]
+
+
+# ---------------------------------------------------------------------------
+# POST /financial/tco/calculate — compute TCO
+# ---------------------------------------------------------------------------
+
+
+@router.post("/tco/calculate", response_model=TCOCalculateResponse)
+async def tco_calculate(
+    body: TCOCalculateRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> TCOCalculateResponse:
+    """Calculate TCO for a fleet composition with optional evolution and comparison."""
+    fleet_dicts = [item.model_dump(exclude_none=True) for item in body.fleet]
+
+    result = calculate_tco(
+        fleet=fleet_dicts,
+        duration_years=body.duration_years,
+        include_evolution=body.include_evolution,
+        include_comparison=body.include_comparison,
+    )
+
+    logger.info(
+        "TCO calculated for %d vehicle specs by user %s",
+        len(body.fleet),
+        current_user.id,
+    )
+    return TCOCalculateResponse(**result)
 
 
 # ---------------------------------------------------------------------------
