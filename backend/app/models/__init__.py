@@ -7,6 +7,7 @@ from app.models.financial import (
     TCOEntry,
     VehicleReference,
 )
+from app.models.generated_report import GeneratedReport
 from app.models.leave import EmployeeLeave
 from app.models.modal import EmployeeModal
 from app.models.optimization import Cluster, Optimization, Route
@@ -29,6 +30,7 @@ __all__ = [
     "EmployeeLeave",
     "EmployeeModal",
     "FinancialScenario",
+    "GeneratedReport",
     "TCOEntry",
     "ROICalculation",
     "VehicleReference",

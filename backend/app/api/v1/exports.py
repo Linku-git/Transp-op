@@ -4,14 +4,21 @@ import io
 import logging
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.middleware.rbac import require_role
 from app.models.auth import User
+from app.models.generated_report import GeneratedReport
 from app.services.export_engine import ExportEngine, load_optimization_context
+from app.services.report_engine import (
+    generate_fleet_utilization_report,
+    generate_hr_mobility_report,
+    generate_modal_analysis_report,
+    generate_volunteer_driver_report,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -154,4 +161,189 @@ async def export_geojson(
     return JSONResponse(
         content=geojson,
         media_type="application/geo+json",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Helper: persist GeneratedReport record
+# ---------------------------------------------------------------------------
+
+
+async def _persist_report(
+    db: AsyncSession,
+    tenant_id: uuid.UUID,
+    user_id: uuid.UUID,
+    report_type: str,
+    report_format: str,
+) -> GeneratedReport:
+    """Create and persist a GeneratedReport record."""
+    report = GeneratedReport(
+        tenant_id=tenant_id,
+        report_type=report_type,
+        format=report_format,
+        generated_by=user_id,
+        params={},
+    )
+    db.add(report)
+    await db.flush()
+    return report
+
+
+# ---------------------------------------------------------------------------
+# GET /export/modal-report
+# ---------------------------------------------------------------------------
+
+
+@router.get("/modal-report")
+async def export_modal_report(
+    report_format: str = Query(default="pdf", description="pdf or xlsx"),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    """Generate modal analysis report (mode distribution and travel stats)."""
+    report_bytes = await generate_modal_analysis_report(
+        tenant_id=current_user.tenant_id,
+        db=db,
+        report_format=report_format,
+    )
+
+    await _persist_report(
+        db=db,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id,
+        report_type="modal_analysis",
+        report_format=report_format,
+    )
+
+    if report_format == "xlsx":
+        return Response(
+            content=report_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": 'attachment; filename="modal_analysis.xlsx"'},
+        )
+
+    return Response(
+        content=report_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="modal_analysis.pdf"'},
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /export/fleet-report
+# ---------------------------------------------------------------------------
+
+
+@router.get("/fleet-report")
+async def export_fleet_report(
+    report_format: str = Query(default="pdf", description="pdf or xlsx"),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    """Generate fleet utilization report."""
+    report_bytes = await generate_fleet_utilization_report(
+        tenant_id=current_user.tenant_id,
+        db=db,
+        report_format=report_format,
+    )
+
+    await _persist_report(
+        db=db,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id,
+        report_type="fleet_utilization",
+        report_format=report_format,
+    )
+
+    if report_format == "xlsx":
+        return Response(
+            content=report_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": 'attachment; filename="fleet_utilization.xlsx"'},
+        )
+
+    return Response(
+        content=report_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="fleet_utilization.pdf"'},
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /export/volunteer-report
+# ---------------------------------------------------------------------------
+
+
+@router.get("/volunteer-report")
+async def export_volunteer_report(
+    report_format: str = Query(default="pdf", description="pdf or xlsx"),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    """Generate volunteer driver report with driver details."""
+    report_bytes = await generate_volunteer_driver_report(
+        tenant_id=current_user.tenant_id,
+        db=db,
+        report_format=report_format,
+    )
+
+    await _persist_report(
+        db=db,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id,
+        report_type="volunteer_driver",
+        report_format=report_format,
+    )
+
+    if report_format == "xlsx":
+        return Response(
+            content=report_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": 'attachment; filename="volunteer_drivers.xlsx"'},
+        )
+
+    return Response(
+        content=report_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="volunteer_drivers.pdf"'},
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /export/hr-mobility
+# ---------------------------------------------------------------------------
+
+
+@router.get("/hr-mobility")
+async def export_hr_mobility(
+    report_format: str = Query(default="pdf", description="pdf or xlsx"),
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    """Generate HR mobility report (coverage, shadow zones, etc.)."""
+    report_bytes = await generate_hr_mobility_report(
+        tenant_id=current_user.tenant_id,
+        db=db,
+        report_format=report_format,
+    )
+
+    await _persist_report(
+        db=db,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id,
+        report_type="hr_mobility",
+        report_format=report_format,
+    )
+
+    if report_format == "xlsx":
+        return Response(
+            content=report_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": 'attachment; filename="hr_mobility.xlsx"'},
+        )
+
+    return Response(
+        content=report_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="hr_mobility.pdf"'},
     )
