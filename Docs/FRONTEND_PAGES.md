@@ -329,11 +329,12 @@
 - Parameter inputs (fuel price, maintenance, etc.)
 - Calculate button
 
-#### TCOCalculatorPage `/financial/tco`
-- Per-vehicle TCO form
-- Fleet-level aggregation
-- Motorization comparison table (diesel vs hybrid vs electric vs hydrogen)
-- TCO evolution chart over time
+#### TCOCalculatorPage `/financial/tco` ✅ Session 35
+- Fleet composition form: add/remove vehicle rows (type, motorization, quantity)
+- Duration slider (1-10 years)
+- Calculate button → POST `/financial/tco/calculate`
+- Results: FleetAggregation card, TCOComparisonCards, TCOEvolutionChart (Recharts LineChart), MotorizationTable, VehicleTCOBreakdown (stacked BarChart)
+- Components: `TCOComparisonCards`, `TCOEvolutionChart`, `MotorizationTable`, `VehicleTCOBreakdown`, `FleetAggregation`
 
 #### ROICalculatorPage `/financial/roi`
 - Baseline metrics inputs (absence rate, turnover, training cost)

@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-35] — 2026-04-02
+### Added
+- TypeScript interfaces for TCO calculation types (`frontend/src/types/financial.ts`)
+- Financial API client: `calculateTCO`, `getVehicleReferences` (`frontend/src/api/financial.ts`)
+- 5 financial chart/table components: TCOComparisonCards (vehicle cards with lowest highlight), TCOEvolutionChart (Recharts LineChart), MotorizationTable (comparison with green cheapest row), VehicleTCOBreakdown (stacked BarChart), FleetAggregation (summary card)
+- TCOCalculatorPage (`/financial/tco`): fleet composition form, duration slider, calculate button, results display with all 5 components
+- FinancialDashboardPage (`/financial`): tab navigation for TCO/ROI/Comparateur (ROI and Comparateur as placeholders)
+- Routes for `/financial` and `/financial/tco` with lazy loading
+- i18n translations for financial section (fr + en)
+- 7 tests in `frontend/src/pages/financial/__tests__/FinancialTCO.test.tsx`
+
+### Changed
+- `frontend/src/routes.tsx` — Added financial routes
+
+---
+
 ## [Session-34] — 2026-04-02
 ### Added
 - Investment model comparator engine: CAPEX (own fleet), Mise a Disposition (rental), OPEX (full outsource) — each computing total cost, annual cost, cost per employee, cost per trip (`backend/app/services/investment_comparator.py`)
