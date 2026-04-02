@@ -338,6 +338,94 @@ class ROICalculateResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Investment Comparator schemas
+# ---------------------------------------------------------------------------
+
+
+class InvestmentCompareRequest(BaseModel):
+    """Request body for investment model comparison."""
+
+    vehicle_count: int = Field(..., ge=1)
+    headcount: int = Field(..., ge=1)
+    annual_trips: int = Field(..., ge=1)
+    duration_years: int = Field(default=5, ge=1, le=10)
+    # CAPEX
+    capex_purchase_price: Decimal = Field(default=Decimal("200000"), ge=0)
+    capex_annual_maintenance: Decimal = Field(default=Decimal("12000"), ge=0)
+    capex_annual_fuel: Decimal = Field(default=Decimal("18000"), ge=0)
+    capex_annual_insurance: Decimal = Field(default=Decimal("5000"), ge=0)
+    capex_annual_driver_cost: Decimal = Field(default=Decimal("36000"), ge=0)
+    capex_residual_value: Decimal = Field(default=Decimal("30000"), ge=0)
+    # Mise a disposition
+    mad_monthly_rental: Decimal = Field(default=Decimal("4500"), ge=0)
+    mad_annual_fuel: Decimal = Field(default=Decimal("18000"), ge=0)
+    mad_management_overhead_rate: Decimal = Field(default=Decimal("0.08"), ge=0, le=1)
+    # OPEX
+    opex_cost_per_km: Decimal = Field(default=Decimal("2.50"), ge=0)
+    opex_annual_km: Decimal = Field(default=Decimal("40000"), ge=0)
+
+
+class InvestmentModelBreakdown(BaseModel):
+    """Cost breakdown for a single investment model."""
+    pass  # dynamic keys, use dict
+
+
+class InvestmentModelResult(BaseModel):
+    """Result for a single investment model."""
+
+    model: str
+    label: str
+    total_cost: float
+    annual_cost: float
+    cost_per_employee: float
+    cost_per_trip: float
+    duration_years: int
+    vehicle_count: int
+    breakdown: dict
+
+
+class InvestmentRecommendation(BaseModel):
+    """Recommended investment model."""
+
+    recommended_model: str
+    reason: str
+
+
+class InvestmentCompareResponse(BaseModel):
+    """Side-by-side comparison of all 3 investment models."""
+
+    models: list[InvestmentModelResult]
+    recommendation: InvestmentRecommendation
+
+
+class SensitivityRequest(BaseModel):
+    """Request body for sensitivity analysis."""
+
+    baseline: InvestmentCompareRequest
+    fuel_price_delta_pct: float = Field(default=0.0, ge=-50, le=50)
+    headcount_delta_pct: float = Field(default=0.0, ge=-50, le=50)
+    fill_rate_pct: float = Field(default=100.0, ge=50, le=100)
+
+
+class SensitivityDelta(BaseModel):
+    """Delta between adjusted and baseline for one model."""
+
+    model: str
+    total_cost_delta: float
+    annual_cost_delta: float
+    cost_per_employee_delta: float
+
+
+class SensitivityResponse(BaseModel):
+    """Sensitivity analysis response."""
+
+    adjusted_params: dict
+    baseline: InvestmentCompareResponse
+    adjusted: InvestmentCompareResponse
+    deltas: list[SensitivityDelta]
+
+
+# ---------------------------------------------------------------------------
 # VehicleReference schemas
 # ---------------------------------------------------------------------------
 

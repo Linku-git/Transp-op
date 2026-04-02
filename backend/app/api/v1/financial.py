@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select, func
@@ -26,8 +27,13 @@ from app.schemas.financial import (
     TCOCalculateResponse,
     ROICalculateRequest,
     ROICalculateResponse,
+    InvestmentCompareRequest,
+    InvestmentCompareResponse,
+    SensitivityRequest,
+    SensitivityResponse,
     VehicleReferenceResponse,
 )
+from app.services.investment_comparator import compare_investment_models, sensitivity_analysis
 from app.services.roi_calculator import calculate_roi
 from app.services.tco_calculator import calculate_tco
 
@@ -376,6 +382,77 @@ async def roi_calculate(
 
     logger.info("ROI calculated for %d headcount by user %s", body.headcount, current_user.id)
     return ROICalculateResponse(**result, stored_id=stored_id)
+
+
+# ---------------------------------------------------------------------------
+# POST /financial/compare — investment model comparison
+# ---------------------------------------------------------------------------
+
+
+@router.post("/compare", response_model=InvestmentCompareResponse)
+async def investment_compare(
+    body: InvestmentCompareRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> InvestmentCompareResponse:
+    """Compare CAPEX, Mise a Disposition, and OPEX investment models side by side."""
+    result = compare_investment_models(
+        vehicle_count=body.vehicle_count,
+        headcount=body.headcount,
+        annual_trips=body.annual_trips,
+        duration_years=body.duration_years,
+        capex_purchase_price=body.capex_purchase_price,
+        capex_annual_maintenance=body.capex_annual_maintenance,
+        capex_annual_fuel=body.capex_annual_fuel,
+        capex_annual_insurance=body.capex_annual_insurance,
+        capex_annual_driver_cost=body.capex_annual_driver_cost,
+        capex_residual_value=body.capex_residual_value,
+        mad_monthly_rental=body.mad_monthly_rental,
+        mad_annual_fuel=body.mad_annual_fuel,
+        mad_management_overhead_rate=body.mad_management_overhead_rate,
+        opex_cost_per_km=body.opex_cost_per_km,
+        opex_annual_km=body.opex_annual_km,
+    )
+
+    logger.info(
+        "Investment comparison for %d vehicles by user %s",
+        body.vehicle_count,
+        current_user.id,
+    )
+    return InvestmentCompareResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /financial/compare/sensitivity — sensitivity analysis
+# ---------------------------------------------------------------------------
+
+
+@router.post("/compare/sensitivity", response_model=SensitivityResponse)
+async def investment_sensitivity(
+    body: SensitivityRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> SensitivityResponse:
+    """Run sensitivity analysis on investment model comparison."""
+    baseline_params = body.baseline.model_dump()
+    # Convert Decimal fields to float for the comparator
+    for key, val in baseline_params.items():
+        if isinstance(val, Decimal):
+            baseline_params[key] = float(val)
+
+    result = sensitivity_analysis(
+        baseline_params=baseline_params,
+        fuel_price_delta_pct=body.fuel_price_delta_pct,
+        headcount_delta_pct=body.headcount_delta_pct,
+        fill_rate_pct=body.fill_rate_pct,
+    )
+
+    logger.info(
+        "Sensitivity analysis (fuel=%+.0f%%, hc=%+.0f%%, fill=%.0f%%) by user %s",
+        body.fuel_price_delta_pct,
+        body.headcount_delta_pct,
+        body.fill_rate_pct,
+        current_user.id,
+    )
+    return SensitivityResponse(**result)
 
 
 # ---------------------------------------------------------------------------
