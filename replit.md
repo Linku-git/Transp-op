@@ -1,0 +1,64 @@
+# Transpop — Replit Project
+
+## Overview
+**Transpop** (Plateforme d'Orchestration Mobilité RH) is an enterprise SaaS platform for HR mobility orchestration. It manages employee transport optimization, route planning, clustering, vehicle assignments, and KPI tracking.
+
+## Architecture
+- **Backend:** Python 3.12 / FastAPI / SQLAlchemy 2.0 (async) / PostgreSQL + PostGIS / Redis + Celery / OR-Tools
+- **Frontend:** React 18 / TypeScript / Vite / TailwindCSS v4 / Zustand / Leaflet / Recharts
+- **Database:** Replit managed PostgreSQL (host: helium, db: heliumdb)
+
+## Project Structure
+```
+backend/        FastAPI application (Python)
+frontend/       React web dashboard (TypeScript/Vite)
+Docs/           Project documentation (Obsidian vault)
+start_backend.sh  Startup script (Redis + uvicorn)
+```
+
+## Running the Project
+
+### Workflows
+- **Start application** — Frontend (Vite, port 5000, webview)
+- **Backend API** — Redis + FastAPI uvicorn (port 8000, console)
+
+### Manual startup
+```bash
+# Backend (includes Redis)
+bash start_backend.sh
+
+# Frontend
+cd frontend && npm run dev
+```
+
+## Key Configuration
+
+### Backend Environment Variables
+Set in `start_backend.sh` (overrides Replit's system DATABASE_URL):
+- `DATABASE_URL` — `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`
+- `DATABASE_URL_SYNC` — `postgresql+psycopg2://postgres:password@helium:5432/heliumdb`
+- `REDIS_URL` — `redis://localhost:6379/0`
+
+### Frontend
+- Dev server: port 5000, host 0.0.0.0, all hosts allowed
+- API proxy: `/api` → `http://localhost:8000` (via Vite dev server proxy)
+- API client base URL: empty string (uses relative URLs)
+
+## Health Check
+```
+GET /api/v1/health
+→ {"status":"healthy","db":true,"redis":true}
+```
+
+## Database
+- 15 Alembic migrations applied (sessions 1–44)
+- Extensions: PostGIS, pg_trgm
+- 38 tables across 10 groups
+
+## Design System: "Azure Velocity"
+- Primary: `#0058be` (Azure Blue)
+- Font: Inter
+- Icons: Material Symbols Outlined
+
+## Refinement Scope
+This is a refinement-only project. Sessions 1–44 are implemented. See `REPLIT_INSTRUCTIONS.md` for constraints and `REPLIT_CHANGES.md` for change log.

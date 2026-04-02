@@ -1,0 +1,25 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Enterprise SaaS platform for optimizing employee transport: clustering, route optimization, financial engineering, real-time tracking, and journey valorization.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.14.0",
+    "i18next": "^26.0.3",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "leaflet": "^1.9.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^17.0.2",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.13.2",
+    "recharts": "^3.8.1",
+    "zustand": "^5.0.12"
+  }
+}
