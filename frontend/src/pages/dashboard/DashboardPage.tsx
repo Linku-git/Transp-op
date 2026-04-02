@@ -765,10 +765,41 @@ export function DashboardPage() {
       {/* ---- Main Interactive Section (map + side cards) ---- */}
       <div className="grid grid-cols-12 gap-4">
         {/* Left: Large Map Container */}
-        <div className="col-span-12 lg:col-span-8">
+        <div className="col-span-12 lg:col-span-8 flex flex-col gap-2">
+          {/* Stats bar — above the map */}
+          <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/10 px-4 py-3 shadow-sm flex items-center gap-4 self-start">
+            <div className="text-center">
+              <p className="text-lg font-black text-on-surface tabular-nums">
+                {employeeSummary?.total_count ?? '--'}
+              </p>
+              <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
+                Employés
+              </p>
+            </div>
+            <div className="w-px h-8 bg-outline-variant" />
+            <div className="text-center">
+              <p className="text-lg font-black text-on-surface tabular-nums">
+                {employeeSummary?.pmr_count ?? '--'}
+              </p>
+              <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
+                PMR
+              </p>
+            </div>
+            <div className="w-px h-8 bg-outline-variant" />
+            <div className="text-center">
+              <p className="text-lg font-black text-on-surface tabular-nums">
+                {optimizationHistory.length}
+              </p>
+              <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
+                Runs
+              </p>
+            </div>
+          </div>
+
+          {/* Map */}
           <div
-            className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden relative"
-            style={{ minHeight: '420px', height: '420px' }}
+            className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden relative flex-1"
+            style={{ minHeight: '380px', height: '380px' }}
           >
             {/* Real Google Maps with site markers */}
             {(() => {
@@ -790,7 +821,7 @@ export function DashboardPage() {
               );
             })()}
 
-            {/* Glassmorphism overlay: Hub label */}
+            {/* Hub label — only overlay kept inside the map */}
             <div className="absolute bottom-4 left-4 z-10 glass-effect bg-white/80 backdrop-blur-sm rounded-xl px-5 py-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-2xl">
@@ -809,37 +840,6 @@ export function DashboardPage() {
                 </div>
               </div>
             </div>
-
-            {/* Stats overlay: top-right */}
-            <div className="absolute top-4 right-4 z-10 glass-effect bg-white/80 backdrop-blur-sm rounded-xl px-4 py-3 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <p className="text-lg font-black text-on-surface tabular-nums">
-                    {employeeSummary?.total_count ?? '--'}
-                  </p>
-                  <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
-                    Employés
-                  </p>
-                </div>
-                <div className="w-px h-8 bg-outline-variant" />
-                <div className="text-center">
-                  <p className="text-lg font-black text-on-surface tabular-nums">
-                    {employeeSummary?.pmr_count ?? '--'}
-                  </p>
-                  <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
-                    PMR
-                  </p>
-                </div>
-                <div className="w-px h-8 bg-outline-variant" />
-                <div className="text-center">
-                  <p className="text-lg font-black text-on-surface tabular-nums">
-                    {optimizationHistory.length}
-                  </p>
-                  <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
-                    Runs
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ export function MapView({
           mapTypeControl={false}
           fullscreenControl={true}
           zoomControl={true}
-          gestureHandling="auto"
+          gestureHandling="greedy"
           style={{ height: '100%', width: '100%' }}
         >
           {children}
