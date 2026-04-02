@@ -288,16 +288,30 @@
 ### Scenarios (Sessions 27-28)
 
 #### ScenarioListPage `/scenarios`
-- Table of saved scenarios
-- Create new scenario button
-- Delete/duplicate actions
+- Data table: name, site, condition type, demand multiplier, created date, key metrics
+- Condition type chips (normal, rain, strike, peak, night, transit_failure)
+- Site filter dropdown
+- Checkbox selection for multi-scenario comparison
+- "Compare Selected" button (enabled when 2+ scenarios selected)
+- Delete action per row
+- Navigation to ScenarioComparePage with selected scenario IDs
 
 #### ScenarioComparePage `/scenarios/compare`
-- Side-by-side comparison (2-3 scenarios)
-- Before/after metrics table
-- Map toggle between scenarios
-- RTI compliance comparison
-- Recommendations text
+- Scenario selector dropdowns (select 2-3 scenarios)
+- Side-by-side metrics comparison table (vehicles, occupancy, distance, cost, CO2)
+- Color-coded delta values (green for improvements, red for worse)
+- Recommendations panel with scenario-specific suggestions
+- URL query parameter support (`?ids=uuid1,uuid2`) for direct linking
+- "Compare" button to trigger comparison
+
+#### WeatherWidget (Component)
+- Located in `components/optimization/WeatherWidget.tsx`
+- 3-day weather forecast display per selected site
+- Condition icons (sun, cloud, rain, snow, etc.)
+- Temperature ranges (min/max) and precipitation data
+- Scenario suggestion chips based on weather conditions
+- One-click "Apply" button to create weather-based scenario
+- Integrated into OptimizationPage below the controls panel
 
 ---
 

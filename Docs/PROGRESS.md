@@ -9,14 +9,14 @@
 | Phase | Sessions | Status | Completion |
 |-------|----------|--------|------------|
 | Phase 0 — Cadrage & Setup | 01-05 | COMPLETE | 5/5 |
-| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 22/25 |
+| Phase 1 — MVP Core (Modules A-D) | 06-30 | IN PROGRESS | 23/25 |
 | Phase 2 — Financial & Reporting | 31-44 | NOT STARTED | 0/14 |
 | Phase 3 — Mobile MVP | 45-56 | NOT STARTED | 0/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total** | **92** | | **27/92** |
+| **Total** | **92** | | **28/92** |
 
 ---
 
@@ -56,7 +56,7 @@
 | 25 | [[sessions/session-25|Optimization Analytics Panel]] | COMPLETE | 2026-04-02 | MetricsPanel, RouteList, ClusterTable, GaugeChart, result/history pages, 35 tests |
 | 26 | [[sessions/session-26|Weather API Integration]] | COMPLETE | 2026-04-02 | WeatherForecast model, OWM service, 4 endpoints, scenario suggestions, 5 tests |
 | 27 | [[sessions/session-27|Scenario Simulation Backend]] | COMPLETE | 2026-04-02 | Scenario model, scenario engine (demand multipliers), 5 endpoints, comparison deltas, French aliases, 6 tests |
-| 28 | [[sessions/session-28|Scenario Comparison Frontend]] | NOT STARTED | | |
+| 28 | [[sessions/session-28|Scenario Comparison Frontend]] | COMPLETE | 2026-04-02 | ScenarioListPage, ScenarioComparePage, WeatherWidget, 8 API client functions, 40 tests |
 | 29 | [[sessions/session-29|Settings & Constraints CRUD]] | NOT STARTED | | |
 | 30 | [[sessions/session-30|Export Engine (PDF, Excel, CSV, GeoJSON)]] | NOT STARTED | | |
 

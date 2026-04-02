@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-28] — 2026-04-02
+### Added
+- Scenario TypeScript types: Scenario, ScenarioMetrics, MetricDelta, ScenarioComparison, WeatherForecast, ScenarioSuggestion, WeatherSuggestions (`frontend/src/types/scenario.ts`)
+- Scenario API client with 8 functions: simulateScenario, listScenarios, getScenario, deleteScenario, compareScenarios, getWeatherForecasts, refreshWeather, getWeatherSuggestions (`frontend/src/api/scenarios.ts`)
+- ScenarioListPage (`/scenarios`): data table with condition chips, site filter, checkbox selection for multi-compare, delete actions (`frontend/src/pages/scenarios/ScenarioListPage.tsx`)
+- ScenarioComparePage (`/scenarios/compare`): side-by-side metrics comparison with color-coded deltas (green=improvement, red=worse), recommendations panel, URL parameter support (`frontend/src/pages/scenarios/ScenarioComparePage.tsx`)
+- WeatherWidget component: 3-day forecast display with condition icons, temp ranges, precipitation, scenario suggestion chips with one-click Apply button (`frontend/src/components/optimization/WeatherWidget.tsx`)
+- 40 frontend tests across 3 test files (15 + 15 + 10)
+
+### Changed
+- `frontend/src/routes.tsx` — Added lazy imports and routes for `/scenarios` and `/scenarios/compare`
+- `frontend/src/components/layout/Sidebar.tsx` — Added "Scenarios" navigation item
+- `frontend/src/pages/optimization/OptimizationPage.tsx` — Integrated WeatherWidget below controls, added `transit_failure` to condition options, added `handleWeatherScenario` callback
+- `frontend/src/components/optimization/index.ts` — Added WeatherWidget barrel export
+- `frontend/src/pages/optimization/__tests__/OptimizationPage.test.tsx` — Fixed test compatibility with WeatherWidget addition
+
+---
+
 ## [Session-27] — 2026-04-02
 ### Added
 - Scenario SQLAlchemy model with tenant_id, site_id, baseline_optimization_id FK, condition_type, demand_multiplier, custom_params (JSONB), estimated_metrics (JSONB), name (`backend/app/models/scenario.py`)
