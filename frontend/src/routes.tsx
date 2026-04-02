@@ -120,6 +120,18 @@ const ConstraintsPage = lazy(() =>
   }))
 );
 
+const FinancialDashboardPage = lazy(() =>
+  import('@/pages/financial/FinancialDashboardPage').then((m) => ({
+    default: m.FinancialDashboardPage,
+  }))
+);
+
+const TCOCalculatorPage = lazy(() =>
+  import('@/pages/financial/TCOCalculatorPage').then((m) => ({
+    default: m.TCOCalculatorPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -311,6 +323,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ConstraintsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'financial',
+        element: (
+          <SuspenseWrapper>
+            <FinancialDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'financial/tco',
+        element: (
+          <SuspenseWrapper>
+            <TCOCalculatorPage />
           </SuspenseWrapper>
         ),
       },
