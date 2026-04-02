@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-32] — 2026-04-02
+### Added
+- TCO calculator engine with core formula: `TCO = Purchase + (Maintenance × Duration) + (Energy/km × Annual_km × Duration) − Residual` (`backend/app/services/tco_calculator.py`)
+- Per-vehicle and fleet-level TCO aggregation with quantity support
+- Motorization comparison: computes TCO for all available motorizations per vehicle type, sorted cheapest-first
+- Year-by-year evolution (1-10 years) showing monotonically increasing cumulative fleet TCO
+- Default cost parameters per motorization with vehicle type multipliers (vehicule_leger through grand_bus)
+- Custom cost override support — any default parameter can be overridden per vehicle in the fleet
+- Pydantic schemas: `TCOCalculateRequest`, `TCOCalculateResponse`, `TCOFleetResult`, `TCOYearlyPoint`, `TCOMotorizationComparison`
+- POST `/financial/tco/calculate` endpoint returning fleet TCO, evolution, and motorization comparisons
+- 8 tests in `backend/tests/test_tco_calculator.py` (7 unit + 1 integration)
+
+### Changed
+- `backend/app/schemas/financial.py` — Added 8 TCO calculation schemas
+- `backend/app/api/v1/financial.py` — Added TCO calculate endpoint
+
+---
+
 ## [Session-31] — 2026-04-02
 ### Added
 - FinancialScenario, TCOEntry, ROICalculation, VehicleReference SQLAlchemy models (`backend/app/models/financial.py`)
