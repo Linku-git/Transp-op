@@ -213,7 +213,8 @@
 | GET | `/financial/scenarios/{id}/tco-entries` | List TCO entries for scenario | Yes | DRH, DAF, Admin | 31 |
 | POST | `/financial/tco/calculate` | Calculate fleet TCO (evolution + motorization comparison) | Yes | DRH, DAF, Admin | 32 |
 | POST | `/financial/roi/calculate` | Calculate ROI (4 levers + payback, optional DB persist) | Yes | DRH, DAF, Admin | 33 |
-| POST | `/financial/compare` | Compare investment models | Yes | DRH, DAF | 34 |
+| POST | `/financial/compare` | Compare CAPEX/MaD/OPEX with recommendation | Yes | DRH, DAF, Admin | 34 |
+| POST | `/financial/compare/sensitivity` | Sensitivity analysis (fuel, headcount, fill rate) | Yes | DRH, DAF, Admin | 34 |
 | GET | `/financial/vehicles` | Vehicle reference catalog | Yes | DRH, DAF, Admin | 31 |
 | POST | `/financial/export/daf` | DAF-compatible export | Yes | DAF, Admin | 38 |
 

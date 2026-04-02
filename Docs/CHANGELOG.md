@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-34] — 2026-04-02
+### Added
+- Investment model comparator engine: CAPEX (own fleet), Mise a Disposition (rental), OPEX (full outsource) — each computing total cost, annual cost, cost per employee, cost per trip (`backend/app/services/investment_comparator.py`)
+- Recommendation logic: heuristic based on fleet size/duration, overridden by >20% cost difference
+- Sensitivity analysis: fuel price delta (±50%), headcount delta (±50%), fill rate (50-100%) — recomputes all 3 models and returns deltas vs baseline
+- Pydantic schemas: `InvestmentCompareRequest/Response`, `SensitivityRequest/Response`, `InvestmentModelResult`, `SensitivityDelta`
+- POST `/financial/compare` — side-by-side comparison with recommendation
+- POST `/financial/compare/sensitivity` — sensitivity analysis endpoint
+- 11 tests in `backend/tests/test_investment_comparator.py` (9 unit + 2 integration)
+
+### Changed
+- `backend/app/schemas/financial.py` — Added 8 comparison/sensitivity schemas
+- `backend/app/api/v1/financial.py` — Added 2 compare endpoints, imported `Decimal`
+
+---
+
 ## [Session-33] — 2026-04-02
 ### Added
 - ROI calculator engine with 4 levers: absenteeism (rate × daily_cost × headcount × 220 working days), retention (turnover reduction × replacement cost), fleet optimization (current vs optimized fleet cost), journey productivity (travel hours × engagement × training cost) (`backend/app/services/roi_calculator.py`)
