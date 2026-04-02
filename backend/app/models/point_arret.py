@@ -34,6 +34,7 @@ class PointArret(BaseModel):
     is_active: Mapped[bool] = mapped_column(
         Boolean, server_default="true", nullable=False
     )
+    correspondance_tb: Mapped[str | None] = mapped_column(Text, nullable=True)
     observations: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    site: Mapped[Site | None] = relationship("Site", lazy="selectin")
+    site: Mapped["Site | None"] = relationship("Site", lazy="selectin")

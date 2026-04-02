@@ -13,6 +13,9 @@ import type {
   ConfigurationTransport,
   ConfigurationTransportCreate,
   ConfigurationTransportUpdate,
+  HoraireTravail,
+  HoraireTravailCreate,
+  HoraireTravailUpdate,
 } from '../types/vehicle';
 
 interface ListResponse<T> {
@@ -117,4 +120,27 @@ export const updateConfigurationTransport = async (id: string, data: Configurati
 
 export const deleteConfigurationTransport = async (id: string): Promise<void> => {
   await api.delete(`${CT_PATH}/${id}`);
+};
+
+// ─── Horaires de Travail ──────────────────────────────────────────────────────
+
+const HT_PATH = '/api/v1/horaires-travail';
+
+export const listHorairesTravail = async (params?: Record<string, unknown>): Promise<ListResponse<HoraireTravail>> => {
+  const response = await api.get<ListResponse<HoraireTravail>>(HT_PATH, { params });
+  return response.data;
+};
+
+export const createHoraireTravail = async (data: HoraireTravailCreate): Promise<HoraireTravail> => {
+  const response = await api.post<HoraireTravail>(HT_PATH, data);
+  return response.data;
+};
+
+export const updateHoraireTravail = async (id: string, data: HoraireTravailUpdate): Promise<HoraireTravail> => {
+  const response = await api.patch<HoraireTravail>(`${HT_PATH}/${id}`, data);
+  return response.data;
+};
+
+export const deleteHoraireTravail = async (id: string): Promise<void> => {
+  await api.delete(`${HT_PATH}/${id}`);
 };

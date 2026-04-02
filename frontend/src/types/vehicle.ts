@@ -119,6 +119,7 @@ export interface PointArret {
   lng: number;
   prestataire: string | null;
   is_active: boolean;
+  correspondance_tb: string | null;
   observations: string | null;
   created_at: string;
   updated_at: string;
@@ -134,10 +135,38 @@ export interface PointArretCreate {
   prestataire?: string | null;
   site_id?: string | null;
   is_active?: boolean;
+  correspondance_tb?: string | null;
   observations?: string | null;
 }
 
 export type PointArretUpdate = Partial<PointArretCreate>;
+
+export interface HoraireTravail {
+  id: string;
+  tenant_id: string;
+  site_id: string | null;
+  site_name: string | null;
+  type_horaire: string;
+  depart_h1: string | null;
+  retour_h1: string | null;
+  depart_h2: string | null;
+  retour_h2: string | null;
+  observations: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HoraireTravailCreate {
+  type_horaire: string;
+  site_id?: string | null;
+  depart_h1?: string | null;
+  retour_h1?: string | null;
+  depart_h2?: string | null;
+  retour_h2?: string | null;
+  observations?: string | null;
+}
+
+export type HoraireTravailUpdate = Partial<HoraireTravailCreate>;
 
 export interface ConfigurationTransport {
   id: string;

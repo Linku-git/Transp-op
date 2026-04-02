@@ -21,6 +21,7 @@ const EMPTY: PointArretCreate = {
   prestataire: '',
   site_id: null,
   is_active: true,
+  correspondance_tb: '',
   observations: '',
 };
 
@@ -85,6 +86,7 @@ export function PointArretPage() {
       prestataire: item.prestataire ?? '',
       site_id: item.site_id,
       is_active: item.is_active,
+      correspondance_tb: item.correspondance_tb ?? '',
       observations: item.observations ?? '',
     });
     setFormError(null);
@@ -102,6 +104,7 @@ export function PointArretPage() {
         ville: form.ville || null,
         prestataire: form.prestataire || null,
         site_id: form.site_id || null,
+        correspondance_tb: form.correspondance_tb || null,
         observations: form.observations || null,
       };
       if (editItem) {
@@ -241,6 +244,14 @@ export function PointArretPage() {
                 <label htmlFor="active" className="text-sm text-on-surface">Arrêt actif</label>
               </div>
               <div className="col-span-2 flex flex-col gap-1">
+                <label className="text-xs font-medium text-on-surface-variant">Correspondance Arrêts avec TB</label>
+                <Input
+                  value={form.correspondance_tb ?? ''}
+                  onChange={(e) => set('correspondance_tb', e.target.value)}
+                  placeholder="ex: Arrêt A, Arrêt B"
+                />
+              </div>
+              <div className="col-span-2 flex flex-col gap-1">
                 <label className="text-xs font-medium text-on-surface-variant">Observations</label>
                 <textarea rows={2} className="rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                   value={form.observations ?? ''} onChange={(e) => set('observations', e.target.value)} />
@@ -266,6 +277,7 @@ export function PointArretPage() {
               <th className="px-4 py-3 text-right font-semibold text-on-surface-variant">Lat</th>
               <th className="px-4 py-3 text-right font-semibold text-on-surface-variant">Lng</th>
               <th className="px-4 py-3 text-left font-semibold text-on-surface-variant">Prestataire</th>
+              <th className="px-4 py-3 text-left font-semibold text-on-surface-variant">Corresp. TB</th>
               <th className="px-4 py-3 text-left font-semibold text-on-surface-variant">Site</th>
               <th className="px-4 py-3 text-left font-semibold text-on-surface-variant">Statut</th>
               <th className="px-4 py-3" />
@@ -273,10 +285,10 @@ export function PointArretPage() {
           </thead>
           <tbody>
             {loading && (
-              <tr><td colSpan={9} className="text-center py-10 text-on-surface-variant text-sm">Chargement…</td></tr>
+              <tr><td colSpan={10} className="text-center py-10 text-on-surface-variant text-sm">Chargement…</td></tr>
             )}
             {!loading && filtered.length === 0 && (
-              <tr><td colSpan={9} className="text-center py-10 text-on-surface-variant text-sm">Aucun point d'arrêt enregistré</td></tr>
+              <tr><td colSpan={10} className="text-center py-10 text-on-surface-variant text-sm">Aucun point d'arrêt enregistré</td></tr>
             )}
             {filtered.map((item) => (
               <tr key={item.id} className="border-b border-surface-container-high hover:bg-surface-container-low/50">
@@ -286,6 +298,7 @@ export function PointArretPage() {
                 <td className="px-4 py-3 text-right font-mono text-xs text-on-surface-variant">{item.lat.toFixed(5)}</td>
                 <td className="px-4 py-3 text-right font-mono text-xs text-on-surface-variant">{item.lng.toFixed(5)}</td>
                 <td className="px-4 py-3 text-on-surface-variant">{item.prestataire ?? '—'}</td>
+                <td className="px-4 py-3 text-xs text-on-surface-variant max-w-[150px] truncate" title={item.correspondance_tb ?? ''}>{item.correspondance_tb ?? '—'}</td>
                 <td className="px-4 py-3 text-xs text-on-surface-variant">{item.site_name ?? '—'}</td>
                 <td className="px-4 py-3">
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${item.is_active ? 'bg-green-100 text-green-700' : 'bg-surface-container text-on-surface-variant'}`}>

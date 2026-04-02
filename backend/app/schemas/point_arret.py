@@ -16,6 +16,7 @@ class PointArretCreate(BaseModel):
     prestataire: str | None = Field(default=None, max_length=100)
     site_id: uuid.UUID | None = None
     is_active: bool = True
+    correspondance_tb: str | None = None
     observations: str | None = None
 
 
@@ -29,6 +30,7 @@ class PointArretUpdate(BaseModel):
     prestataire: str | None = Field(default=None, max_length=100)
     site_id: uuid.UUID | None = None
     is_active: bool | None = None
+    correspondance_tb: str | None = None
     observations: str | None = None
 
 
@@ -46,6 +48,7 @@ class PointArretResponse(BaseModel):
     lng: float
     prestataire: str | None
     is_active: bool
+    correspondance_tb: str | None
     observations: str | None
     created_at: datetime
     updated_at: datetime

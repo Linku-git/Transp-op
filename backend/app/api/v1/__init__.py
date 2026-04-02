@@ -27,6 +27,7 @@ from app.api.v1.kpis import router as kpis_router
 from app.api.v1.km_consommation import router as km_consommation_router
 from app.api.v1.point_arret import router as point_arret_router
 from app.api.v1.configuration_transport import router as configuration_transport_router
+from app.api.v1.horaire_travail import router as horaire_travail_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -55,3 +56,4 @@ api_router.include_router(kpis_router, tags=["kpis"])
 api_router.include_router(km_consommation_router, tags=["km-consommation"])
 api_router.include_router(point_arret_router, tags=["points-arret"])
 api_router.include_router(configuration_transport_router, tags=["configuration-transport"])
+api_router.include_router(horaire_travail_router, tags=["horaires-travail"])

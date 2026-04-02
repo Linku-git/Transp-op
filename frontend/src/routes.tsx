@@ -198,6 +198,12 @@ const ConfigurationTransportPage = lazy(() =>
   }))
 );
 
+const HoraireTravailPage = lazy(() =>
+  import('@/pages/fleet/HoraireTravailPage').then((m) => ({
+    default: m.HoraireTravailPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -493,6 +499,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ConfigurationTransportPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'fleet/horaires',
+        element: (
+          <SuspenseWrapper>
+            <HoraireTravailPage />
           </SuspenseWrapper>
         ),
       },
