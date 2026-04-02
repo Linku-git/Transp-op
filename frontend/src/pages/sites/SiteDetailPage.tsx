@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-import L from 'leaflet';
 import { useSiteStore } from '@/stores/siteStore';
 import { getSiteSummary } from '@/api/sites';
 import { Card } from '@/components/ui/Card';
@@ -11,19 +9,9 @@ import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { SiteSummaryCards } from '@/components/sites/SiteSummaryCards';
 import { ShiftConfigPanel } from '@/components/sites/ShiftConfigPanel';
+import { MapView } from '@/components/maps/MapView';
+import { SiteMarker } from '@/components/maps/SiteMarker';
 import type { SecurityProfile, SiteSummary } from '@/types/site';
-import 'leaflet/dist/leaflet.css';
-
-/* Fix default marker icons */
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
-L.Icon.Default.mergeOptions({
-  iconUrl,
-  iconRetinaUrl,
-  shadowUrl,
-});
 
 function InfoRow({ label, value }: { label: string; value: string | number | null | undefined }) {
   return (
@@ -230,20 +218,13 @@ export function SiteDetailPage() {
         {/* Mini-map */}
         <Card title={t('sites.detail.location', 'Localisation')}>
           <div className="rounded-xl overflow-hidden" style={{ height: '300px' }}>
-            <MapContainer
+            <MapView
               center={[currentSite.lat, currentSite.lng]}
               zoom={14}
-              style={{ height: '100%', width: '100%' }}
-              scrollWheelZoom={false}
-              dragging={false}
-              zoomControl={false}
+              height="300px"
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[currentSite.lat, currentSite.lng]} />
-            </MapContainer>
+              <SiteMarker site={currentSite} />
+            </MapView>
           </div>
         </Card>
       </div>

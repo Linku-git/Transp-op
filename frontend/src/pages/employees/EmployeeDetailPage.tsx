@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { AdvancedMarker, InfoWindow } from '@vis.gl/react-google-maps';
 import { useEmployeeStore } from '@/stores/employeeStore';
 import { getSite } from '@/api/sites';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { MapView } from '@/components/maps/MapView';
 import type { Site } from '@/types/site';
 import type { OptInChoice } from '@/types/employee';
-import 'leaflet/dist/leaflet.css';
 
 function InfoRow({
   label,
@@ -51,6 +51,8 @@ export function EmployeeDetailPage() {
 
   const [site, setSite] = useState<Site | null>(null);
   const [siteLoading, setSiteLoading] = useState(false);
+  const [empInfoOpen, setEmpInfoOpen] = useState(false);
+  const [siteInfoOpen, setSiteInfoOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -215,69 +217,79 @@ export function EmployeeDetailPage() {
 
         {/* Mini-map with employee home + site location */}
         <Card title={t('employees.detail.location_map', 'Carte')}>
-          <div
-            className="rounded-lg overflow-hidden"
-            style={{ height: '280px' }}
-          >
+          <div className="rounded-lg overflow-hidden" style={{ height: '280px' }}>
             {(hasLocation || hasSiteLocation) ? (
-              <MapContainer
-                center={mapCenter}
-                zoom={mapZoom}
-                style={{ height: '100%', width: '100%' }}
-                scrollWheelZoom={false}
-                dragging={false}
-                zoomControl={false}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {/* Employee home marker - primary blue */}
+              <MapView center={mapCenter} zoom={mapZoom} height="280px">
+                {/* Employee home marker */}
                 {hasLocation && (
-                  <CircleMarker
-                    center={[
-                      currentEmployee.lat as number,
-                      currentEmployee.lng as number,
-                    ]}
-                    radius={8}
-                    pathOptions={{
-                      fillColor: '#0058be',
-                      fillOpacity: 0.9,
-                      color: '#003d82',
-                      weight: 2,
+                  <AdvancedMarker
+                    position={{
+                      lat: currentEmployee.lat as number,
+                      lng: currentEmployee.lng as number,
                     }}
+                    onClick={() => setEmpInfoOpen(true)}
                   >
-                    <Popup>
-                      <span className="text-sm font-sans">
-                        {fullName}
-                        <br />
-                        {currentEmployee.address ?? t('employees.detail.home', 'Domicile')}
-                      </span>
-                    </Popup>
-                  </CircleMarker>
+                    <div
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: '50%',
+                        background: '#0058be',
+                        border: '2px solid #003d82',
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </AdvancedMarker>
                 )}
-                {/* Site marker - secondary navy */}
+                {empInfoOpen && hasLocation && (
+                  <InfoWindow
+                    position={{
+                      lat: currentEmployee.lat as number,
+                      lng: currentEmployee.lng as number,
+                    }}
+                    onCloseClick={() => setEmpInfoOpen(false)}
+                  >
+                    <span className="text-sm font-sans">
+                      {fullName}
+                      <br />
+                      {currentEmployee.address ?? t('employees.detail.home', 'Domicile')}
+                    </span>
+                  </InfoWindow>
+                )}
+
+                {/* Site marker */}
                 {hasSiteLocation && (
-                  <CircleMarker
-                    center={[site.lat, site.lng]}
-                    radius={10}
-                    pathOptions={{
-                      fillColor: '#495e8a',
-                      fillOpacity: 0.9,
-                      color: '#323f5e',
-                      weight: 2,
-                    }}
+                  <AdvancedMarker
+                    position={{ lat: site!.lat, lng: site!.lng }}
+                    onClick={() => setSiteInfoOpen(true)}
                   >
-                    <Popup>
-                      <span className="text-sm font-sans">
-                        {site.name}
-                        <br />
-                        {site.address}
-                      </span>
-                    </Popup>
-                  </CircleMarker>
+                    <div
+                      style={{
+                        width: 18,
+                        height: 18,
+                        borderRadius: '50%',
+                        background: '#495e8a',
+                        border: '2px solid #323f5e',
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </AdvancedMarker>
                 )}
-              </MapContainer>
+                {siteInfoOpen && hasSiteLocation && (
+                  <InfoWindow
+                    position={{ lat: site!.lat, lng: site!.lng }}
+                    onCloseClick={() => setSiteInfoOpen(false)}
+                  >
+                    <span className="text-sm font-sans">
+                      {site!.name}
+                      <br />
+                      {site!.address}
+                    </span>
+                  </InfoWindow>
+                )}
+              </MapView>
             ) : (
               <div className="flex items-center justify-center h-full bg-surface-container rounded-lg">
                 <p className="text-sm text-on-surface-variant font-sans">

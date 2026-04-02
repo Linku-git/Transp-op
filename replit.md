@@ -5,7 +5,7 @@
 
 ## Architecture
 - **Backend:** Python 3.12 / FastAPI / SQLAlchemy 2.0 (async) / PostgreSQL + PostGIS / Redis + Celery / OR-Tools
-- **Frontend:** React 18 / TypeScript / Vite / TailwindCSS v4 / Zustand / Google Maps (`@vis.gl/react-google-maps`) / Recharts
+- **Frontend:** React 19 / TypeScript / Vite / TailwindCSS v4 / Zustand / Google Maps (`@vis.gl/react-google-maps`) / Recharts
 - **Database:** Replit managed PostgreSQL (host: helium, db: heliumdb)
 
 ## Project Structure
@@ -38,11 +38,16 @@ Set in `start_backend.sh` (overrides Replit's system DATABASE_URL):
 - `DATABASE_URL` — `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`
 - `DATABASE_URL_SYNC` — `postgresql+psycopg2://postgres:password@helium:5432/heliumdb`
 - `REDIS_URL` — `redis://localhost:6379/0`
+- `WEATHER_API_KEY` — OpenWeatherMap API key (set as Replit secret); enables real weather forecasts
+
+### Frontend Environment Variables
+- `VITE_GOOGLE_MAPS_API_KEY` — Google Maps API key (already set); powers all map views and optimization maps
 
 ### Frontend
 - Dev server: port 5000, host 0.0.0.0, all hosts allowed
 - API proxy: `/api` → `http://localhost:8000` (via Vite dev server proxy)
 - API client base URL: empty string (uses relative URLs)
+- Vite dedupe: `['react', 'react-dom']` — prevents multiple React instances from `@vis.gl/react-google-maps`
 
 ## Health Check
 ```

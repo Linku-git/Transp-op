@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { AdvancedMarker, InfoWindow } from '@vis.gl/react-google-maps';
 
 import { useOptimizationStore } from '@/stores/optimizationStore';
 import { useSiteStore } from '@/stores/siteStore';
 import { Button } from '@/components/ui/Button';
+import { MapView } from '@/components/maps/MapView';
+import { SiteMarker } from '@/components/maps/SiteMarker';
 import { ClusterRegion } from '@/components/maps/ClusterRegion';
 import { RoutePolyline } from '@/components/maps/RoutePolyline';
 import { MeetingZoneMarker } from '@/components/maps/MeetingZoneMarker';
@@ -82,6 +83,8 @@ export function OptimizationPage() {
   } = useOptimizationStore();
 
   const { sites, fetchSites } = useSiteStore();
+
+  const [openEmpId, setOpenEmpId] = useState<string | null>(null);
 
   // Form state
   const [siteId, setSiteId] = useState('');
@@ -516,38 +519,10 @@ export function OptimizationPage() {
             </div>
           )}
 
-          <MapContainer
-            center={mapCenter}
-            zoom={12}
-            style={{ height: '100%', width: '100%' }}
-            scrollWheelZoom
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
+          <MapView center={mapCenter} zoom={12}>
             {/* Site marker */}
             {layers.siteMarker && activeSite && (
-              <CircleMarker
-                center={[activeSite.lat, activeSite.lng]}
-                radius={10}
-                pathOptions={{
-                  fillColor: '#041627',
-                  fillOpacity: 0.9,
-                  color: '#041627',
-                  weight: 2,
-                  opacity: 0.7,
-                }}
-              >
-                <Popup>
-                  <div className="font-sans text-sm text-on-surface min-w-[140px]">
-                    <p className="font-medium text-on-surface">{activeSite.name}</p>
-                    <p className="text-xs text-on-surface-variant mt-0.5">{activeSite.code}</p>
-                    <p className="text-xs text-on-surface-variant mt-1">{activeSite.city}</p>
-                  </div>
-                </Popup>
-              </CircleMarker>
+              <SiteMarker site={activeSite} />
             )}
 
             {/* Cluster regions */}
@@ -561,32 +536,54 @@ export function OptimizationPage() {
               clusterEmployees
                 .filter((emp) => emp.lat !== null && emp.lng !== null)
                 .map((emp) => (
-                  <CircleMarker
+                  <AdvancedMarker
                     key={emp.employee_id}
-                    center={[emp.lat as number, emp.lng as number]}
-                    radius={5}
-                    pathOptions={{
-                      fillColor: emp.is_pmr ? '#68fadd' : '#2563eb',
-                      fillOpacity: 0.85,
-                      color: emp.is_pmr ? '#006b5c' : '#2563eb',
-                      weight: 1.5,
-                      opacity: 0.6,
-                    }}
+                    position={{ lat: emp.lat as number, lng: emp.lng as number }}
+                    onClick={() =>
+                      setOpenEmpId(
+                        openEmpId === emp.employee_id ? null : emp.employee_id,
+                      )
+                    }
                   >
-                    <Popup>
-                      <div className="font-sans text-sm">
-                        <p className="font-medium text-on-surface">
-                          {emp.first_name} {emp.last_name}
-                        </p>
-                        {emp.is_pmr && (
-                          <span className="inline-block mt-1 rounded-md bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">
-                            PMR
-                          </span>
-                        )}
-                      </div>
-                    </Popup>
-                  </CircleMarker>
+                    <div
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        background: emp.is_pmr ? '#68fadd' : '#2563eb',
+                        opacity: 0.85,
+                        border: `1.5px solid ${emp.is_pmr ? '#006b5c' : '#2563eb'}`,
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </AdvancedMarker>
                 ))}
+
+            {/* Employee info window */}
+            {openEmpId &&
+              (() => {
+                const emp = clusterEmployees.find(
+                  (e) => e.employee_id === openEmpId,
+                );
+                return emp && emp.lat !== null && emp.lng !== null ? (
+                  <InfoWindow
+                    position={{ lat: emp.lat as number, lng: emp.lng as number }}
+                    onCloseClick={() => setOpenEmpId(null)}
+                  >
+                    <div className="font-sans text-sm">
+                      <p className="font-medium text-on-surface">
+                        {emp.first_name} {emp.last_name}
+                      </p>
+                      {emp.is_pmr && (
+                        <span className="inline-block mt-1 rounded-md bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-medium">
+                          PMR
+                        </span>
+                      )}
+                    </div>
+                  </InfoWindow>
+                ) : null;
+              })()}
 
             {/* Route polylines */}
             {layers.routes &&
@@ -618,17 +615,17 @@ export function OptimizationPage() {
                     zoneLng={emp.cluster_centroid_lng}
                   />
                 ))}
+          </MapView>
 
-            {/* Floating map legend */}
-            <MapLegend
-              layers={layers}
-              onToggle={toggleLayer}
-              routeCount={current?.routes.length ?? 0}
-              selectedRouteId={selectedRouteId}
-              routeIds={current?.routes.map((r) => r.id) ?? []}
-              onSelectRoute={selectRoute}
-            />
-          </MapContainer>
+          {/* Floating map legend — sits on top of the map via z-index */}
+          <MapLegend
+            layers={layers}
+            onToggle={toggleLayer}
+            routeCount={current?.routes.length ?? 0}
+            selectedRouteId={selectedRouteId}
+            routeIds={current?.routes.map((r) => r.id) ?? []}
+            onSelectRoute={selectRoute}
+          />
         </div>
       </div>
     </div>

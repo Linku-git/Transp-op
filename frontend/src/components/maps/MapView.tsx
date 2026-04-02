@@ -5,11 +5,6 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
 const CASABLANCA: [number, number] = [33.57, -7.59];
 const DEFAULT_ZOOM = 12;
 
-const MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-];
-
 interface MapViewProps {
   /** [lat, lng] tuple — preserved from Leaflet interface */
   center?: [number, number];
@@ -38,7 +33,6 @@ export function MapView({
           center={gCenter}
           zoom={zoom}
           mapId="DEMO_MAP_ID"
-          styles={MAP_STYLES}
           streetViewControl={false}
           mapTypeControl={false}
           fullscreenControl={true}
