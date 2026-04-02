@@ -126,6 +126,12 @@ const HRDashboardPage = lazy(() =>
   }))
 );
 
+const RSEDashboardPage = lazy(() =>
+  import('@/pages/dashboard/RSEDashboardPage').then((m) => ({
+    default: m.RSEDashboardPage,
+  }))
+);
+
 const FinancialDashboardPage = lazy(() =>
   import('@/pages/financial/FinancialDashboardPage').then((m) => ({
     default: m.FinancialDashboardPage,
@@ -337,6 +343,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <HRDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'dashboard/rse',
+        element: (
+          <SuspenseWrapper>
+            <RSEDashboardPage />
           </SuspenseWrapper>
         ),
       },
