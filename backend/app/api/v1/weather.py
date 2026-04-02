@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 import uuid
 
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -81,10 +83,15 @@ async def get_forecasts(
     # Verify site belongs to tenant
     site = await _get_tenant_site(db, site_id, current_user.tenant_id)
 
+    today = date.today()
     stmt = (
         select(WeatherForecast)
-        .where(WeatherForecast.site_id == site.id)
+        .where(
+            WeatherForecast.site_id == site.id,
+            WeatherForecast.date >= today,
+        )
         .order_by(WeatherForecast.date.asc())
+        .limit(7)
     )
     result = await db.execute(stmt)
     forecasts = list(result.scalars().all())

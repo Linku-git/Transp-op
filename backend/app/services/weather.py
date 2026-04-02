@@ -3,55 +3,123 @@ from __future__ import annotations
 import logging
 import uuid
 from collections import Counter
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
 from app.models.weather import WeatherForecast
 
 logger = logging.getLogger(__name__)
 
-_SOURCE = "openweathermap"
+_SOURCE = "open-meteo"
+
+_OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
+
+_WMO_TO_CONDITION: dict[int, str] = {
+    0: "Clear",
+    1: "Clear",
+    2: "Clouds",
+    3: "Clouds",
+    45: "Fog",
+    48: "Fog",
+    51: "Drizzle",
+    53: "Drizzle",
+    55: "Drizzle",
+    56: "Drizzle",
+    57: "Drizzle",
+    61: "Rain",
+    63: "Rain",
+    65: "Rain",
+    66: "Rain",
+    67: "Rain",
+    71: "Snow",
+    73: "Snow",
+    75: "Snow",
+    77: "Snow",
+    80: "Rain",
+    81: "Rain",
+    82: "Rain",
+    85: "Snow",
+    86: "Snow",
+    95: "Thunderstorm",
+    96: "Thunderstorm",
+    99: "Thunderstorm",
+}
+
+
+def _wmo_to_condition(code: int | None) -> str:
+    if code is None:
+        return "Clear"
+    return _WMO_TO_CONDITION.get(code, "Clouds")
 
 
 async def fetch_forecast_from_api(lat: float, lng: float) -> list[dict] | None:
-    """Fetch 5-day/3-hour forecast from OpenWeatherMap.
+    """Fetch 5-day daily forecast from Open-Meteo (no API key required).
 
-    Returns the raw interval list on success, or ``None`` on failure.
+    Returns a list of daily summary dicts on success, or ``None`` on failure.
     """
-    if not settings.weather_api_key:
-        logger.warning("Weather API key not configured — skipping fetch")
-        return None
-
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
             response = await client.get(
-                settings.weather_api_url,
+                _OPEN_METEO_URL,
                 params={
-                    "lat": lat,
-                    "lon": lng,
-                    "appid": settings.weather_api_key,
-                    "units": "metric",
+                    "latitude": lat,
+                    "longitude": lng,
+                    "daily": ",".join([
+                        "weathercode",
+                        "temperature_2m_max",
+                        "temperature_2m_min",
+                        "precipitation_sum",
+                        "windspeed_10m_max",
+                    ]),
+                    "timezone": "auto",
+                    "forecast_days": 5,
                 },
             )
             response.raise_for_status()
             data = response.json()
-            intervals: list[dict] = data.get("list", [])
+
+            daily = data.get("daily", {})
+            times: list[str] = daily.get("time", [])
+            weathercodes: list[int | None] = daily.get("weathercode", [])
+            temp_max: list[float | None] = daily.get("temperature_2m_max", [])
+            temp_min: list[float | None] = daily.get("temperature_2m_min", [])
+            precip: list[float | None] = daily.get("precipitation_sum", [])
+            wind: list[float | None] = daily.get("windspeed_10m_max", [])
+
+            days: list[dict] = []
+            today = date.today()
+            for i, day_str in enumerate(times):
+                try:
+                    day = date.fromisoformat(day_str)
+                except ValueError:
+                    continue
+                if day < today:
+                    continue
+                wmo = weathercodes[i] if i < len(weathercodes) else None
+                days.append({
+                    "date": day,
+                    "condition_summary": _wmo_to_condition(wmo),
+                    "temp_max_c": temp_max[i] if i < len(temp_max) else None,
+                    "temp_min_c": temp_min[i] if i < len(temp_min) else None,
+                    "precipitation_mm": precip[i] if i < len(precip) else None,
+                    "wind_kph": wind[i] if i < len(wind) else None,
+                })
+
             logger.info(
-                "Fetched %d weather intervals for (%.4f, %.4f)",
-                len(intervals),
+                "Fetched %d daily forecasts from Open-Meteo for (%.4f, %.4f)",
+                len(days),
                 lat,
                 lng,
             )
-            return intervals
+            return days
 
     except httpx.HTTPStatusError as exc:
         logger.warning(
-            "Weather API HTTP error for (%.4f, %.4f): %s %s",
+            "Open-Meteo HTTP error for (%.4f, %.4f): %s %s",
             lat,
             lng,
             exc.response.status_code,
@@ -59,74 +127,8 @@ async def fetch_forecast_from_api(lat: float, lng: float) -> list[dict] | None:
         )
         return None
     except (httpx.RequestError, ValueError, KeyError) as exc:
-        logger.warning("Weather API failed for (%.4f, %.4f): %s", lat, lng, exc)
+        logger.warning("Open-Meteo request failed for (%.4f, %.4f): %s", lat, lng, exc)
         return None
-
-
-def aggregate_daily(raw_intervals: list[dict], max_days: int = 3) -> list[dict]:
-    """Aggregate 3-hour intervals into daily summaries.
-
-    Returns up to *max_days* daily records starting from today.
-    """
-    today = date.today()
-    cutoff = today + timedelta(days=max_days)
-
-    # Group intervals by date
-    by_date: dict[str, list[dict]] = {}
-    for interval in raw_intervals:
-        dt_txt = interval.get("dt_txt", "")
-        day_str = dt_txt[:10]  # "YYYY-MM-DD"
-        if not day_str:
-            continue
-        try:
-            day = date.fromisoformat(day_str)
-        except ValueError:
-            continue
-        if day < today or day >= cutoff:
-            continue
-        by_date.setdefault(day_str, []).append(interval)
-
-    results: list[dict] = []
-    for day_str in sorted(by_date.keys()):
-        intervals = by_date[day_str]
-
-        temps_min: list[float] = []
-        temps_max: list[float] = []
-        precip_total = 0.0
-        wind_speeds: list[float] = []
-        conditions: list[str] = []
-
-        for iv in intervals:
-            main = iv.get("main", {})
-            temps_min.append(main.get("temp_min", 0.0))
-            temps_max.append(main.get("temp_max", 0.0))
-
-            rain_3h = iv.get("rain", {}).get("3h", 0.0)
-            snow_3h = iv.get("snow", {}).get("3h", 0.0)
-            precip_total += rain_3h + snow_3h
-
-            wind_speed_ms = iv.get("wind", {}).get("speed", 0.0)
-            wind_speeds.append(wind_speed_ms * 3.6)  # m/s -> km/h
-
-            weather_list = iv.get("weather", [])
-            if weather_list:
-                conditions.append(weather_list[0].get("main", "Clear"))
-
-        # Most frequent condition
-        condition_summary = "Clear"
-        if conditions:
-            condition_summary = Counter(conditions).most_common(1)[0][0]
-
-        results.append({
-            "date": date.fromisoformat(day_str),
-            "condition_summary": condition_summary,
-            "precipitation_mm": round(precip_total, 2),
-            "temp_min_c": round(min(temps_min), 2) if temps_min else None,
-            "temp_max_c": round(max(temps_max), 2) if temps_max else None,
-            "wind_kph": round(max(wind_speeds), 2) if wind_speeds else None,
-        })
-
-    return results
 
 
 async def refresh_forecast_for_site(
@@ -139,15 +141,13 @@ async def refresh_forecast_for_site(
 
     Returns the number of forecast records upserted.
     """
-    raw = await fetch_forecast_from_api(lat, lng)
-    if raw is None:
+    days = await fetch_forecast_from_api(lat, lng)
+    if days is None:
         return 0
 
-    daily = aggregate_daily(raw)
     count = 0
 
-    for day_data in daily:
-        # Check for existing record
+    for day_data in days:
         stmt = select(WeatherForecast).where(
             WeatherForecast.site_id == site_id,
             WeatherForecast.date == day_data["date"],
@@ -156,53 +156,24 @@ async def refresh_forecast_for_site(
         result = await db.execute(stmt)
         existing = result.scalar_one_or_none()
 
+        def _decimal(val: float | None) -> Decimal | None:
+            return Decimal(str(val)) if val is not None else None
+
         if existing:
             existing.condition_summary = day_data["condition_summary"]
-            existing.precipitation_mm = (
-                Decimal(str(day_data["precipitation_mm"]))
-                if day_data["precipitation_mm"] is not None
-                else None
-            )
-            existing.temp_min_c = (
-                Decimal(str(day_data["temp_min_c"]))
-                if day_data["temp_min_c"] is not None
-                else None
-            )
-            existing.temp_max_c = (
-                Decimal(str(day_data["temp_max_c"]))
-                if day_data["temp_max_c"] is not None
-                else None
-            )
-            existing.wind_kph = (
-                Decimal(str(day_data["wind_kph"]))
-                if day_data["wind_kph"] is not None
-                else None
-            )
+            existing.precipitation_mm = _decimal(day_data["precipitation_mm"])
+            existing.temp_min_c = _decimal(day_data["temp_min_c"])
+            existing.temp_max_c = _decimal(day_data["temp_max_c"])
+            existing.wind_kph = _decimal(day_data["wind_kph"])
         else:
             forecast = WeatherForecast(
                 site_id=site_id,
                 date=day_data["date"],
                 condition_summary=day_data["condition_summary"],
-                precipitation_mm=(
-                    Decimal(str(day_data["precipitation_mm"]))
-                    if day_data["precipitation_mm"] is not None
-                    else None
-                ),
-                temp_min_c=(
-                    Decimal(str(day_data["temp_min_c"]))
-                    if day_data["temp_min_c"] is not None
-                    else None
-                ),
-                temp_max_c=(
-                    Decimal(str(day_data["temp_max_c"]))
-                    if day_data["temp_max_c"] is not None
-                    else None
-                ),
-                wind_kph=(
-                    Decimal(str(day_data["wind_kph"]))
-                    if day_data["wind_kph"] is not None
-                    else None
-                ),
+                precipitation_mm=_decimal(day_data["precipitation_mm"]),
+                temp_min_c=_decimal(day_data["temp_min_c"]),
+                temp_max_c=_decimal(day_data["temp_max_c"]),
+                wind_kph=_decimal(day_data["wind_kph"]),
                 source=_SOURCE,
             )
             db.add(forecast)

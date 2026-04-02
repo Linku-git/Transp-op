@@ -38,7 +38,7 @@ Set in `start_backend.sh` (overrides Replit's system DATABASE_URL):
 - `DATABASE_URL` — `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`
 - `DATABASE_URL_SYNC` — `postgresql+psycopg2://postgres:password@helium:5432/heliumdb`
 - `REDIS_URL` — `redis://localhost:6379/0`
-- `WEATHER_API_KEY` — OpenWeatherMap API key (set as Replit secret); enables real weather forecasts
+- Weather — uses **Open-Meteo** (free, no API key required); live 5-day forecasts fetch automatically via `POST /api/v1/weather/{site_id}/refresh`
 
 ### Frontend Environment Variables
 - `VITE_GOOGLE_MAPS_API_KEY` — Google Maps API key (already set); powers all map views and optimization maps
