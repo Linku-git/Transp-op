@@ -9,7 +9,7 @@ import type {
   CSVUploadResult,
 } from '../types/employee';
 
-const BASE_PATH = '/api/v1/employees';
+const BASE_PATH = '/api/v1/employees/';
 
 export const listEmployees = async (
   params: EmployeeListParams = {},
@@ -21,7 +21,7 @@ export const listEmployees = async (
 };
 
 export const getEmployee = async (id: string): Promise<Employee> => {
-  const response = await api.get<Employee>(`${BASE_PATH}/${id}`);
+  const response = await api.get<Employee>(`${BASE_PATH}${id}`);
   return response.data;
 };
 
@@ -36,12 +36,12 @@ export const updateEmployee = async (
   id: string,
   data: EmployeeUpdate,
 ): Promise<Employee> => {
-  const response = await api.patch<Employee>(`${BASE_PATH}/${id}`, data);
+  const response = await api.patch<Employee>(`${BASE_PATH}${id}`, data);
   return response.data;
 };
 
 export const deleteEmployee = async (id: string): Promise<void> => {
-  await api.delete(`${BASE_PATH}/${id}`);
+  await api.delete(`${BASE_PATH}${id}`);
 };
 
 export const uploadEmployeesCSV = async (
@@ -50,7 +50,7 @@ export const uploadEmployeesCSV = async (
   const formData = new FormData();
   formData.append('file', file);
   const response = await api.post<CSVUploadResult>(
-    `${BASE_PATH}/upload-csv`,
+    `${BASE_PATH}upload-csv`,
     formData,
     {
       headers: {
@@ -63,12 +63,12 @@ export const uploadEmployeesCSV = async (
 
 export const geocodeEmployees = async (): Promise<{ geocoded: number }> => {
   const response = await api.post<{ geocoded: number }>(
-    `${BASE_PATH}/geocode`,
+    `${BASE_PATH}geocode`,
   );
   return response.data;
 };
 
 export const getEmployeeSummary = async (): Promise<EmployeeSummary> => {
-  const response = await api.get<EmployeeSummary>(`${BASE_PATH}/summary`);
+  const response = await api.get<EmployeeSummary>(`${BASE_PATH}summary`);
   return response.data;
 };
