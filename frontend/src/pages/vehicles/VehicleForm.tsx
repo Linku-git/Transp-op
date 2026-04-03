@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { extractApiError } from '@/lib/apiError';
 import type { Vehicle, VehicleCreate } from '@/types/vehicle';
 import { VEHICLE_TYPES, CONDITIONS, OWNER_TYPES } from '@/types/vehicle';
 import { createVehicle, updateVehicle } from '@/api/vehicles';
@@ -66,8 +67,7 @@ export function VehicleForm({ vehicle }: Props) {
       }
       navigate('/vehicles');
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { detail?: string } } };
-      setError(e?.response?.data?.detail ?? 'Erreur lors de la sauvegarde');
+      setError(extractApiError(err, 'Erreur lors de la sauvegarde'));
     } finally {
       setSaving(false);
     }

@@ -39,7 +39,12 @@ interface EmployeeState {
 
 const extractErrorMessage = (err: unknown): string => {
   const axiosError = err as AxiosError<ApiError>;
-  return axiosError.response?.data?.detail ?? 'An unexpected error occurred';
+  const detail = axiosError.response?.data?.detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    return detail.map((d: { msg?: string }) => d.msg ?? JSON.stringify(d)).join('; ');
+  }
+  if (typeof detail === 'string' && detail.length > 0) return detail;
+  return 'An unexpected error occurred';
 };
 
 const useEmployeeStore = create<EmployeeState>((set, get) => ({

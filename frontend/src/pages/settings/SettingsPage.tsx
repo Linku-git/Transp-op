@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getSettings, updateSettings } from '@/api/settings';
+import { extractApiError } from '@/lib/apiError';
 import { Button } from '@/components/ui/Button';
 import { ShiftsEditorTable } from '@/components/shifts/ShiftsEditorTable';
 import type { OptimizationSettings } from '@/types/settings';
@@ -164,11 +165,7 @@ export function SettingsPage() {
       setOriginalSettings(data);
       setFormValues(extractFormValues(data));
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        axiosError.response?.data?.detail ??
-          t('common.error', 'Une erreur est survenue'),
-      );
+      setError(extractApiError(err, t('common.error', 'Une erreur est survenue')));
     } finally {
       setIsLoading(false);
     }
@@ -218,11 +215,7 @@ export function SettingsPage() {
         t('settings.save_success', 'Parametres enregistres avec succes.'),
       );
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        axiosError.response?.data?.detail ??
-          t('common.error', 'Une erreur est survenue'),
-      );
+      setError(extractApiError(err, t('common.error', 'Une erreur est survenue')));
     } finally {
       setIsSaving(false);
     }

@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useEmployeeStore } from '@/stores/employeeStore';
 import { EmployeeForm } from './EmployeeForm';
+import { extractApiError } from '@/lib/apiError';
 import type { EmployeeCreate } from '@/types/employee';
-import type { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
 
 export function EmployeeCreatePage() {
   const { t } = useTranslation();
@@ -22,10 +21,7 @@ export function EmployeeCreatePage() {
         await createEmployee(data);
         navigate('/employees');
       } catch (err: unknown) {
-        const axiosErr = err as AxiosError<ApiError>;
-        setApiError(
-          axiosErr.response?.data?.detail ?? t('common.error'),
-        );
+        setApiError(extractApiError(err, t('common.error')));
       } finally {
         setIsSubmitting(false);
       }

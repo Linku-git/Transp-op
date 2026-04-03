@@ -533,7 +533,7 @@ export function StopsAnalysisSection() {
                 <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{ fontSize: 11, borderRadius: 8 }}
-                  formatter={(v: number, name: string) => [v, name === 'count' ? 'Total' : 'Actifs']}
+                  formatter={(v, name) => [v, (name as string) === 'count' ? 'Total' : 'Actifs']}
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {cityChartData.map((entry, i) => (

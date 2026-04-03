@@ -80,9 +80,9 @@ export function BreakevenChart({ data, breakevenEmployees }: BreakevenChartProps
               fontFamily: 'Inter, sans-serif',
               fontSize: '12px',
             }}
-            formatter={(value: number, name: string) => [formatEUR(value), name]}
-            labelFormatter={(label: number) =>
-              `${label} ${t('financial.employees_label', 'employes')}`
+            formatter={(value) => [formatEUR(value as number), String(value)]}
+            labelFormatter={(label) =>
+              `${label ?? 0} ${t('financial.employees_label', 'employes')}`
             }
           />
 

@@ -84,12 +84,6 @@ const ModalAnalysisPage = lazy(() =>
   }))
 );
 
-const OptimizationPage = lazy(() =>
-  import('@/pages/optimization/OptimizationPage').then((m) => ({
-    default: m.OptimizationPage,
-  }))
-);
-
 const OptimizationHubPage = lazy(() =>
   import('@/pages/optimization/OptimizationHubPage').then((m) => ({
     default: m.OptimizationHubPage,

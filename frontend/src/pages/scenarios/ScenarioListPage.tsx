@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { listScenarios, deleteScenario } from '@/api/scenarios';
+import { extractApiError } from '@/lib/apiError';
 import { Button } from '@/components/ui/Button';
 import { useSiteStore } from '@/stores/siteStore';
 import type { Scenario } from '@/types/scenario';
@@ -68,8 +69,7 @@ export function ScenarioListPage() {
       const data = await listScenarios(siteId || undefined);
       setScenarios(data);
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(axiosError.response?.data?.detail ?? 'An error occurred');
+      setError(extractApiError(err, 'An error occurred'));
     } finally {
       setIsLoading(false);
     }
@@ -103,12 +103,7 @@ export function ScenarioListPage() {
           return next;
         });
       } catch (err: unknown) {
-        const axiosError = err as {
-          response?: { data?: { detail?: string } };
-        };
-        setError(
-          axiosError.response?.data?.detail ?? 'Failed to delete scenario',
-        );
+        setError(extractApiError(err, 'Failed to delete scenario'));
       } finally {
         setDeletingId(null);
       }

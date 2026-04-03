@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { extractApiError } from '@/lib/apiError';
 import {
   listConstraints,
   createConstraint,
@@ -48,10 +49,7 @@ export function ConstraintsPage() {
       const data = await listConstraints(category || undefined);
       setConstraints(data);
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        axiosError.response?.data?.detail ?? 'An error occurred',
-      );
+      setError(extractApiError(err, 'An error occurred'));
     } finally {
       setIsLoading(false);
     }
@@ -111,10 +109,7 @@ export function ConstraintsPage() {
       );
       setEditingRow(null);
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        axiosError.response?.data?.detail ?? 'Failed to update constraint',
-      );
+      setError(extractApiError(err, 'Failed to update constraint'));
     } finally {
       setSavingId(null);
     }
@@ -136,12 +131,7 @@ export function ConstraintsPage() {
         await deleteConstraint(constraint.id);
         setConstraints((prev) => prev.filter((c) => c.id !== constraint.id));
       } catch (err: unknown) {
-        const axiosError = err as {
-          response?: { data?: { detail?: string } };
-        };
-        setError(
-          axiosError.response?.data?.detail ?? 'Failed to delete constraint',
-        );
+        setError(extractApiError(err, 'Failed to delete constraint'));
       } finally {
         setDeletingId(null);
       }
@@ -170,10 +160,7 @@ export function ConstraintsPage() {
       setNewDescription('');
       setShowAddForm(false);
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        axiosError.response?.data?.detail ?? 'Failed to create constraint',
-      );
+      setError(extractApiError(err, 'Failed to create constraint'));
     } finally {
       setIsCreating(false);
     }
@@ -190,12 +177,7 @@ export function ConstraintsPage() {
           prev.map((c) => (c.id === updated.id ? updated : c)),
         );
       } catch (err: unknown) {
-        const axiosError = err as {
-          response?: { data?: { detail?: string } };
-        };
-        setError(
-          axiosError.response?.data?.detail ?? 'Failed to toggle constraint',
-        );
+        setError(extractApiError(err, 'Failed to toggle constraint'));
       } finally {
         setSavingId(null);
       }

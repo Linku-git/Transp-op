@@ -1,0 +1,22 @@
+Unexpected Application Error!
+Objects are not valid as a React child (found: object with keys {type, loc, msg, input, ctx}). If you meant to render a collection of children, use an array instead.
+
+throwOnInvalidObjectTypeImpl@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3540:10
+throwOnInvalidObjectType@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3544:105
+createChild@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3643:30
+reconcileChildrenArray@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3737:63
+reconcileChildFibersImpl@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3842:106
+require_react_dom_client_development</createChildReconciler/<@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:3869:52
+reconcileChildren@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:5386:46
+beginWork@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:6200:1569
+runWithFiberInDEV@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:851:123
+performUnitOfWork@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:8429:92
+workLoopSync@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:8325:54
+renderRootSync@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:8309:6
+performWorkOnRoot@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:7994:27
+performWorkOnRootViaSchedulerTask@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:9059:21
+performWorkUntilDeadline@https://254b501e-1520-48ca-a4fc-a4bb0b416ca3-00-6zp49igg58q.kirk.replit.dev/node_modules/.vite/deps/react-dom_client.js?v=9a1b9c63:36:46
+
+💿 Hey developer 👋
+
+You can provide a way better UX than this when your app throws errors by providing your own ErrorBoundary or errorElement prop on your route.

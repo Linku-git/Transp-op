@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 
+import { extractApiError } from '@/lib/apiError';
 import {
   listKmConsommation,
   createKmConsommation,
@@ -104,8 +105,7 @@ export function KmConsommationPage() {
       setShowForm(false);
       await fetchData();
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { detail?: string } } };
-      setFormError(e?.response?.data?.detail ?? 'Erreur lors de la sauvegarde');
+      setFormError(extractApiError(err, 'Erreur lors de la sauvegarde'));
     } finally {
       setSaving(false);
     }

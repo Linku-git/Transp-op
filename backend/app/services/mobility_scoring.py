@@ -2,83 +2,67 @@ from __future__ import annotations
 
 import logging
 import uuid
-from decimal import Decimal
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.employee import Employee
-from app.models.modal import EmployeeModal
 
 logger = logging.getLogger(__name__)
 
+# Shift-time to departure-time-slot mapping
+_SHIFT_TO_SLOT: dict[str, str] = {
+    "P1": "morning",    # 06:00-09:00
+    "P2": "afternoon",  # 12:00-15:00
+    "P3": "evening",    # 15:00-19:00
+    "N":  "night",      # 19:00-24:00
+    "S":  "morning",    # split / standard → morning
+}
+
+_TIME_SLOTS = ["morning", "midday", "afternoon", "evening", "night"]
+
 
 # ---------------------------------------------------------------------------
-# Per-employee mobility score
+# Per-employee mobility score (based on Employee fields)
 # ---------------------------------------------------------------------------
 
-
-def calculate_employee_score(modal: EmployeeModal) -> tuple[float, dict[str, float]]:
+def calculate_employee_score(emp: Employee) -> tuple[float, dict[str, float]]:
     """Calculate a mobility score (0-100) for a single employee.
 
-    Higher score = better mobility situation (more flexible, more options).
+    Higher score = better mobility situation.
     Returns ``(score, factors_breakdown)``.
     """
     score = 0.0
     factors: dict[str, float] = {}
 
-    # Distance factor
-    if modal.distance_km is not None:
-        distance = float(modal.distance_km)
-        if distance < 10:
-            score += 15.0
-            factors["distance_short"] = 15.0
-        elif distance < 20:
-            score += 5.0
-            factors["distance_medium"] = 5.0
-        elif distance < 30:
-            score -= 5.0
-            factors["distance_long"] = -5.0
-        else:
-            score -= 15.0
-            factors["distance_very_long"] = -15.0
-
     # Interest in company transport
-    if modal.interest_company_transport == "Oui":
+    if emp.opt_in_company_transport == "Oui":
         score += 20.0
         factors["company_transport_interest"] = 20.0
-    elif modal.interest_company_transport == "Sous conditions":
-        score += 10.0
-        factors["company_transport_conditional"] = 10.0
 
-    # Pickup flexibility
-    if modal.accepts_common_pickup:
-        score += 10.0
-        factors["accepts_common_pickup"] = 10.0
-
-    # Volunteer driver
-    if modal.volunteer_driver:
-        score += 15.0
-        factors["volunteer_driver"] = 15.0
-
-    # Has private car (has backup option)
-    if modal.has_private_car:
+    # Has private car (backup option available)
+    if emp.has_private_car:
         score += 5.0
         factors["has_private_car"] = 5.0
 
-    # Alternative mode available
-    if modal.alternative_mode is not None:
-        score += 5.0
-        factors["alternative_mode"] = 5.0
-
-    # Primary mode bonus
-    if modal.primary_mode in ("transport_public", "covoiturage"):
+    # Current transport mode bonus
+    mode = emp.current_transport_mode or ""
+    if mode == "company_bus":
+        score += 25.0
+        factors["company_shuttle"] = 25.0
+    elif mode == "walk":
+        score += 20.0
+        factors["sustainable_mode_walk"] = 20.0
+    elif mode in ("motorcycle",):
         score += 10.0
-        factors["sustainable_mode"] = 10.0
-    elif modal.primary_mode == "navette_entreprise":
-        score += 15.0
-        factors["company_shuttle"] = 15.0
+        factors["sustainable_mode_motor"] = 10.0
+    elif mode == "personal_car":
+        score += 5.0
+        factors["personal_car"] = 5.0
+    elif mode == "taxi":
+        score += 2.0
+        factors["taxi"] = 2.0
 
     # Clamp 0-100
     score = max(0.0, min(100.0, score))
@@ -104,26 +88,23 @@ async def calculate_group_scores(
         conditions.append(Employee.site_id == site_id)
 
     stmt = (
-        select(EmployeeModal)
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
-        .options(selectinload(EmployeeModal.employee))
+        select(Employee)
+        .options(selectinload(Employee.site))
         .where(*conditions)
     )
     result = await db.execute(stmt)
-    modals = list(result.scalars().all())
+    employees = list(result.scalars().all())
 
-    # Build per-employee scores
     employee_scores: list[dict] = []
-    for modal in modals:
-        sc, _ = calculate_employee_score(modal)
-        emp = modal.employee
+    for emp in employees:
+        sc, _ = calculate_employee_score(emp)
         employee_scores.append(
             {
                 "score": sc,
-                "site_id": str(emp.site_id) if emp else "unknown",
-                "site_name": emp.site.name if emp and emp.site else "Unknown",
-                "department": emp.department or "unassigned" if emp else "unknown",
-                "shift": emp.shift_time or "unassigned" if emp else "unknown",
+                "site_id": str(emp.site_id) if emp.site_id else "unknown",
+                "site_name": emp.site.name if emp.site else "Unknown",
+                "department": emp.department or "unassigned",
+                "shift": emp.shift_time or "unassigned",
             }
         )
 
@@ -183,16 +164,8 @@ async def calculate_group_scores(
 
 
 # ---------------------------------------------------------------------------
-# Time-slot score
+# Time-slot score (derived from shift_time)
 # ---------------------------------------------------------------------------
-
-_TIME_SLOTS = [
-    ("morning", 6, 9),
-    ("midday", 9, 12),
-    ("afternoon", 12, 15),
-    ("evening", 15, 19),
-    ("night", 19, 24),
-]
 
 
 async def calculate_timeslot_scores(
@@ -200,35 +173,21 @@ async def calculate_timeslot_scores(
     tenant_id: uuid.UUID,
     site_id: uuid.UUID | None = None,
 ) -> list[dict]:
-    """Count employees per departure-time bucket."""
+    """Count employees per departure-time bucket, derived from shift_time."""
     conditions = [Employee.tenant_id == tenant_id, Employee.active.is_(True)]
     if site_id is not None:
         conditions.append(Employee.site_id == site_id)
 
-    stmt = (
-        select(EmployeeModal.departure_time)
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
-        .where(*conditions)
-    )
+    stmt = select(Employee.shift_time).where(*conditions)
     result = await db.execute(stmt)
     rows = result.all()
 
-    buckets: dict[str, int] = {slot: 0 for slot, _, _ in _TIME_SLOTS}
+    buckets: dict[str, int] = {slot: 0 for slot in _TIME_SLOTS}
     buckets["unknown"] = 0
 
-    for (dep_time,) in rows:
-        if dep_time is None:
-            buckets["unknown"] += 1
-            continue
-        hour = dep_time.hour
-        placed = False
-        for slot_name, start, end in _TIME_SLOTS:
-            if start <= hour < end:
-                buckets[slot_name] += 1
-                placed = True
-                break
-        if not placed:
-            buckets["unknown"] += 1
+    for (shift,) in rows:
+        slot = _SHIFT_TO_SLOT.get(shift or "", "unknown")
+        buckets[slot] += 1
 
     return [{"slot": slot, "count": count} for slot, count in buckets.items()]
 
@@ -246,33 +205,27 @@ async def identify_shadow_zones(
 ) -> list[dict]:
     """Find employees with no satisfactory transport solution.
 
-    Criteria: distance > threshold AND interest != 'Oui' AND car-dependent.
+    Criteria: car-dependent (personal_car mode) AND not interested in company transport.
     """
     conditions = [
         Employee.tenant_id == tenant_id,
         Employee.active.is_(True),
-        EmployeeModal.distance_km > Decimal(str(distance_threshold_km)),
-        EmployeeModal.interest_company_transport != "Oui",
-        EmployeeModal.primary_mode == "vehicule_particulier",
+        Employee.current_transport_mode == "personal_car",
+        Employee.opt_in_company_transport != "Oui",
     ]
     if site_id is not None:
         conditions.append(Employee.site_id == site_id)
 
     stmt = (
-        select(EmployeeModal)
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
-        .options(selectinload(EmployeeModal.employee))
+        select(Employee)
+        .options(selectinload(Employee.site))
         .where(*conditions)
     )
     result = await db.execute(stmt)
-    modals = list(result.scalars().all())
+    employees = list(result.scalars().all())
 
     shadow_employees: list[dict] = []
-    for modal in modals:
-        emp = modal.employee
-        if emp is None:
-            continue
-        distance = float(modal.distance_km) if modal.distance_km else 0.0
+    for emp in employees:
         shadow_employees.append(
             {
                 "employee_id": str(emp.id),
@@ -280,10 +233,10 @@ async def identify_shadow_zones(
                 "lat": emp.lat,
                 "lng": emp.lng,
                 "site_id": str(emp.site_id),
-                "distance_km": distance,
+                "distance_km": None,
                 "reason": (
-                    f"Car-dependent, {distance:.1f}km from site, "
-                    f"no interest in company transport"
+                    f"Car-dependent, not interested in company transport "
+                    f"(opt_in={emp.opt_in_company_transport})"
                 ),
             }
         )

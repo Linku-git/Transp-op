@@ -3,10 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSiteStore } from '@/stores/siteStore';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { extractApiError } from '@/lib/apiError';
 import { SiteForm } from './SiteForm';
 import type { SiteCreate } from '@/types/site';
-import type { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
 
 export function SiteEditPage() {
   const { t } = useTranslation();
@@ -33,10 +32,7 @@ export function SiteEditPage() {
         await updateSite(id, data);
         navigate('/sites');
       } catch (err: unknown) {
-        const axiosErr = err as AxiosError<ApiError>;
-        setApiError(
-          axiosErr.response?.data?.detail ?? t('common.error'),
-        );
+        setApiError(extractApiError(err, t('common.error')));
       } finally {
         setIsSubmitting(false);
       }

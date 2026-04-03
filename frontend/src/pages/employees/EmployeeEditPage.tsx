@@ -3,10 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useEmployeeStore } from '@/stores/employeeStore';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { extractApiError } from '@/lib/apiError';
 import { EmployeeForm } from './EmployeeForm';
 import type { EmployeeCreate } from '@/types/employee';
-import type { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
 
 export function EmployeeEditPage() {
   const { t } = useTranslation();
@@ -33,10 +32,7 @@ export function EmployeeEditPage() {
         await updateEmployee(id, data);
         navigate('/employees');
       } catch (err: unknown) {
-        const axiosErr = err as AxiosError<ApiError>;
-        setApiError(
-          axiosErr.response?.data?.detail ?? t('common.error'),
-        );
+        setApiError(extractApiError(err, t('common.error')));
       } finally {
         setIsSubmitting(false);
       }

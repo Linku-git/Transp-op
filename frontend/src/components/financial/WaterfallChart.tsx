@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  type TooltipProps,
+
 } from 'recharts';
 import { useTranslation } from 'react-i18next';
 
@@ -34,7 +34,7 @@ function formatMAD(value: number): string {
   return value.toFixed(0);
 }
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+function CustomTooltip({ active, payload }: { active?: boolean; payload?: { name?: string; value?: number }[] }) {
   if (!active || !payload || payload.length === 0) return null;
   const item = payload[0];
   const raw = item.value as number;

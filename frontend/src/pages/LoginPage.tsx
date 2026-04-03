@@ -40,9 +40,12 @@ export function LoginPage() {
       login(access_token, meResp.data);
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { detail?: string } } })?.response?.data
-          ?.detail ?? t('auth.loginError', 'Email ou mot de passe incorrect');
+      const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+      const msg = Array.isArray(detail)
+        ? detail.map((d: { msg?: string }) => d.msg ?? JSON.stringify(d)).join('; ')
+        : typeof detail === 'string' && detail.length > 0
+          ? detail
+          : t('auth.loginError', 'Email ou mot de passe incorrect');
       setError(msg);
     } finally {
       setIsLoading(false);

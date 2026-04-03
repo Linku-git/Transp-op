@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSiteStore } from '@/stores/siteStore';
 import { SiteForm } from './SiteForm';
+import { extractApiError } from '@/lib/apiError';
 import type { SiteCreate } from '@/types/site';
-import type { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
 
 export function SiteCreatePage() {
   const { t } = useTranslation();
@@ -22,10 +21,7 @@ export function SiteCreatePage() {
         await createSite(data);
         navigate('/sites');
       } catch (err: unknown) {
-        const axiosErr = err as AxiosError<ApiError>;
-        setApiError(
-          axiosErr.response?.data?.detail ?? t('common.error'),
-        );
+        setApiError(extractApiError(err, t('common.error')));
       } finally {
         setIsSubmitting(false);
       }

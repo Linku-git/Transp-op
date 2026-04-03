@@ -246,7 +246,6 @@ function GanttView({
     return Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label));
   }, [rows, groupBy]);
 
-  const totalH = lanes.length * LANE_H + 40; // 40 = header
 
   if (loading) {
     return (

@@ -4,7 +4,7 @@ import { listConfigurationPlans } from '@/api/vehicles';
 import {
   getFleetAnalysis, runFleetOptimizer, generateNewConfig,
   type FleetAnalysis, type OptimizationResult, type OptimizedTrip,
-  type NewConfigResult, type ProposedTrip,
+  type NewConfigResult,
 } from '@/api/transportOptimization';
 import type { ConfigurationPlan } from '@/types/vehicle';
 
@@ -237,7 +237,7 @@ function NewConfigMode() {
                 <select value={filterShift} onChange={(e) => setFilterShift(e.target.value)}
                   className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-600 appearance-none">
                   <option value="">Tous shifts</option>
-                  {result.shifts && Object.keys(result.shift_summary).map((s) => <option key={s}>{s}</option>)}
+                  {result.shift_summary && Object.keys(result.shift_summary).map((s) => <option key={s}>{s}</option>)}
                 </select>
                 <select value={filterVehicle} onChange={(e) => setFilterVehicle(e.target.value)}
                   className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-600 appearance-none">
@@ -536,7 +536,7 @@ export function FleetOptimizerSection() {
                 <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11 }} />
-                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(v: number) => [`${v.toFixed(0)}/100`]} />
+                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(v) => [`${(v as number).toFixed(0)}/100`]} />
                   <Radar name="Actuel" dataKey="before" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
                   {result && <Radar name="Optimisé" dataKey="after" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />}
                 </RadarChart>

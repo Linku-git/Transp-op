@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MapPicker } from '@/components/maps/MapPicker';
 import { useSiteStore } from '@/stores/siteStore';
-import { listPointsArret, type PointArret } from '@/api/vehicles';
+import { listPointsArret } from '@/api/vehicles';
+import type { PointArret } from '@/types/vehicle';
 import type { EmployeeCreate, OptInChoice } from '@/types/employee';
 
 interface FieldErrors {

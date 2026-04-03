@@ -236,7 +236,7 @@ class ShadowZoneEmployee(BaseModel):
     lat: float | None
     lng: float | None
     site_id: uuid.UUID
-    distance_km: float
+    distance_km: float | None = None
     reason: str
 
 

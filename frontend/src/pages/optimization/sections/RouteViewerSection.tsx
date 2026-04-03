@@ -36,19 +36,7 @@ function downloadKml(tripId: string, path: google.maps.LatLngLiteral[], label?: 
   URL.revokeObjectURL(a.href);
 }
 
-/* ── Route cache (localStorage, 7-day TTL) ───────────────────────────────── */
-const CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
-
-function getCachedRoute(tripId: string): google.maps.LatLngLiteral[] | null {
-  try {
-    const raw = localStorage.getItem(`route_${tripId}`);
-    if (!raw) return null;
-    const { path, ts } = JSON.parse(raw);
-    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(`route_${tripId}`); return null; }
-    return path;
-  } catch { return null; }
-}
-
+/* ── Route cache (localStorage) ─────────────────────────────────────────── */
 function setCachedRoute(tripId: string, path: google.maps.LatLngLiteral[]) {
   try { localStorage.setItem(`route_${tripId}`, JSON.stringify({ path, ts: Date.now() })); } catch { /* storage full */ }
 }
@@ -115,7 +103,7 @@ function RouteSnapper({ tripId, origin, destination, waypoints, trigger, onRoute
           origin: orig,
           destination: dest,
           waypoints: wps.map((wp) => ({ location: wp, stopover: true })),
-          travelMode: routesLib.TravelMode.DRIVING,
+          travelMode: routesLib!.TravelMode.DRIVING,
           optimizeWaypoints: false,
         },
         (result, status) => {
