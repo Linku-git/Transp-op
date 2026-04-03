@@ -21,7 +21,7 @@ export function AppLayout() {
 
       <div
         className="flex-1 flex flex-col transition-[margin-left] duration-300"
-        style={{ marginLeft: sidebarCollapsed ? 56 : 256 }}
+        style={{ marginLeft: sidebarCollapsed ? 68 : 256 }}
       >
         <Header />
 
