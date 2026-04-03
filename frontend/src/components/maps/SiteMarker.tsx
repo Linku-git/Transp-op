@@ -43,7 +43,7 @@ export function SiteMarker({ site, color = '#041627' }: SiteMarkerProps) {
             <p className="text-xs text-on-surface-variant mt-0.5">{site.code}</p>
             <p className="text-xs text-on-surface-variant mt-1">{site.city}</p>
             <p className="text-xs text-on-surface-variant">
-              {site.num_shifts} equipe{site.num_shifts > 1 ? 's' : ''}
+              {site.num_shifts} shift{site.num_shifts > 1 ? 's' : ''}
             </p>
           </div>
         </InfoWindow>

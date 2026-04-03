@@ -442,6 +442,7 @@ async def create_site(
         security_profile=body.security_profile,
         timezone=body.timezone,
         observations=body.observations,
+        active_shift_ids=body.active_shift_ids,
     )
     db.add(site)
     await db.flush()

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { SiteSummaryCards } from '@/components/sites/SiteSummaryCards';
-import { ShiftConfigPanel } from '@/components/sites/ShiftConfigPanel';
+import { SiteActiveShiftsPanel } from '@/components/sites/SiteActiveShiftsPanel';
 import { MapView } from '@/components/maps/MapView';
 import { SiteMarker } from '@/components/maps/SiteMarker';
 import type { SecurityProfile, SiteSummary } from '@/types/site';
@@ -229,9 +229,9 @@ export function SiteDetailPage() {
         </Card>
       </div>
 
-      {/* Shift schedule */}
+      {/* Active shifts */}
       <Card>
-        <ShiftConfigPanel site={currentSite} />
+        <SiteActiveShiftsPanel activeIds={currentSite.active_shift_ids ?? []} />
       </Card>
 
       {/* Quick action links */}

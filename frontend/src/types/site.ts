@@ -54,6 +54,7 @@ export interface Site {
   security_profile: SecurityProfile;
   timezone: string;
   observations: string | null;
+  active_shift_ids: string[];
   created_at: string;
   updated_at: string;
 }
@@ -95,6 +96,7 @@ export interface SiteCreate {
   security_profile?: SecurityProfile;
   timezone?: string;
   observations?: string | null;
+  active_shift_ids?: string[];
 }
 
 export interface SiteUpdate extends Partial<SiteCreate> {}

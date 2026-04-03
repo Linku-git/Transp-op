@@ -4,6 +4,7 @@
 **Transpop** (Plateforme d'Orchestration Mobilité RH) is an enterprise SaaS platform for HR mobility orchestration. It manages employee transport optimization, route planning, clustering, vehicle assignments, and KPI tracking.
 
 ## Recent Changes
+- **Shifts restructure:** Removed all "Equipes/Horaires" terminology. Company-wide shift management (create/edit/delete) moved to **Paramètres** page. Site create/edit form now has a **Shifts Actifs** selector (read-only table with checkboxes to activate per site). Site detail page shows `SiteActiveShiftsPanel`. `active_shift_ids` (JSONB) column added to `site` table (migration `g2h3i4j5k6l7`). "Horaires de Travail" removed from fleet sidebar navigation.
 - **CSV Export/Import (Sites):** `GET /api/v1/sites/export/csv` streams a UTF-8 CSV (headers-only when empty). `POST /api/v1/sites/import/csv` accepts a `.csv` file and upserts by `code` (no duplicates on re-import). Frontend: "Import CSV" + "Export CSV" buttons in SiteListPage header; result/error banners shown after import.
 
 ## Architecture

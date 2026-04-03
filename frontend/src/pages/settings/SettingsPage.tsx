@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getSettings, updateSettings } from '@/api/settings';
 import { Button } from '@/components/ui/Button';
+import { ShiftsEditorTable } from '@/components/shifts/ShiftsEditorTable';
 import type { OptimizationSettings } from '@/types/settings';
 
 interface FieldConfig {
@@ -394,6 +395,14 @@ export function SettingsPage() {
 
       {/* Form */}
       <div className="flex flex-col gap-6 pb-8">
+        {/* Shifts */}
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
+          <SectionHeading>
+            Shifts
+          </SectionHeading>
+          <ShiftsEditorTable siteId={null} />
+        </div>
+
         {/* Optimization Parameters */}
         <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 p-6">
           <SectionHeading>

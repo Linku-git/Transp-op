@@ -58,6 +58,9 @@ class SiteCreate(BaseModel):
     timezone: str = Field(default="Africa/Casablanca", max_length=50)
     observations: str | None = None
 
+    # Active shifts selected for this site (list of HoraireTravail IDs)
+    active_shift_ids: list[str] = Field(default_factory=list)
+
     @field_validator("security_profile")
     @classmethod
     def validate_security_profile(cls, v: str) -> str:
@@ -120,6 +123,7 @@ class SiteUpdate(BaseModel):
     security_profile: str | None = Field(default=None, max_length=20)
     timezone: str | None = Field(default=None, max_length=50)
     observations: str | None = None
+    active_shift_ids: list[str] | None = None
 
     @field_validator("security_profile")
     @classmethod
@@ -182,6 +186,7 @@ class SiteResponse(BaseModel):
     security_profile: str
     timezone: str
     observations: str | None
+    active_shift_ids: list[str] = Field(default_factory=list)
 
     created_at: datetime
     updated_at: datetime

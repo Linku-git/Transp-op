@@ -204,7 +204,7 @@ export function SiteListPage() {
       },
       {
         key: 'num_shifts',
-        label: t('sites.columns.shifts', 'Equipes'),
+        label: t('sites.columns.shifts', 'Shifts'),
         render: (row) => <ShiftCircles count={row.num_shifts} />,
       },
       {
@@ -412,7 +412,7 @@ export function SiteListPage() {
             </div>
             <div>
               <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest font-sans block">
-                {t('sites.active_shifts', 'Equipes actives')}
+                {t('sites.active_shifts', 'Shifts actifs')}
               </span>
               <span className="text-2xl font-black text-on-surface font-sans tabular-nums">
                 {filteredSites.reduce((sum, s) => sum + s.num_shifts, 0)}

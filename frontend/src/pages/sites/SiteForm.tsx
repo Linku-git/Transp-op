@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MapPicker } from '@/components/maps/MapPicker';
-import { ShiftsEditorTable } from '@/components/shifts/ShiftsEditorTable';
+import { SiteShiftSelector } from '@/components/sites/SiteShiftSelector';
 import {
   WorkingDayRangePicker,
   workingDaysToRange,
@@ -117,6 +117,8 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
   const [startIdx, setStartIdx] = useState(initRange.startIdx);
   const [endIdx, setEndIdx] = useState(initRange.endIdx);
 
+  const [activeShiftIds, setActiveShiftIds] = useState<string[]>(initialData?.active_shift_ids ?? []);
+
   const [zfeZone, setZfeZone] = useState(initialData?.zfe_zone ?? false);
   const [securityProfile, setSecurityProfile] = useState<SecurityProfile>(initialData?.security_profile ?? 'normal');
   const [contactName, setContactName] = useState(initialData?.contact_name ?? '');
@@ -148,6 +150,7 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
       num_shifts: 1,
       working_days: rangeToWorkingDays(startIdx, endIdx),
       days_per_week: rangeToDaysPerWeek(startIdx, endIdx),
+      active_shift_ids: activeShiftIds,
       zfe_zone: zfeZone,
       security_profile: securityProfile,
       contact_name: contactName || null,
@@ -159,7 +162,7 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
     await onSubmit(data);
   }, [
     validate, onSubmit, code, name, address, city, lat, lng,
-    startIdx, endIdx, zfeZone, securityProfile,
+    startIdx, endIdx, activeShiftIds, zfeZone, securityProfile,
     contactName, contactPhone, accessNotes, parkingNotes, observations,
   ]);
 
@@ -286,9 +289,15 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
         </div>
       </Card>
 
-      {/* Horaires — company-wide, managed via HoraireTravail API */}
-      <Card title={t('sites.form.section_shifts', 'Horaires')}>
-        <ShiftsEditorTable siteId={null} />
+      {/* Shifts actifs pour ce site */}
+      <Card title={t('sites.form.section_shifts', 'Shifts Actifs')}>
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-on-surface-variant font-sans">
+            Sélectionnez les shifts applicables à ce site. Les shifts sont définis dans{' '}
+            <strong>Paramètres → Shifts</strong>.
+          </p>
+          <SiteShiftSelector activeIds={activeShiftIds} onChange={setActiveShiftIds} />
+        </div>
       </Card>
 
       {/* Configuration */}

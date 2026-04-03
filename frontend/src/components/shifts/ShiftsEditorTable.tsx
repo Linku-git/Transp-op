@@ -182,7 +182,7 @@ export function ShiftsEditorTable({ siteId = null }: Props) {
           <thead>
             <tr className="bg-surface-container-low border-b border-outline-variant/20">
               <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-on-surface-variant w-[22%]">
-                Type Horaire
+                Shift
               </th>
               <th className="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-widest text-on-surface-variant" colSpan={2}>
                 Premier Horaire

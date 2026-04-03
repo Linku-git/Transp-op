@@ -5,7 +5,7 @@ from datetime import time
 
 from geoalchemy2 import Geometry
 from sqlalchemy import Boolean, Float, ForeignKey, Index, Integer, String, Text, Time
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -81,6 +81,11 @@ class Site(BaseModel):
         String(50), server_default="Europe/Paris", nullable=False
     )
     observations: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Active shifts — list of HoraireTravail IDs selected for this site
+    active_shift_ids: Mapped[list] = mapped_column(
+        JSONB, nullable=False, server_default="[]"
+    )
 
     # Relationships
     tenant: Mapped[Tenant] = relationship("Tenant", lazy="selectin")
