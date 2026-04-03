@@ -90,6 +90,12 @@ const OptimizationPage = lazy(() =>
   }))
 );
 
+const OptimizationHubPage = lazy(() =>
+  import('@/pages/optimization/OptimizationHubPage').then((m) => ({
+    default: m.OptimizationHubPage,
+  }))
+);
+
 const OptimizationResultPage = lazy(() =>
   import('@/pages/optimization/OptimizationResultPage').then((m) => ({
     default: m.OptimizationResultPage,
@@ -360,7 +366,7 @@ export const router = createBrowserRouter([
         path: 'optimization',
         element: (
           <SuspenseWrapper>
-            <OptimizationPage />
+            <OptimizationHubPage />
           </SuspenseWrapper>
         ),
       },

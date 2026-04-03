@@ -29,6 +29,7 @@ from app.api.v1.point_arret import router as point_arret_router
 from app.api.v1.configuration_transport import router as configuration_transport_router
 from app.api.v1.configuration_plans import router as configuration_plans_router
 from app.api.v1.horaire_travail import router as horaire_travail_router
+from app.api.v1.transport_optimization import router as transport_optimization_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -59,3 +60,4 @@ api_router.include_router(point_arret_router, tags=["points-arret"])
 api_router.include_router(configuration_transport_router, tags=["configuration-transport"])
 api_router.include_router(configuration_plans_router, tags=["configuration-plans"])
 api_router.include_router(horaire_travail_router, tags=["horaires-travail"])
+api_router.include_router(transport_optimization_router, tags=["transport-optimization"])
