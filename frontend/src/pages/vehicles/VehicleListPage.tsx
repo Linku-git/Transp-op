@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   listVehicles,
   deleteVehicle,
@@ -92,22 +92,6 @@ export function VehicleListPage() {
           <span className="material-symbols-outlined text-base">add</span>
           Ajouter un véhicule
         </Button>
-      </div>
-
-      {/* Sub-nav: fleet section tabs */}
-      <div className="flex gap-2 border-b border-surface-container-high pb-3">
-        <Link to="/vehicles" className="text-sm font-medium text-primary border-b-2 border-primary pb-1 px-1">
-          Parc Véhicule
-        </Link>
-        <Link to="/fleet/consumption" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
-          Type Véhicules & Consommation
-        </Link>
-        <Link to="/fleet/stops" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
-          Points d'Arrêt
-        </Link>
-        <Link to="/fleet/config" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
-          Config. Transport
-        </Link>
       </div>
 
       {/* Search */}
