@@ -1,5 +1,6 @@
 from app.models.auth import Permission, Role, RolePermission, Tenant, User
 from app.models.base import BaseModel, TimestampMixin
+from app.models.configuration_plan import ConfigurationPlan
 from app.models.configuration_transport import ConfigurationTransport
 from app.models.employee import Employee
 from app.models.financial import (
@@ -38,6 +39,7 @@ __all__ = [
     "KmConsommation",
     "KPISnapshot",
     "PointArret",
+    "ConfigurationPlan",
     "ConfigurationTransport",
     "TCOEntry",
     "ROICalculation",

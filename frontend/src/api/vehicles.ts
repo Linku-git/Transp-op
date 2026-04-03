@@ -10,6 +10,9 @@ import type {
   PointArret,
   PointArretCreate,
   PointArretUpdate,
+  ConfigurationPlan,
+  ConfigurationPlanCreate,
+  ConfigurationPlanUpdate,
   ConfigurationTransport,
   ConfigurationTransportCreate,
   ConfigurationTransportUpdate,
@@ -97,6 +100,29 @@ export const updatePointArret = async (id: string, data: PointArretUpdate): Prom
 
 export const deletePointArret = async (id: string): Promise<void> => {
   await api.delete(`${PA_PATH}/${id}`);
+};
+
+// ─── Configuration Plans ─────────────────────────────────────────────────────
+
+const CP_PATH = '/api/v1/configuration-plans';
+
+export const listConfigurationPlans = async (params?: Record<string, unknown>): Promise<ListResponse<ConfigurationPlan>> => {
+  const response = await api.get<ListResponse<ConfigurationPlan>>(CP_PATH, { params });
+  return response.data;
+};
+
+export const createConfigurationPlan = async (data: ConfigurationPlanCreate): Promise<ConfigurationPlan> => {
+  const response = await api.post<ConfigurationPlan>(CP_PATH, data);
+  return response.data;
+};
+
+export const updateConfigurationPlan = async (id: string, data: ConfigurationPlanUpdate): Promise<ConfigurationPlan> => {
+  const response = await api.patch<ConfigurationPlan>(`${CP_PATH}/${id}`, data);
+  return response.data;
+};
+
+export const deleteConfigurationPlan = async (id: string): Promise<void> => {
+  await api.delete(`${CP_PATH}/${id}`);
 };
 
 // ─── Configuration Transport ─────────────────────────────────────────────────

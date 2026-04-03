@@ -168,39 +168,82 @@ export interface HoraireTravailCreate {
 
 export type HoraireTravailUpdate = Partial<HoraireTravailCreate>;
 
+export interface ConfigurationPlan {
+  id: string;
+  tenant_id: string;
+  name: string;
+  description: string | null;
+  is_active: boolean;
+  is_current: boolean;
+  source: string | null;
+  row_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConfigurationPlanCreate {
+  name: string;
+  description?: string | null;
+  is_active?: boolean;
+  is_current?: boolean;
+  source?: string | null;
+}
+
+export type ConfigurationPlanUpdate = Partial<ConfigurationPlanCreate>;
+
 export interface ConfigurationTransport {
   id: string;
   tenant_id: string;
+  plan_id: string;
   site_id: string | null;
   site_name: string | null;
-  ligne: string;
-  prestataire: string;
-  vehicle_type: string | null;
-  vehicle_count: number | null;
+  conducteur: string | null;
+  poste: string | null;
+  prestataire: string | null;
+  mle_vehicule: string | null;
+  type_vehicule: string | null;
+  type_moteur: string | null;
+  secteur: string | null;
+  entite: string | null;
+  aller_retour: string | null;
   shift: string | null;
-  point_depart_id: string | null;
-  point_arrivee_id: string | null;
-  point_depart_nom: string | null;
-  point_arrivee_nom: string | null;
-  circuit: string | null;
+  heure_depart: string | null;
+  point_depart: string | null;
+  point_arrivee: string | null;
+  heure_arrivee: string | null;
+  arrets_circuit: string | null;
+  duree_trajet_min: number | null;
+  km: number | null;
+  rot: number | null;
+  t_km: number | null;
   is_active: boolean;
-  observations: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface ConfigurationTransportCreate {
-  ligne: string;
-  prestataire: string;
+  plan_id: string;
   site_id?: string | null;
-  vehicle_type?: string | null;
-  vehicle_count?: number | null;
+  conducteur?: string | null;
+  poste?: string | null;
+  prestataire?: string | null;
+  mle_vehicule?: string | null;
+  type_vehicule?: string | null;
+  type_moteur?: string | null;
+  secteur?: string | null;
+  entite?: string | null;
+  aller_retour?: string | null;
   shift?: string | null;
-  point_depart_id?: string | null;
-  point_arrivee_id?: string | null;
-  circuit?: string | null;
+  heure_depart?: string | null;
+  point_depart?: string | null;
+  point_arrivee?: string | null;
+  heure_arrivee?: string | null;
+  arrets_circuit?: string | null;
+  duree_trajet_min?: number | null;
+  km?: number | null;
+  rot?: number | null;
+  t_km?: number | null;
   is_active?: boolean;
-  observations?: string | null;
 }
 
-export type ConfigurationTransportUpdate = Partial<ConfigurationTransportCreate>;
+export type ConfigurationTransportUpdate = Partial<Omit<ConfigurationTransportCreate, 'plan_id'>>;

@@ -25,41 +25,56 @@ def _to_resp(obj: ConfigurationTransport) -> ConfigurationTransportResponse:
     resp = ConfigurationTransportResponse.model_validate(obj)
     if obj.site is not None:
         resp.site_name = obj.site.name
-    if obj.point_depart is not None:
-        resp.point_depart_nom = obj.point_depart.nom
-    if obj.point_arrivee is not None:
-        resp.point_arrivee_nom = obj.point_arrivee.nom
     return resp
 
 
 @router.get("", response_model=dict)
 async def list_configuration_transport(
+    plan_id: uuid.UUID | None = Query(default=None),
     prestataire: str | None = Query(default=None),
     site_id: uuid.UUID | None = Query(default=None),
+    secteur: str | None = Query(default=None),
+    poste: str | None = Query(default=None),
+    shift: str | None = Query(default=None),
+    aller_retour: str | None = Query(default=None),
     is_active: bool | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=50, ge=1, le=200),
+    page_size: int = Query(default=100, ge=1, le=600),
     current_user: User = Depends(require_role("admin", "drh", "daf", "operateur")),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
+    from sqlalchemy import func
     stmt = select(ConfigurationTransport).where(
         ConfigurationTransport.tenant_id == current_user.tenant_id
     )
+    if plan_id:
+        stmt = stmt.where(ConfigurationTransport.plan_id == plan_id)
     if prestataire:
         stmt = stmt.where(ConfigurationTransport.prestataire.ilike(f"%{prestataire}%"))
     if site_id:
         stmt = stmt.where(ConfigurationTransport.site_id == site_id)
+    if secteur:
+        stmt = stmt.where(ConfigurationTransport.secteur.ilike(f"%{secteur}%"))
+    if poste:
+        stmt = stmt.where(ConfigurationTransport.poste == poste)
+    if shift:
+        stmt = stmt.where(ConfigurationTransport.shift == shift)
+    if aller_retour:
+        stmt = stmt.where(ConfigurationTransport.aller_retour == aller_retour)
     if is_active is not None:
         stmt = stmt.where(ConfigurationTransport.is_active == is_active)
 
-    stmt = stmt.order_by(ConfigurationTransport.prestataire, ConfigurationTransport.ligne)
+    count_stmt = select(func.count()).select_from(stmt.subquery())
+    total = (await db.execute(count_stmt)).scalar_one()
+
+    stmt = stmt.order_by(ConfigurationTransport.poste, ConfigurationTransport.shift)
     stmt = stmt.offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(stmt)
     items = list(result.scalars().all())
 
     return {
         "items": [_to_resp(i) for i in items],
-        "total": len(items),
+        "total": total,
         "page": page,
         "page_size": page_size,
     }
