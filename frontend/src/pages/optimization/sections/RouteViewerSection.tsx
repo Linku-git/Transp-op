@@ -164,14 +164,14 @@ export function RouteViewerSection() {
   const selectCls = 'bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 appearance-none';
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* ── Toolbar ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3 bg-white border border-slate-100 rounded-xl px-4 py-3">
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 256px)' }}>
+      {/* ── Toolbar ─────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2 bg-white border border-slate-100 rounded-xl px-3 py-2 mb-3 shrink-0">
         <select value={planId} onChange={(e) => { setPlanId(e.target.value); resetPage(); setSelectedTrip(null); setDetail(null); }}
-          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 appearance-none min-w-[200px]">
+          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 appearance-none min-w-[180px]">
           {plans.map((p) => <option key={p.id} value={p.id}>{p.name}{p.is_current ? ' ✓' : ''}</option>)}
         </select>
-        <div className="w-px h-5 bg-slate-200" />
+        <div className="w-px h-4 bg-slate-200" />
         <select value={shift} onChange={(e) => { setShift(e.target.value); resetPage(); }} className={selectCls}>
           <option value="">Tous shifts</option>
           {['P1','P2','P3','N','S'].map((s) => <option key={s}>Shift {s}</option>)}
@@ -200,11 +200,12 @@ export function RouteViewerSection() {
         </span>
       </div>
 
-      {/* ── Main two-panel layout ──────────────────────────────────────── */}
-      <div className="flex gap-4" style={{ minHeight: 540 }}>
-        {/* Trip list */}
-        <div className="w-80 shrink-0 flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+      {/* ── Main two-panel layout — fills all remaining height ──────── */}
+      <div className="flex gap-3 flex-1 min-h-0">
+
+        {/* ── Left: trip list ──────────────────────────────────────── */}
+        <div className="w-72 shrink-0 flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trajets</p>
             <div className="flex items-center gap-1">
               <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
@@ -228,11 +229,11 @@ export function RouteViewerSection() {
                 key={trip.id}
                 onClick={() => loadDetail(trip)}
                 className={[
-                  'w-full text-left px-4 py-3 border-b border-slate-50 hover:bg-blue-50/50 transition-colors',
+                  'w-full text-left px-3 py-2.5 border-b border-slate-50 hover:bg-blue-50/50 transition-colors',
                   selectedTrip?.id === trip.id ? 'bg-blue-50 border-l-2 border-l-blue-500' : '',
                 ].join(' ')}
               >
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                   <span className="text-xs font-black text-slate-700">{trip.poste}</span>
                   {trip.shift && <Badge text={trip.shift} cls={SHIFT_COLOR[trip.shift] ?? 'bg-slate-100 text-slate-600'} />}
                   {trip.aller_retour && (
@@ -243,16 +244,16 @@ export function RouteViewerSection() {
                     <Badge text={trip.type_vehicule} cls={VEHICLE_COLOR[trip.type_vehicule] ?? 'bg-slate-100 text-slate-600'} />
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                  <span className="material-symbols-outlined text-xs">schedule</span>
+                <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                  <span className="material-symbols-outlined text-[11px]">schedule</span>
                   {trip.heure_depart ?? '?'} → {trip.heure_arrivee ?? '?'}
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                  <span className="truncate max-w-[140px]">{trip.point_depart}</span>
+                <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                  <span className="truncate max-w-[110px]">{trip.point_depart}</span>
                   <span>→</span>
-                  <span className="truncate max-w-[140px]">{trip.point_arrivee}</span>
+                  <span className="truncate max-w-[110px]">{trip.point_arrivee}</span>
                 </div>
-                <div className="mt-1.5 h-1 rounded-full bg-slate-100 overflow-hidden">
+                <div className="mt-1 h-1 rounded-full bg-slate-100 overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${Math.min(100, trip.fill_pct)}%`, backgroundColor: fillColor(trip.fill_pct) }} />
                 </div>
               </button>
@@ -260,8 +261,9 @@ export function RouteViewerSection() {
           </div>
         </div>
 
-        {/* Map + detail panel */}
-        <div className="flex-1 flex flex-col gap-4">
+        {/* ── Right: map area ──────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col min-h-0 gap-2">
+
           {!selectedTrip ? (
             <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 border-dashed flex flex-col items-center justify-center gap-3 text-center p-8">
               <span className="material-symbols-outlined text-5xl text-slate-300">route</span>
@@ -270,190 +272,152 @@ export function RouteViewerSection() {
             </div>
           ) : (
             <>
-              {/* Trip header card */}
-              <div className="bg-white border border-slate-100 rounded-xl px-5 py-4 flex flex-wrap items-start gap-5">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className="text-lg font-black text-slate-800">Poste {selectedTrip.poste}</span>
-                    {selectedTrip.shift && <Badge text={`Shift ${selectedTrip.shift}`} cls={SHIFT_COLOR[selectedTrip.shift] ?? ''} />}
-                    {selectedTrip.aller_retour && (
-                      <Badge text={selectedTrip.aller_retour} cls={selectedTrip.aller_retour === 'ALLER' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'} />
-                    )}
-                    {selectedTrip.type_vehicule && <Badge text={selectedTrip.type_vehicule} cls={VEHICLE_COLOR[selectedTrip.type_vehicule] ?? ''} />}
-                  </div>
-                  <p className="text-sm text-slate-500">{selectedTrip.conducteur || '—'} · {selectedTrip.prestataire} · {selectedTrip.mle_vehicule}</p>
-                </div>
-                <div className="grid grid-cols-3 gap-3 shrink-0 text-center">
-                  {[
-                    { icon: 'schedule', label: 'Départ', value: selectedTrip.heure_depart ?? '—' },
-                    { icon: 'schedule', label: 'Arrivée', value: selectedTrip.heure_arrivee ?? '—' },
-                    { icon: 'straighten', label: 'Distance', value: selectedTrip.km != null ? `${selectedTrip.km} km` : '—' },
-                    { icon: 'loop', label: 'Rotations', value: selectedTrip.rot ?? '—' },
-                    { icon: 'route', label: 'T. KM', value: selectedTrip.t_km != null ? `${selectedTrip.t_km} km` : '—' },
-                    { icon: 'payments', label: 'Coût/j', value: `${selectedTrip.estimated_cost_mad} MAD` },
-                  ].map((item) => (
-                    <div key={item.label} className="bg-slate-50 rounded-lg px-3 py-2">
-                      <p className="text-[9px] text-slate-400 uppercase tracking-wider">{item.label}</p>
-                      <p className="text-sm font-bold text-slate-700">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Map */}
-              <div className="relative flex-1" style={{ minHeight: 320 }}>
-                {detailLoading && (
-                  <div className="absolute inset-0 z-20 bg-white/80 rounded-xl flex items-center justify-center">
-                    <span className="material-symbols-outlined text-3xl animate-spin text-blue-500">progress_activity</span>
-                  </div>
-                )}
-                <MapView center={mapCenter} zoom={mapZoom} height="100%" className="rounded-xl min-h-[320px]">
-                  {detail && (
-                    <>
-                      {/* Polyline connecting known points */}
-                      {polylineCoords.length >= 2 && (
-                        <Polyline
-                          path={polylineCoords}
-                          strokeColor="#3b82f6"
-                          strokeOpacity={0.85}
-                          strokeWeight={4}
-                        />
-                      )}
-
-                      {/* Start marker */}
-                      {detail.start_point?.lat && detail.start_point.lng && (
-                        <AdvancedMarker
-                          position={{ lat: detail.start_point.lat, lng: detail.start_point.lng }}
-                          onClick={() => setOpenInfoId(openInfoId === 'start' ? null : 'start')}
-                        >
-                          <StopPin index={0} label={detail.start_point.label || ''} type="start" />
-                          {openInfoId === 'start' && (
-                            <InfoWindow position={{ lat: detail.start_point.lat, lng: detail.start_point.lng! }}
-                              onCloseClick={() => setOpenInfoId(null)}>
-                              <div className="text-xs">
-                                <p className="font-bold text-emerald-700">Départ</p>
-                                <p>{detail.start_point.label}</p>
-                                <p className="text-slate-400 mt-1">{selectedTrip.heure_depart}</p>
-                              </div>
-                            </InfoWindow>
-                          )}
-                        </AdvancedMarker>
-                      )}
-
-                      {/* Intermediate stop markers */}
-                      {detail.waypoints.map((wp, i) => wp.lat && wp.lng ? (
-                        <AdvancedMarker
-                          key={`wp-${i}`}
-                          position={{ lat: wp.lat, lng: wp.lng }}
-                          onClick={() => setOpenInfoId(openInfoId === `wp-${i}` ? null : `wp-${i}`)}
-                        >
-                          <StopPin index={i + 1} label={wp.label} type="stop" />
-                          {openInfoId === `wp-${i}` && (
-                            <InfoWindow position={{ lat: wp.lat, lng: wp.lng! }}
-                              onCloseClick={() => setOpenInfoId(null)}>
-                              <div className="text-xs">
-                                <p className="font-bold text-blue-700">Arrêt {i + 1}</p>
-                                <p>{wp.label}</p>
-                              </div>
-                            </InfoWindow>
-                          )}
-                        </AdvancedMarker>
-                      ) : null)}
-
-                      {/* End marker */}
-                      {detail.end_point?.lat && detail.end_point.lng && (
-                        <AdvancedMarker
-                          position={{ lat: detail.end_point.lat, lng: detail.end_point.lng }}
-                          onClick={() => setOpenInfoId(openInfoId === 'end' ? null : 'end')}
-                        >
-                          <StopPin index={-1} label={detail.end_point.label || ''} type="end" />
-                          {openInfoId === 'end' && (
-                            <InfoWindow position={{ lat: detail.end_point.lat, lng: detail.end_point.lng! }}
-                              onCloseClick={() => setOpenInfoId(null)}>
-                              <div className="text-xs">
-                                <p className="font-bold text-red-600">Arrivée</p>
-                                <p>{detail.end_point.label}</p>
-                                <p className="text-slate-400 mt-1">{selectedTrip.heure_arrivee}</p>
-                              </div>
-                            </InfoWindow>
-                          )}
-                        </AdvancedMarker>
-                      )}
-                    </>
+              {/* Compact trip header bar */}
+              <div className="bg-white border border-slate-100 rounded-xl px-4 py-2 flex items-center gap-3 shrink-0 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                  <span className="text-sm font-black text-slate-800">Poste {selectedTrip.poste}</span>
+                  {selectedTrip.shift && <Badge text={`Shift ${selectedTrip.shift}`} cls={SHIFT_COLOR[selectedTrip.shift] ?? ''} />}
+                  {selectedTrip.aller_retour && (
+                    <Badge text={selectedTrip.aller_retour} cls={selectedTrip.aller_retour === 'ALLER' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'} />
                   )}
-                </MapView>
+                  {selectedTrip.type_vehicule && <Badge text={selectedTrip.type_vehicule} cls={VEHICLE_COLOR[selectedTrip.type_vehicule] ?? ''} />}
+                  <span className="text-[11px] text-slate-400">{selectedTrip.conducteur || '—'} · {selectedTrip.prestataire}</span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0 text-xs text-slate-500">
+                  <span><span className="text-slate-400">Départ</span> <strong>{selectedTrip.heure_depart ?? '—'}</strong></span>
+                  <span><span className="text-slate-400">Arrivée</span> <strong>{selectedTrip.heure_arrivee ?? '—'}</strong></span>
+                  <span><span className="text-slate-400">Dist.</span> <strong>{selectedTrip.km != null ? `${selectedTrip.km} km` : '—'}</strong></span>
+                  <span><span className="text-slate-400">Rot.</span> <strong>{selectedTrip.rot ?? '—'}</strong></span>
+                  <span><strong style={{ color: fillColor(selectedTrip.fill_pct) }}>{selectedTrip.fill_pct}%</strong> <span className="text-slate-400">rempli</span></span>
+                  {detail?.google_maps_url && (
+                    <a href={detail.google_maps_url} target="_blank" rel="noreferrer"
+                      className="flex items-center gap-1 text-blue-500 hover:text-blue-700 font-medium">
+                      <span className="material-symbols-outlined text-sm">open_in_new</span>Maps
+                    </a>
+                  )}
+                </div>
               </div>
 
-              {/* Bottom: stops list + capacity gauge */}
-              {detail && (
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Stops sequence */}
-                  <div className="bg-white rounded-xl border border-slate-100 p-4">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-                      Séquence des arrêts ({(detail.waypoints?.length ?? 0) + 2})
-                    </p>
-                    <div className="flex flex-col gap-2">
-                      {/* Start */}
-                      {detail.start_point && (
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[9px] font-black shrink-0">▶</div>
-                          <div>
-                            <p className="text-xs font-semibold text-slate-700">{detail.start_point.label}</p>
-                            <p className="text-[10px] text-slate-400">Départ · {selectedTrip.heure_depart}</p>
-                          </div>
-                        </div>
-                      )}
-                      {/* Waypoints */}
-                      {detail.waypoints.map((wp, i) => (
-                        <div key={i} className="flex items-center gap-2.5 ml-1">
-                          <div className="w-1 h-4 bg-slate-200 rounded ml-2.5" />
-                          <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-[9px] font-black shrink-0">{i + 1}</div>
-                          <p className="text-xs text-slate-600 truncate">{wp.label}</p>
-                          {wp.lat ? <span className="text-[9px] text-emerald-400 shrink-0">●</span> : <span className="text-[9px] text-slate-300 shrink-0">○</span>}
-                        </div>
-                      ))}
-                      {/* End */}
-                      {detail.end_point && (
-                        <div className="flex items-center gap-2.5 mt-1">
-                          <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-[9px] font-black shrink-0">⬛</div>
-                          <div>
-                            <p className="text-xs font-semibold text-slate-700">{detail.end_point.label}</p>
-                            <p className="text-[10px] text-slate-400">Arrivée · {selectedTrip.heure_arrivee}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              {/* Map + side panel — fills remaining height */}
+              <div className="flex-1 flex gap-2 min-h-0">
 
-                  {/* Capacity + actions */}
-                  <div className="flex flex-col gap-3">
-                    <div className="bg-white rounded-xl border border-slate-100 p-4">
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Capacité véhicule</p>
+                {/* Map — fills all height */}
+                <div className="relative flex-1 min-h-0">
+                  {detailLoading && (
+                    <div className="absolute inset-0 z-20 bg-white/80 rounded-xl flex items-center justify-center">
+                      <span className="material-symbols-outlined text-3xl animate-spin text-blue-500">progress_activity</span>
+                    </div>
+                  )}
+                  <MapView center={mapCenter} zoom={mapZoom} height="100%" className="rounded-xl h-full">
+                    {detail && (
+                      <>
+                        {polylineCoords.length >= 2 && (
+                          <Polyline path={polylineCoords} strokeColor="#3b82f6" strokeOpacity={0.85} strokeWeight={4} />
+                        )}
+                        {detail.start_point?.lat && detail.start_point.lng && (
+                          <AdvancedMarker
+                            position={{ lat: detail.start_point.lat, lng: detail.start_point.lng }}
+                            onClick={() => setOpenInfoId(openInfoId === 'start' ? null : 'start')}
+                          >
+                            <StopPin index={0} label={detail.start_point.label || ''} type="start" />
+                            {openInfoId === 'start' && (
+                              <InfoWindow position={{ lat: detail.start_point.lat, lng: detail.start_point.lng! }} onCloseClick={() => setOpenInfoId(null)}>
+                                <div className="text-xs"><p className="font-bold text-emerald-700">Départ</p><p>{detail.start_point.label}</p><p className="text-slate-400 mt-1">{selectedTrip.heure_depart}</p></div>
+                              </InfoWindow>
+                            )}
+                          </AdvancedMarker>
+                        )}
+                        {detail.waypoints.map((wp, i) => wp.lat && wp.lng ? (
+                          <AdvancedMarker key={`wp-${i}`} position={{ lat: wp.lat, lng: wp.lng }}
+                            onClick={() => setOpenInfoId(openInfoId === `wp-${i}` ? null : `wp-${i}`)}>
+                            <StopPin index={i + 1} label={wp.label} type="stop" />
+                            {openInfoId === `wp-${i}` && (
+                              <InfoWindow position={{ lat: wp.lat, lng: wp.lng! }} onCloseClick={() => setOpenInfoId(null)}>
+                                <div className="text-xs"><p className="font-bold text-blue-700">Arrêt {i + 1}</p><p>{wp.label}</p></div>
+                              </InfoWindow>
+                            )}
+                          </AdvancedMarker>
+                        ) : null)}
+                        {detail.end_point?.lat && detail.end_point.lng && (
+                          <AdvancedMarker
+                            position={{ lat: detail.end_point.lat, lng: detail.end_point.lng }}
+                            onClick={() => setOpenInfoId(openInfoId === 'end' ? null : 'end')}
+                          >
+                            <StopPin index={-1} label={detail.end_point.label || ''} type="end" />
+                            {openInfoId === 'end' && (
+                              <InfoWindow position={{ lat: detail.end_point.lat, lng: detail.end_point.lng! }} onCloseClick={() => setOpenInfoId(null)}>
+                                <div className="text-xs"><p className="font-bold text-red-600">Arrivée</p><p>{detail.end_point.label}</p><p className="text-slate-400 mt-1">{selectedTrip.heure_arrivee}</p></div>
+                              </InfoWindow>
+                            )}
+                          </AdvancedMarker>
+                        )}
+                      </>
+                    )}
+                  </MapView>
+                </div>
+
+                {/* Side panel: stops sequence + capacity — same height as map, internal scroll */}
+                {detail && (
+                  <div className="w-60 shrink-0 flex flex-col gap-2 overflow-y-auto">
+                    {/* Capacity gauge */}
+                    <div className="bg-white rounded-xl border border-slate-100 p-3 shrink-0">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Capacité</p>
                       <CapacityGauge
                         fill_pct={selectedTrip.fill_pct}
                         capacity={selectedTrip.capacity}
                         passengers={selectedTrip.estimated_passengers}
                       />
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-100 p-4 flex flex-col gap-2">
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Informations circuit</p>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div><span className="text-slate-400">Secteur</span><p className="font-semibold">{selectedTrip.secteur || '—'}</p></div>
-                        <div><span className="text-slate-400">Entité</span><p className="font-semibold truncate">{selectedTrip.entite || '—'}</p></div>
-                        <div><span className="text-slate-400">Circuit</span><p className="font-mono text-[10px] truncate">{selectedTrip.arrets_circuit || '—'}</p></div>
-                        <div><span className="text-slate-400">Durée</span><p className="font-semibold">{selectedTrip.duree_trajet_min ? `${Math.floor(selectedTrip.duree_trajet_min / 60)}h${String(selectedTrip.duree_trajet_min % 60).padStart(2,'0')}` : '—'}</p></div>
+                    {/* Circuit info */}
+                    <div className="bg-white rounded-xl border border-slate-100 p-3 shrink-0">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Circuit</p>
+                      <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                        <div><p className="text-slate-400">Secteur</p><p className="font-semibold">{selectedTrip.secteur || '—'}</p></div>
+                        <div><p className="text-slate-400">Entité</p><p className="font-semibold truncate">{selectedTrip.entite || '—'}</p></div>
+                        <div><p className="text-slate-400">T.KM</p><p className="font-semibold">{selectedTrip.t_km != null ? `${selectedTrip.t_km} km` : '—'}</p></div>
+                        <div><p className="text-slate-400">Coût/j</p><p className="font-semibold">{selectedTrip.estimated_cost_mad} MAD</p></div>
+                        <div className="col-span-2"><p className="text-slate-400">Code circuit</p><p className="font-mono text-[10px] truncate">{selectedTrip.arrets_circuit || '—'}</p></div>
                       </div>
-                      {detail.google_maps_url && (
-                        <a href={detail.google_maps_url} target="_blank" rel="noreferrer"
-                          className="mt-2 flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 font-medium">
-                          <span className="material-symbols-outlined text-sm">open_in_new</span>
-                          Ouvrir l'itinéraire Google Maps
-                        </a>
-                      )}
+                    </div>
+                    {/* Stops sequence */}
+                    <div className="bg-white rounded-xl border border-slate-100 p-3 flex-1">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                        Arrêts ({(detail.waypoints?.length ?? 0) + 2})
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {detail.start_point && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[8px] font-black shrink-0">▶</div>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-semibold text-slate-700 truncate">{detail.start_point.label}</p>
+                              <p className="text-[9px] text-slate-400">{selectedTrip.heure_depart}</p>
+                            </div>
+                          </div>
+                        )}
+                        {detail.waypoints.map((wp, i) => (
+                          <div key={i} className="flex items-center gap-2 ml-0.5">
+                            <div className="w-1 h-3 bg-slate-200 rounded ml-2" />
+                            <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[8px] font-black shrink-0">{i + 1}</div>
+                            <div className="flex items-center gap-1 min-w-0">
+                              <p className="text-[11px] text-slate-600 truncate">{wp.label}</p>
+                              {wp.lat ? <span className="text-[8px] text-emerald-400 shrink-0">●</span> : <span className="text-[8px] text-slate-300 shrink-0">○</span>}
+                            </div>
+                          </div>
+                        ))}
+                        {detail.end_point && (
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white text-[8px] font-black shrink-0">■</div>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-semibold text-slate-700 truncate">{detail.end_point.label}</p>
+                              <p className="text-[9px] text-slate-400">{selectedTrip.heure_arrivee}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </>
           )}
         </div>
