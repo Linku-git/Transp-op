@@ -5,6 +5,12 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MapPicker } from '@/components/maps/MapPicker';
 import { ShiftsEditorTable } from '@/components/shifts/ShiftsEditorTable';
+import {
+  WorkingDayRangePicker,
+  workingDaysToRange,
+  rangeToWorkingDays,
+  rangeToDaysPerWeek,
+} from '@/components/ui/WorkingDayRangePicker';
 import type { SiteCreate, SecurityProfile } from '@/types/site';
 
 interface FieldErrors { [field: string]: string; }
@@ -57,6 +63,11 @@ function SelectField({ label, value, onChange, options, error }: {
   );
 }
 
+function parseInitialRange(wd: string | null | undefined): { startIdx: number; endIdx: number } {
+  if (!wd) return { startIdx: 0, endIdx: 4 };
+  return workingDaysToRange(wd);
+}
+
 export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiError }: SiteFormProps) {
   const { t } = useTranslation();
 
@@ -67,8 +78,10 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
   const [lat, setLat] = useState(initialData?.lat ?? 33.57);
   const [lng, setLng] = useState(initialData?.lng ?? -7.59);
 
-  const [workingDays, setWorkingDays] = useState(initialData?.working_days ?? 'Lun-Ven');
-  const [daysPerWeek, setDaysPerWeek] = useState(initialData?.days_per_week ?? 5);
+  const initRange = parseInitialRange(initialData?.working_days);
+  const [startIdx, setStartIdx] = useState(initRange.startIdx);
+  const [endIdx, setEndIdx] = useState(initRange.endIdx);
+
   const [zfeZone, setZfeZone] = useState(initialData?.zfe_zone ?? false);
   const [securityProfile, setSecurityProfile] = useState<SecurityProfile>(initialData?.security_profile ?? 'normal');
   const [contactName, setContactName] = useState(initialData?.contact_name ?? '');
@@ -99,8 +112,8 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
       code: code.trim(), name: name.trim(), address: address.trim(), city: city.trim(),
       lat, lng,
       num_shifts: 1,
-      working_days: workingDays.trim(),
-      days_per_week: daysPerWeek,
+      working_days: rangeToWorkingDays(startIdx, endIdx),
+      days_per_week: rangeToDaysPerWeek(startIdx, endIdx),
       zfe_zone: zfeZone,
       security_profile: securityProfile,
       contact_name: contactName || null,
@@ -112,12 +125,17 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
     await onSubmit(data);
   }, [
     validate, onSubmit, code, name, address, city, lat, lng,
-    workingDays, daysPerWeek, zfeZone, securityProfile,
+    startIdx, endIdx, zfeZone, securityProfile,
     contactName, contactPhone, accessNotes, parkingNotes, observations,
   ]);
 
   const handleMapChange = useCallback((newLat: number, newLng: number) => {
     setLat(newLat); setLng(newLng);
+  }, []);
+
+  const handleRangeChange = useCallback((s: number, e: number) => {
+    setStartIdx(s);
+    setEndIdx(e);
   }, []);
 
   return (
@@ -161,11 +179,28 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
 
       {/* Configuration */}
       <Card title={t('sites.form.section_config', 'Configuration')}>
-        <div className="flex flex-col gap-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input label={t('sites.form.working_days', 'Jours travailles')} value={workingDays} onChange={(e) => setWorkingDays(e.target.value)} placeholder="Lun-Ven" />
-            <Input label={t('sites.form.days_per_week', 'Jours par semaine')} type="number" value={String(daysPerWeek)} onChange={(e) => setDaysPerWeek(parseInt(e.target.value, 10) || 5)} min="1" max="7" />
+        <div className="flex flex-col gap-6">
+
+          {/* Day range picker */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">
+                {t('sites.form.working_days', 'Jours Travaillés')}
+              </label>
+              <span className="text-xs font-bold text-on-surface bg-surface-container px-2.5 py-1 rounded-full">
+                {rangeToDaysPerWeek(startIdx, endIdx)} jour{rangeToDaysPerWeek(startIdx, endIdx) > 1 ? 's' : ''} / semaine
+              </span>
+            </div>
+            <div className="bg-surface-container-low/40 rounded-2xl p-4">
+              <WorkingDayRangePicker
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={handleRangeChange}
+              />
+            </div>
           </div>
+
+          {/* ZFE + Security */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
             <label className="flex items-center gap-3 cursor-pointer select-none py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
               <input type="checkbox" checked={zfeZone} onChange={(e) => setZfeZone(e.target.checked)} className="w-4 h-4 rounded accent-primary" />
