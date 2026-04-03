@@ -230,39 +230,31 @@ async def get_modal_stats(
 ) -> ModalStats:
     """Return modal distribution stats: count per mode with percentage.
 
+    Reads current_transport_mode directly from the employee table.
     Optionally filtered by ``site_id``.
     """
-    conditions = [Employee.tenant_id == current_user.tenant_id]
+    conditions = [Employee.tenant_id == current_user.tenant_id, Employee.active.is_(True)]
     if site_id is not None:
         conditions.append(Employee.site_id == site_id)
 
-    # Total count
-    count_stmt = (
-        select(func.count())
-        .select_from(EmployeeModal)
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
-        .where(*conditions)
-    )
-    total_result = await db.execute(count_stmt)
-    total = total_result.scalar_one()
-
-    # Distribution by primary_mode
+    # Distribution by current_transport_mode (read directly from Employee)
     dist_stmt = (
         select(
-            EmployeeModal.primary_mode,
+            Employee.current_transport_mode,
             func.count().label("cnt"),
         )
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
         .where(*conditions)
-        .group_by(EmployeeModal.primary_mode)
+        .group_by(Employee.current_transport_mode)
         .order_by(func.count().desc())
     )
     dist_result = await db.execute(dist_stmt)
     rows = dist_result.all()
 
+    total = sum(row.cnt for row in rows)
+
     distribution = [
         ModalDistribution(
-            mode=row.primary_mode,
+            mode=row.current_transport_mode or "unknown",
             count=row.cnt,
             percentage=round((row.cnt / total) * 100, 2) if total > 0 else 0.0,
         )
@@ -294,12 +286,11 @@ async def get_shift_analysis(
     stmt = (
         select(
             Employee.shift_time,
-            EmployeeModal.primary_mode,
+            Employee.current_transport_mode,
             func.count().label("cnt"),
         )
-        .join(Employee, EmployeeModal.employee_id == Employee.id)
         .where(*conditions)
-        .group_by(Employee.shift_time, EmployeeModal.primary_mode)
+        .group_by(Employee.shift_time, Employee.current_transport_mode)
         .order_by(Employee.shift_time, func.count().desc())
     )
     result = await db.execute(stmt)
@@ -311,7 +302,7 @@ async def get_shift_analysis(
         shift_key = row.shift_time or "unassigned"
         if shift_key not in shifts:
             shifts[shift_key] = []
-        shifts[shift_key].append({"mode": row.primary_mode, "count": row.cnt})
+        shifts[shift_key].append({"mode": row.current_transport_mode or "unknown", "count": row.cnt})
 
     # Enhanced analytics
     disruptions = await analyze_disruption_vulnerability(

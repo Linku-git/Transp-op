@@ -65,8 +65,8 @@ exposeLocalhost = true
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "redis-server --daemonize yes; export DATABASE_URL='postgresql+asyncpg://postgres:password@helium:5432/heliumdb' DATABASE_URL_SYNC='postgresql+psycopg2://postgres:password@helium:5432/heliumdb' REDIS_URL='redis://localhost:6379/0' SECRET_KEY='replit-dev-secret-change-me-in-production' ENVIRONMENT='production' DEBUG='false' LOG_LEVEL='INFO'; cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 & cd frontend && npx serve dist -l 5000"]
-build = ["bash", "-c", "cd frontend && npm install && npm run build"]
+run = ["bash", "start_production.sh"]
+build = ["bash", "-c", "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt"]
 
 [userenv]
 
