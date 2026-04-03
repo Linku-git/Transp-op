@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
 import { listConfigurationPlans } from '@/api/vehicles';
 import {
-  getFleetAnalysis, runFleetOptimizer,
+  getFleetAnalysis, runFleetOptimizer, generateNewConfig,
   type FleetAnalysis, type OptimizationResult, type OptimizedTrip,
+  type NewConfigResult, type ProposedTrip,
 } from '@/api/transportOptimization';
 import type { ConfigurationPlan } from '@/types/vehicle';
 
@@ -66,8 +67,243 @@ function KpiCard({ label, value, sub, icon, highlight }: { label: string; value:
   );
 }
 
+/* ── New config mode component ───────────────────────────────────────────── */
+function NewConfigMode() {
+  const [targetFill, setTargetFill] = useState(78);
+  const [preferSmaller, setPreferSmaller] = useState(true);
+  const [maxStops, setMaxStops] = useState(8);
+  const [shifts, setShifts] = useState<string[]>(['P1', 'P2', 'N']);
+  const [planName, setPlanName] = useState('Nouvelle configuration 2025');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<NewConfigResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [filterShift, setFilterShift] = useState('');
+  const [filterVehicle, setFilterVehicle] = useState('');
+  const [showTrips, setShowTrips] = useState(false);
+
+  const SHIFTS_ALL = ['P1', 'P2', 'P3', 'N', 'S'];
+
+  const toggleShift = (s: string) => setShifts((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const r = await generateNewConfig({ target_fill: targetFill / 100, prefer_smaller: preferSmaller, max_stops_per_route: maxStops, shifts, plan_name: planName });
+      setResult(r);
+      setShowTrips(false);
+    } catch (e: unknown) {
+      setError((e as Error).message || 'Erreur de génération');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTrips = useMemo(() => {
+    if (!result) return [];
+    return result.trips.filter((t) => {
+      if (filterShift && t.shift !== filterShift) return false;
+      if (filterVehicle && t.vehicle_type !== filterVehicle) return false;
+      return true;
+    });
+  }, [result, filterShift, filterVehicle]);
+
+  const vehicleChartData = result ? Object.entries(result.vehicle_summary).map(([k, v]) => ({ name: k, value: v, color: k === 'AUTOCAR' ? '#3b82f6' : k === 'MINIBUS' ? '#8b5cf6' : '#f59e0b' })) : [];
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* Info banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-start gap-3">
+        <span className="material-symbols-outlined text-blue-500 text-xl mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+        <div>
+          <p className="text-sm font-semibold text-blue-800">Génération depuis les données maîtres</p>
+          <p className="text-xs text-blue-600 mt-0.5">
+            Cette configuration est générée en partant de zéro — en utilisant uniquement les arrêts, employés et véhicules du master data.
+            <span className="ml-1 font-bold text-blue-700">Configuration Initiale 2024 exclue.</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Params wizard */}
+      <div className="bg-white border border-slate-100 rounded-xl p-5">
+        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Paramètres de génération</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-slate-500">Nom du plan</label>
+            <input value={planName} onChange={(e) => setPlanName(e.target.value)}
+              className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 bg-slate-50" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-slate-500">Taux remplissage cible</label>
+            <div className="flex items-center gap-2">
+              <input type="range" min={50} max={95} step={5} value={targetFill}
+                onChange={(e) => setTargetFill(Number(e.target.value))} className="flex-1 accent-blue-600" />
+              <span className="text-sm font-bold text-blue-700 w-10">{targetFill}%</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-slate-500">Arrêts max. par circuit</label>
+            <div className="flex items-center gap-2">
+              <input type="range" min={3} max={15} step={1} value={maxStops}
+                onChange={(e) => setMaxStops(Number(e.target.value))} className="flex-1 accent-blue-600" />
+              <span className="text-sm font-bold text-slate-700 w-6">{maxStops}</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5 col-span-full md:col-span-1">
+            <label className="text-xs font-bold text-slate-500">Shifts à couvrir</label>
+            <div className="flex gap-2 flex-wrap">
+              {SHIFTS_ALL.map((s) => (
+                <button key={s} onClick={() => toggleShift(s)}
+                  className={['px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors', shifts.includes(s) ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-300'].join(' ')}>
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-3 col-span-full md:col-span-1">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <div className={['w-10 h-5 rounded-full relative transition-colors', preferSmaller ? 'bg-blue-600' : 'bg-slate-300'].join(' ')} onClick={() => setPreferSmaller((v) => !v)}>
+                <div className={['absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform', preferSmaller ? 'translate-x-5' : 'translate-x-0.5'].join(' ')} />
+              </div>
+              <span className="text-xs font-bold text-slate-600">Préférer véhicules plus petits</span>
+            </label>
+          </div>
+          <div className="flex items-end col-span-full md:col-span-1">
+            <button onClick={handleGenerate} disabled={loading || shifts.length === 0}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl px-6 py-2.5 text-sm font-semibold transition-colors shadow-sm">
+              {loading ? <><span className="material-symbols-outlined text-base animate-spin">progress_activity</span>Génération…</> : <><span className="material-symbols-outlined text-base">auto_awesome</span>Générer la configuration</>}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {error && <div className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200">{error}</div>}
+
+      {result && (
+        <>
+          {/* KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <KpiCard label="Trajets proposés" value={result.total_proposed_trips} icon="route" />
+            <KpiCard label="Arrêts utilisés" value={result.total_stops_used} icon="location_on" />
+            <KpiCard label="KM journaliers" value={result.total_estimated_km.toLocaleString('fr-MA')} icon="straighten" />
+            <KpiCard label="Coût journalier" value={`${result.total_estimated_daily_cost.toLocaleString('fr-MA')} MAD`} icon="payments" highlight />
+          </div>
+
+          {/* Charts + methodology */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="bg-white rounded-xl border border-slate-100 p-4">
+              <p className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Répartition véhicules</p>
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={vehicleChartData} margin={{ left: -20, right: 0 }}>
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {vehicleChartData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-100 p-4">
+              <p className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Répartition shifts</p>
+              <div className="flex flex-col gap-2 mt-2">
+                {Object.entries(result.shift_summary).map(([shift, count]) => (
+                  <div key={shift} className="flex items-center gap-3">
+                    <span className={['text-[10px] font-bold px-2 py-0.5 rounded-full w-10 text-center', SHIFT_COLOR[shift] ?? 'bg-slate-100 text-slate-500'].join(' ')}>{shift}</span>
+                    <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-blue-500" style={{ width: `${(count / result.total_proposed_trips) * 100}%` }} />
+                    </div>
+                    <span className="text-xs font-mono text-slate-500 w-8 text-right">{count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 text-white flex flex-col gap-3">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Méthodologie IA</p>
+              <p className="text-xs text-slate-300 leading-relaxed">{result.methodology}</p>
+              <div className="mt-auto pt-2 border-t border-slate-700">
+                <p className="text-[10px] text-slate-500">Données exclues</p>
+                <p className="text-xs font-semibold text-amber-400">{result.excluded_plan}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Trip table */}
+          <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trajets proposés ({filteredTrips.length})</p>
+                <select value={filterShift} onChange={(e) => setFilterShift(e.target.value)}
+                  className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-600 appearance-none">
+                  <option value="">Tous shifts</option>
+                  {result.shifts && Object.keys(result.shift_summary).map((s) => <option key={s}>{s}</option>)}
+                </select>
+                <select value={filterVehicle} onChange={(e) => setFilterVehicle(e.target.value)}
+                  className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-600 appearance-none">
+                  <option value="">Tous véhicules</option>
+                  {Object.keys(result.vehicle_summary).map((v) => <option key={v}>{v}</option>)}
+                </select>
+              </div>
+              <button onClick={() => setShowTrips((v) => !v)}
+                className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1 font-medium">
+                <span className="material-symbols-outlined text-sm">{showTrips ? 'expand_less' : 'expand_more'}</span>
+                {showTrips ? 'Réduire' : 'Voir les trajets'}
+              </button>
+            </div>
+
+            {showTrips && (
+              <div className="overflow-y-auto" style={{ maxHeight: 420 }}>
+                <table className="w-full text-xs">
+                  <thead className="bg-slate-50 sticky top-0">
+                    <tr>
+                      {['Zone', 'Shift', 'A/R', 'Arrêts', 'Passagers', 'Véhicule', 'Remplissage', 'KM', 'Coût/jour'].map((h) => (
+                        <th key={h} className="px-3 py-2 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {filteredTrips.slice(0, 200).map((t, i) => (
+                      <tr key={i} className="hover:bg-slate-50/50">
+                        <td className="px-3 py-2 font-medium text-slate-700">{t.zone}</td>
+                        <td className="px-3 py-2">
+                          <span className={['px-1.5 py-0.5 rounded-full font-bold text-[10px]', SHIFT_COLOR[t.shift] ?? 'bg-slate-100 text-slate-500'].join(' ')}>{t.shift}</span>
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className={['px-1.5 py-0.5 rounded-full font-bold text-[10px]', t.aller_retour === 'ALLER' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'].join(' ')}>{t.aller_retour}</span>
+                        </td>
+                        <td className="px-3 py-2 text-slate-500">{t.stop_count} arrêts</td>
+                        <td className="px-3 py-2 font-mono text-slate-700">{t.estimated_passengers}</td>
+                        <td className="px-3 py-2">
+                          <span className={['px-1.5 py-0.5 rounded font-bold text-[10px]', VEHICLE_COLOR[t.vehicle_type] ?? 'bg-slate-100 text-slate-500'].join(' ')}>{t.vehicle_type}</span>
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-1">
+                            <div className="w-12 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                              <div className="h-full rounded-full" style={{ width: `${Math.min(100, t.fill_pct)}%`, backgroundColor: t.fill_pct >= 70 ? '#10b981' : t.fill_pct >= 50 ? '#f59e0b' : '#ef4444' }} />
+                            </div>
+                            <span className="font-mono text-[10px] text-slate-500">{t.fill_pct}%</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 font-mono text-slate-500">{t.estimated_km}</td>
+                        <td className="px-3 py-2 font-mono text-slate-700">{t.estimated_cost_mad.toFixed(0)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {filteredTrips.length > 200 && <p className="text-center py-3 text-xs text-slate-400">+ {filteredTrips.length - 200} trajets supplémentaires (appliquer des filtres pour réduire)</p>}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 /* ── Main component ──────────────────────────────────────────────────────── */
 export function FleetOptimizerSection() {
+  const [mode, setMode] = useState<'optimize' | 'new_config'>('optimize');
   const [plans, setPlans] = useState<ConfigurationPlan[]>([]);
   const [planId, setPlanId] = useState('');
   const [analysis, setAnalysis] = useState<FleetAnalysis | null>(null);
@@ -144,6 +380,26 @@ export function FleetOptimizerSection() {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* ── Mode toggle ─────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-xl p-1.5 self-start">
+        <button
+          onClick={() => setMode('optimize')}
+          className={['flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors', mode === 'optimize' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'].join(' ')}
+        >
+          <span className="material-symbols-outlined text-base">tune</span>
+          Optimiser configuration existante
+        </button>
+        <button
+          onClick={() => setMode('new_config')}
+          className={['flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors', mode === 'new_config' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'].join(' ')}
+        >
+          <span className="material-symbols-outlined text-base">auto_awesome</span>
+          Nouvelle configuration
+        </button>
+      </div>
+
+      {mode === 'new_config' ? <NewConfigMode /> : (
+      <>
       {/* ── Plan + params bar ──────────────────────────────────────────── */}
       <div className="bg-white border border-slate-100 rounded-xl px-4 py-4 flex flex-wrap gap-4 items-end">
         <div className="flex flex-col gap-1 min-w-[200px]">
@@ -381,6 +637,8 @@ export function FleetOptimizerSection() {
             )}
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );

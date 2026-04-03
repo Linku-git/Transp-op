@@ -53,53 +53,91 @@ function setCachedRoute(tripId: string, path: google.maps.LatLngLiteral[]) {
   try { localStorage.setItem(`route_${tripId}`, JSON.stringify({ path, ts: Date.now() })); } catch { /* storage full */ }
 }
 
-/* ── RouteSnapper: child of MapView (inside APIProvider) ─────────────────── */
+/* ── RouteSnapper: manual-trigger, chunked waypoints, error reporting ────── */
+const MAX_WPS_PER_LEG = 8;
+
 interface RouteSnapperProps {
   tripId: string | null;
   origin: google.maps.LatLngLiteral | null;
   destination: google.maps.LatLngLiteral | null;
   waypoints: google.maps.LatLngLiteral[];
+  trigger: number;
   onRouteReady: (path: google.maps.LatLngLiteral[]) => void;
   onLoading: (v: boolean) => void;
+  onSnapError: (msg: string | null) => void;
 }
-function RouteSnapper({ tripId, origin, destination, waypoints, onRouteReady, onLoading }: RouteSnapperProps) {
+
+function RouteSnapper({ tripId, origin, destination, waypoints, trigger, onRouteReady, onLoading, onSnapError }: RouteSnapperProps) {
   const routesLib = useMapsLibrary('routes');
-  const prevTripId = useRef<string | null>(null);
+  const lastTriggerRef = useRef(0);
+  const runningRef = useRef(false);
 
   useEffect(() => {
-    if (!routesLib || !tripId || !origin || !destination) return;
-    if (prevTripId.current === tripId) return;
-    prevTripId.current = tripId;
-
-    // Check cache first
-    const cached = getCachedRoute(tripId);
-    if (cached) { onRouteReady(cached); return; }
-
+    if (!routesLib || !tripId || !origin || !destination || trigger === 0) return;
+    if (lastTriggerRef.current === trigger) return;
+    if (runningRef.current) return;
+    lastTriggerRef.current = trigger;
+    runningRef.current = true;
     onLoading(true);
-    const svc = new routesLib.DirectionsService();
-    svc.route(
-      {
-        origin,
-        destination,
-        waypoints: waypoints.map((wp) => ({ location: wp as google.maps.LatLngLiteral, stopover: false })),
-        travelMode: routesLib.TravelMode.DRIVING,
-        optimizeWaypoints: false,
-      },
-      (result, status) => {
-        onLoading(false);
-        if (status === 'OK' && result?.routes[0]) {
-          const overview = result.routes[0].overview_path;
-          const path = overview.map((pt) => ({ lat: pt.lat(), lng: pt.lng() }));
-          setCachedRoute(tripId, path);
-          onRouteReady(path);
-        } else {
-          // Fallback to straight-line if Directions API fails
-          const fallback: google.maps.LatLngLiteral[] = [origin, ...waypoints, destination];
-          onRouteReady(fallback);
-        }
+    onSnapError(null);
+
+    // Build route segments (chunk waypoints, max MAX_WPS_PER_LEG per DirectionsService call)
+    type Pt = google.maps.LatLngLiteral;
+    const allWps = waypoints;
+    const segments: { orig: Pt; dest: Pt; wps: Pt[] }[] = [];
+
+    if (allWps.length <= MAX_WPS_PER_LEG) {
+      segments.push({ orig: origin, dest: destination, wps: allWps });
+    } else {
+      // Build multi-leg: split waypoints into chunks, each leg is consecutive stops
+      const allPoints: Pt[] = [origin, ...allWps, destination];
+      for (let i = 0; i < allPoints.length - 1; i += MAX_WPS_PER_LEG) {
+        const slice = allPoints.slice(i, i + MAX_WPS_PER_LEG + 1);
+        segments.push({ orig: slice[0], dest: slice[slice.length - 1], wps: slice.slice(1, -1) });
       }
-    );
-  }, [routesLib, tripId, origin, destination, waypoints, onRouteReady, onLoading]);
+    }
+
+    const svc = new routesLib.DirectionsService();
+    let fullPath: Pt[] = [];
+    let segIdx = 0;
+
+    function runSeg() {
+      if (segIdx >= segments.length) {
+        setCachedRoute(tripId!, fullPath);
+        onRouteReady(fullPath);
+        onLoading(false);
+        runningRef.current = false;
+        return;
+      }
+      const { orig, dest, wps } = segments[segIdx++];
+      svc.route(
+        {
+          origin: orig,
+          destination: dest,
+          waypoints: wps.map((wp) => ({ location: wp, stopover: true })),
+          travelMode: routesLib.TravelMode.DRIVING,
+          optimizeWaypoints: false,
+        },
+        (result, status) => {
+          if (status === 'OK' && result?.routes[0]) {
+            const path = result.routes[0].overview_path.map((pt) => ({ lat: pt.lat(), lng: pt.lng() }));
+            fullPath = [...fullPath, ...path];
+            runSeg();
+          } else {
+            const msg = status === 'REQUEST_DENIED'
+              ? 'Directions API non autorisée — vérifiez la clé Google Maps'
+              : status === 'ZERO_RESULTS'
+              ? 'Aucun itinéraire routier trouvé pour ce trajet'
+              : `Erreur API: ${status}`;
+            onSnapError(msg);
+            onLoading(false);
+            runningRef.current = false;
+          }
+        }
+      );
+    }
+    runSeg();
+  }, [routesLib, tripId, trigger]);
 
   return null;
 }
@@ -191,6 +229,8 @@ export function RouteViewerSection() {
   const [openInfoId, setOpenInfoId] = useState<string | null>(null);
   const [roadPath, setRoadPath] = useState<google.maps.LatLngLiteral[]>([]);
   const [dirLoading, setDirLoading] = useState(false);
+  const [snapTrigger, setSnapTrigger] = useState(0);
+  const [snapError, setSnapError] = useState<string | null>(null);
 
   // Filters
   const [shift, setShift] = useState('');
@@ -239,12 +279,22 @@ export function RouteViewerSection() {
     setDetail(null);
     setRoadPath([]);
     setDirLoading(false);
+    setSnapTrigger(0);
+    setSnapError(null);
     try {
       setDetail(await getTripDetail(trip.id));
     } finally {
       setDetailLoading(false);
     }
   }, []);
+
+  const handleCalculateRoute = useCallback(() => {
+    if (!detail) return;
+    setRoadPath([]);
+    setSnapError(null);
+    if (selectedTrip?.id) localStorage.removeItem(`route_${selectedTrip.id}`);
+    setSnapTrigger((t) => t + 1);
+  }, [detail, selectedTrip]);
 
   const resetPage = () => setPage(1);
 
@@ -268,10 +318,21 @@ export function RouteViewerSection() {
   const mapZoom = polylineCoords.length >= 2 ? 11 : 10;
 
   // Derived snap inputs
-  const snapOrigin = useMemo(() => detail?.start_point?.lat && detail.start_point.lng
-    ? { lat: detail.start_point.lat, lng: detail.start_point.lng } : null, [detail]);
-  const snapDest = useMemo(() => detail?.end_point?.lat && detail.end_point.lng
-    ? { lat: detail.end_point.lat, lng: detail.end_point.lng } : null, [detail]);
+  const snapOrigin = useMemo(() => {
+    if (!detail) return null;
+    if (detail.start_point?.lat && detail.start_point.lng)
+      return { lat: detail.start_point.lat, lng: detail.start_point.lng };
+    const first = detail.waypoints.find((wp) => wp.lat && wp.lng);
+    return first ? { lat: first.lat!, lng: first.lng! } : null;
+  }, [detail]);
+  const snapDest = useMemo(() => {
+    if (!detail) return null;
+    if (detail.end_point?.lat && detail.end_point.lng)
+      return { lat: detail.end_point.lat, lng: detail.end_point.lng };
+    const wps = detail.waypoints.filter((wp) => wp.lat && wp.lng);
+    if (wps.length > 0) return { lat: wps[wps.length - 1].lat!, lng: wps[wps.length - 1].lng! };
+    return null;
+  }, [detail]);
   const snapWaypoints = useMemo(() =>
     detail?.waypoints.filter((wp) => wp.lat && wp.lng).map((wp) => ({ lat: wp.lat!, lng: wp.lng! })) ?? [],
     [detail]);
@@ -410,16 +471,32 @@ export function RouteViewerSection() {
                   <span><span className="text-slate-400">Dist.</span> <strong>{selectedTrip.km != null ? `${selectedTrip.km} km` : '—'}</strong></span>
                   <span><span className="text-slate-400">Rot.</span> <strong>{selectedTrip.rot ?? '—'}</strong></span>
                   <span><strong style={{ color: fillColor(selectedTrip.fill_pct) }}>{selectedTrip.fill_pct}%</strong> <span className="text-slate-400">rempli</span></span>
+
+                  {/* Snap status */}
                   {dirLoading && (
-                    <span className="flex items-center gap-1 text-slate-400 text-[10px]">
-                      <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>Snap…
+                    <span className="flex items-center gap-1 text-blue-500 text-[10px] font-medium animate-pulse">
+                      <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>Calcul itinéraire…
                     </span>
                   )}
                   {!dirLoading && roadPath.length >= 2 && (
-                    <span className="flex items-center gap-1 text-emerald-600 text-[10px] font-medium">
-                      <span className="material-symbols-outlined text-sm">alt_route</span>Snappé route
+                    <span className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 rounded-full px-2 py-0.5">
+                      <span className="material-symbols-outlined text-sm">alt_route</span>Itinéraire GPS actif
                     </span>
                   )}
+
+                  {/* Calculer l'itinéraire button */}
+                  {!detailLoading && detail && snapOrigin && snapDest && (
+                    <button
+                      onClick={handleCalculateRoute}
+                      disabled={dirLoading}
+                      className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg px-3 py-1.5 text-[11px] font-bold transition-colors shadow-sm"
+                      title="Calculer l'itinéraire en suivant les routes réelles (Google Maps Directions)"
+                    >
+                      <span className="material-symbols-outlined text-sm">navigation</span>
+                      Calculer l'itinéraire
+                    </button>
+                  )}
+
                   {activePath.length >= 2 && (
                     <button
                       onClick={() => downloadKml(selectedTrip!.id, activePath, `Poste ${selectedTrip!.poste} – Shift ${selectedTrip!.shift}`)}
@@ -438,6 +515,15 @@ export function RouteViewerSection() {
                 </div>
               </div>
 
+              {/* Snap error banner */}
+              {snapError && (
+                <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-xs text-amber-800 shrink-0">
+                  <span className="material-symbols-outlined text-base text-amber-500">warning</span>
+                  <span>{snapError}</span>
+                  <span className="ml-1 text-amber-500">— L'itinéraire en ligne droite est affiché à la place.</span>
+                </div>
+              )}
+
               {/* Map + side panel — fills remaining height */}
               <div className="flex-1 flex gap-2 min-h-0">
 
@@ -454,8 +540,10 @@ export function RouteViewerSection() {
                       origin={snapOrigin}
                       destination={snapDest}
                       waypoints={snapWaypoints}
+                      trigger={snapTrigger}
                       onRouteReady={handleRouteReady}
                       onLoading={handleDirLoading}
+                      onSnapError={setSnapError}
                     />
                     {detail && (
                       <>

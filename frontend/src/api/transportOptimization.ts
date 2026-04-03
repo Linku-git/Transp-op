@@ -81,3 +81,27 @@ export async function getTripDetail(tripId: string): Promise<TripDetail> {
   const r = await api.get<TripDetail>(`${BASE}/trip/${tripId}`);
   return r.data;
 }
+
+export interface ProposedTrip {
+  zone: string; shift: string; aller_retour: string;
+  stops: string[]; stop_count: number;
+  estimated_passengers: number; vehicle_type: string;
+  capacity: number; fill_pct: number;
+  origin_coords: { lat: number; lng: number } | null;
+  dest_site: string; dest_coords: { lat: number; lng: number } | null;
+  estimated_km: number; estimated_cost_mad: number; savings_vs_autocar: number;
+}
+export interface NewConfigResult {
+  plan_name: string; total_proposed_trips: number;
+  total_employees_covered: number; total_stops_used: number;
+  vehicle_summary: Record<string, number>; shift_summary: Record<string, number>;
+  total_estimated_km: number; total_estimated_daily_cost: number;
+  trips: ProposedTrip[]; methodology: string; excluded_plan: string;
+}
+export async function generateNewConfig(params: {
+  target_fill?: number; prefer_smaller?: boolean;
+  max_stops_per_route?: number; shifts?: string[]; plan_name?: string;
+}): Promise<NewConfigResult> {
+  const r = await api.post<NewConfigResult>(`${BASE}/generate-new-config`, params);
+  return r.data;
+}

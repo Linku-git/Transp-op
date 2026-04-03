@@ -16,7 +16,9 @@ from app.middleware.rbac import require_role
 from app.models.auth import User
 from app.models.configuration_plan import ConfigurationPlan
 from app.models.configuration_transport import ConfigurationTransport
+from app.models.employee import Employee
 from app.models.point_arret import PointArret
+from app.models.site import Site
 from app.models.vehicle import Vehicle
 
 logger = logging.getLogger(__name__)
@@ -809,4 +811,244 @@ async def get_trip_detail(
         end_point=end_point,
         waypoints=waypoints,
         google_maps_url=maps_url,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GENERATE NEW CONFIGURATION FROM MASTER DATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+class NewConfigParams(BaseModel):
+    target_fill: float = 0.75
+    prefer_smaller: bool = True
+    max_stops_per_route: int = 8
+    shifts: list[str] = ["P1", "P2", "N"]
+    plan_name: str = "Nouvelle configuration"
+
+class ProposedTrip(BaseModel):
+    zone: str
+    shift: str
+    aller_retour: str
+    stops: list[str]
+    stop_count: int
+    estimated_passengers: int
+    vehicle_type: str
+    capacity: int
+    fill_pct: float
+    origin_coords: dict[str, float] | None
+    dest_site: str
+    dest_coords: dict[str, float] | None
+    estimated_km: float
+    estimated_cost_mad: float
+    savings_vs_autocar: float
+
+class NewConfigResult(BaseModel):
+    plan_name: str
+    total_proposed_trips: int
+    total_employees_covered: int
+    total_stops_used: int
+    vehicle_summary: dict[str, int]
+    shift_summary: dict[str, int]
+    total_estimated_km: float
+    total_estimated_daily_cost: float
+    trips: list[ProposedTrip]
+    methodology: str
+    excluded_plan: str
+
+def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    R = 6371.0
+    dlat = math.radians(lat2 - lat1)
+    dlng = math.radians(lng2 - lng1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlng / 2) ** 2
+    return R * 2 * math.asin(math.sqrt(a))
+
+def _select_vehicle(passengers: int, prefer_smaller: bool) -> tuple[str, int]:
+    if prefer_smaller:
+        if passengers <= CAPACITY["MINICAR"]:
+            return "MINICAR", CAPACITY["MINICAR"]
+        if passengers <= CAPACITY["MINIBUS"]:
+            return "MINIBUS", CAPACITY["MINIBUS"]
+        return "AUTOCAR", CAPACITY["AUTOCAR"]
+    else:
+        if passengers <= CAPACITY["MINIBUS"]:
+            return "MINIBUS", CAPACITY["MINIBUS"]
+        return "AUTOCAR", CAPACITY["AUTOCAR"]
+
+def _cluster_stops_greedy(stops: list[Any], max_per_cluster: int) -> list[list[Any]]:
+    if not stops:
+        return []
+    remaining = list(stops)
+    clusters: list[list[Any]] = []
+    while remaining:
+        seed = remaining.pop(0)
+        cluster = [seed]
+        if not (seed.lat and seed.lng):
+            clusters.append(cluster)
+            continue
+        # Add nearest stops until cluster full
+        with_coords = [(s, _haversine_km(seed.lat, seed.lng, s.lat, s.lng))
+                       for s in remaining if s.lat and s.lng]
+        with_coords.sort(key=lambda x: x[1])
+        for s, _ in with_coords:
+            if len(cluster) >= max_per_cluster:
+                break
+            cluster.append(s)
+            remaining.remove(s)
+        clusters.append(cluster)
+    return clusters
+
+@router.post("/generate-new-config", response_model=NewConfigResult)
+async def generate_new_config(
+    params: NewConfigParams,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_role("admin", "manager", "analyst")),
+):
+    tid = current_user.tenant_id
+
+    # 1. Get all active stops
+    stops_res = await db.execute(
+        select(PointArret)
+        .where(PointArret.tenant_id == tid, PointArret.is_active.is_(True))
+        .order_by(PointArret.ville.nullslast(), PointArret.nom)
+    )
+    all_stops = list(stops_res.scalars().all())
+
+    # 2. Get active employees (for demand estimation)
+    emp_res = await db.execute(
+        select(Employee)
+        .where(Employee.tenant_id == tid, Employee.active.is_(True),
+               Employee.transport_required.is_(True))
+    )
+    employees = list(emp_res.scalars().all())
+
+    # 3. Get sites (destinations)
+    sites_res = await db.execute(
+        select(Site).where(Site.tenant_id == tid).order_by(Site.name)
+    )
+    all_sites = list(sites_res.scalars().all())
+    main_site = all_sites[0] if all_sites else None
+
+    # 4. Get usage count per stop from existing config data (for demand estimation)
+    usage_stmt = (
+        select(ConfigurationTransport.arrets_circuit, func.count().label("cnt"))
+        .where(ConfigurationTransport.tenant_id == tid)
+        .group_by(ConfigurationTransport.arrets_circuit)
+    )
+    usage_res = await db.execute(usage_stmt)
+    usage_rows = usage_res.fetchall()
+
+    # Build stop → usage count dict
+    stop_usage: dict[str, int] = {}
+    for row in usage_rows:
+        if not row[0]:
+            continue
+        for name in row[0].replace(";", ",").split(","):
+            n = name.strip()
+            if n:
+                stop_usage[n] = stop_usage.get(n, 0) + row[1]
+
+    # 5. For each employee with coords, find nearest stop
+    stop_demand: dict[str, int] = {}  # stop nom → demand count
+    for emp in employees:
+        if not emp.lat or not emp.lng:
+            continue
+        best_stop = None
+        best_dist = float("inf")
+        for s in all_stops:
+            if not s.lat or not s.lng:
+                continue
+            d = _haversine_km(emp.lat, emp.lng, s.lat, s.lng)
+            if d < best_dist:
+                best_dist = d
+                best_stop = s
+        if best_stop and best_dist < 3.0:  # within 3km
+            stop_demand[best_stop.nom] = stop_demand.get(best_stop.nom, 0) + 1
+
+    # 6. Group stops by city
+    city_stops: dict[str, list[Any]] = {}
+    for s in all_stops:
+        city = s.ville or "Inconnu"
+        city_stops.setdefault(city, []).append(s)
+
+    # 7. For each city, cluster stops into routes
+    proposed_trips: list[ProposedTrip] = []
+    total_employees_covered = 0
+    total_km = 0.0
+
+    for city, stops_in_city in city_stops.items():
+        geo_clusters = _cluster_stops_greedy(stops_in_city, params.max_stops_per_route)
+
+        for ci, cluster in enumerate(geo_clusters):
+            # Estimate passengers: prefer direct demand if available, else usage-based
+            demand_direct = sum(stop_demand.get(s.nom, 0) for s in cluster)
+            demand_usage = sum(min(stop_usage.get(s.nom, 0), 8) for s in cluster)
+            estimated_passengers = demand_direct if demand_direct > 0 else max(demand_usage, 3)
+
+            zone_name = f"{city} Z{ci + 1}"
+            stop_names = [s.nom for s in cluster]
+
+            # Origin = first stop in cluster (closest to city center)
+            origin = next((s for s in cluster if s.lat and s.lng), None)
+            origin_coords = {"lat": origin.lat, "lng": origin.lng} if origin else None
+
+            dest_site = main_site.name if main_site else (all_sites[0].name if all_sites else "Site principal")
+            dest_coords = {"lat": main_site.lat, "lng": main_site.lng} if main_site and main_site.lat else None
+
+            # Estimate km
+            route_km = 15.0  # default
+            if origin and main_site and main_site.lat:
+                route_km = round(_haversine_km(origin.lat, origin.lng, main_site.lat, main_site.lng) * 1.35, 1)
+                route_km = max(route_km, 5.0)
+
+            for shift in params.shifts:
+                for ar in ["ALLER", "RETOUR"]:
+                    vtype, cap = _select_vehicle(estimated_passengers, params.prefer_smaller)
+                    fill_pct = round((estimated_passengers / cap) * 100, 1)
+
+                    # Cost calculation
+                    autocar_cost = route_km * COST_PER_KM["AUTOCAR"]
+                    actual_cost = route_km * COST_PER_KM[vtype]
+                    savings = round(autocar_cost - actual_cost, 2)
+
+                    proposed_trips.append(ProposedTrip(
+                        zone=zone_name,
+                        shift=shift,
+                        aller_retour=ar,
+                        stops=stop_names,
+                        stop_count=len(stop_names),
+                        estimated_passengers=estimated_passengers,
+                        vehicle_type=vtype,
+                        capacity=cap,
+                        fill_pct=fill_pct,
+                        origin_coords=origin_coords,
+                        dest_site=dest_site,
+                        dest_coords=dest_coords,
+                        estimated_km=route_km,
+                        estimated_cost_mad=round(actual_cost, 2),
+                        savings_vs_autocar=savings,
+                    ))
+
+            total_employees_covered += demand_direct
+            total_km += route_km * len(params.shifts)
+
+    vehicle_summary: dict[str, int] = {}
+    shift_summary: dict[str, int] = {}
+    for t in proposed_trips:
+        vehicle_summary[t.vehicle_type] = vehicle_summary.get(t.vehicle_type, 0) + 1
+        shift_summary[t.shift] = shift_summary.get(t.shift, 0) + 1
+
+    total_cost = sum(t.estimated_cost_mad for t in proposed_trips)
+
+    return NewConfigResult(
+        plan_name=params.plan_name,
+        total_proposed_trips=len(proposed_trips),
+        total_employees_covered=total_employees_covered,
+        total_stops_used=len(all_stops),
+        vehicle_summary=vehicle_summary,
+        shift_summary=shift_summary,
+        total_estimated_km=round(total_km, 1),
+        total_estimated_daily_cost=round(total_cost, 2),
+        trips=proposed_trips,
+        methodology="Clustering géographique des arrêts par ville + estimation de la demande par employés géolocalisés (algorithme glouton VRP simplifié)",
+        excluded_plan="Configuration Initiale 2024",
     )
