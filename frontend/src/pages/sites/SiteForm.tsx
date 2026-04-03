@@ -1,4 +1,4 @@
-import { useCallback, useState, type FormEvent } from 'react';
+import { useCallback, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -68,6 +68,37 @@ function parseInitialRange(wd: string | null | undefined): { startIdx: number; e
   return workingDaysToRange(wd);
 }
 
+function parseGoogleMapsUrl(raw: string): { lat: number; lng: number } | null {
+  const s = raw.trim();
+  try {
+    // @lat,lng pattern — most share links use this
+    const atMatch = s.match(/@(-?\d+\.?\d+),(-?\d+\.?\d+)/);
+    if (atMatch) {
+      return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) };
+    }
+    // Query param: q= ll= query= center=
+    const u = new URL(s);
+    for (const param of ['q', 'll', 'query', 'center']) {
+      const val = u.searchParams.get(param);
+      if (val) {
+        const parts = val.split(',');
+        if (parts.length >= 2) {
+          const lat = parseFloat(parts[0]);
+          const lng = parseFloat(parts[1]);
+          if (!isNaN(lat) && !isNaN(lng)) return { lat, lng };
+        }
+      }
+    }
+  } catch {
+    // Not a valid URL — try bare "lat,lng" string
+  }
+  const coordMatch = s.match(/(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)/);
+  if (coordMatch) {
+    return { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]) };
+  }
+  return null;
+}
+
 export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiError }: SiteFormProps) {
   const { t } = useTranslation();
 
@@ -77,6 +108,10 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
   const [city, setCity] = useState(initialData?.city ?? '');
   const [lat, setLat] = useState(initialData?.lat ?? 33.57);
   const [lng, setLng] = useState(initialData?.lng ?? -7.59);
+
+  const [mapsLink, setMapsLink] = useState('');
+  const [mapsError, setMapsError] = useState('');
+  const mapsInputRef = useRef<HTMLInputElement>(null);
 
   const initRange = parseInitialRange(initialData?.working_days);
   const [startIdx, setStartIdx] = useState(initRange.startIdx);
@@ -96,13 +131,12 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
     const e: FieldErrors = {};
     if (!code.trim()) e.code = t('sites.form.error_required', 'Ce champ est requis');
     if (!name.trim()) e.name = t('sites.form.error_required', 'Ce champ est requis');
-    if (!address.trim()) e.address = t('sites.form.error_required', 'Ce champ est requis');
     if (!city.trim()) e.city = t('sites.form.error_required', 'Ce champ est requis');
     if (lat < -90 || lat > 90) e.lat = t('sites.form.error_lat', 'Latitude entre -90 et 90');
     if (lng < -180 || lng > 180) e.lng = t('sites.form.error_lng', 'Longitude entre -180 et 180');
     setErrors(e);
     return Object.keys(e).length === 0;
-  }, [code, name, address, city, lat, lng, t]);
+  }, [code, name, city, lat, lng, t]);
 
   const handleSubmit = useCallback(async (ev: FormEvent) => {
     ev.preventDefault();
@@ -138,8 +172,21 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
     setEndIdx(e);
   }, []);
 
+  const handleApplyMapsLink = useCallback(() => {
+    const result = parseGoogleMapsUrl(mapsLink);
+    if (result) {
+      setLat(parseFloat(result.lat.toFixed(6)));
+      setLng(parseFloat(result.lng.toFixed(6)));
+      setMapsError('');
+      setMapsLink('');
+      mapsInputRef.current?.blur();
+    } else {
+      setMapsError(t('sites.form.maps_link_error', 'Lien non reconnu. Essayez un lien Google Maps complet.'));
+    }
+  }, [mapsLink, t]);
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8" noValidate>
       {apiError && (
         <div className="bg-error-container rounded-xl p-4 flex items-center gap-3">
           <span className="material-symbols-outlined text-error text-lg">error</span>
@@ -158,14 +205,81 @@ export function SiteForm({ initialData, onSubmit, onCancel, isSubmitting, apiErr
       {/* Localisation */}
       <Card title={t('sites.form.section_location', 'Localisation')}>
         <div className="flex flex-col gap-5">
+
+          {/* Address + City */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input label={t('sites.form.address', 'Adresse') + ' *'} value={address} onChange={(e) => setAddress(e.target.value)} error={errors.address} />
-            <Input label={t('sites.form.city', 'Ville') + ' *'} value={city} onChange={(e) => setCity(e.target.value)} error={errors.city} />
+            <Input
+              label={t('sites.form.address', 'Adresse')}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder={t('sites.form.address_placeholder', 'Numéro et rue (optionnel)')}
+            />
+            <Input
+              label={t('sites.form.city', 'Ville') + ' *'}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              error={errors.city}
+              placeholder="Casablanca"
+            />
           </div>
+
+          {/* Google Maps link paste */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-outline font-sans">
+              {t('sites.form.maps_link', 'Lien Google Maps')}
+            </label>
+            <div className="flex gap-2 items-start">
+              <div className="flex-1 flex flex-col gap-1">
+                <div className="flex items-center gap-2 bg-surface-container-high/50 rounded-lg px-3 py-2.5 ring-0 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant/60 shrink-0">location_on</span>
+                  <input
+                    ref={mapsInputRef}
+                    type="text"
+                    value={mapsLink}
+                    onChange={(e) => { setMapsLink(e.target.value); setMapsError(''); }}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleApplyMapsLink())}
+                    placeholder="https://maps.google.com/..."
+                    className="flex-1 bg-transparent text-on-surface font-sans text-sm outline-none placeholder:text-on-surface-variant/40"
+                  />
+                  {mapsLink && (
+                    <button
+                      type="button"
+                      onClick={() => { setMapsLink(''); setMapsError(''); }}
+                      className="text-on-surface-variant/40 hover:text-on-surface-variant transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">close</span>
+                    </button>
+                  )}
+                </div>
+                {mapsError && (
+                  <p className="text-[11px] text-error font-sans flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[12px]">error</span>
+                    {mapsError}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handleApplyMapsLink}
+                disabled={!mapsLink.trim()}
+                className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-sans font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[15px]">my_location</span>
+                {t('sites.form.maps_apply', 'Appliquer')}
+              </button>
+            </div>
+            <p className="text-[10px] text-on-surface-variant/60 font-sans">
+              {t('sites.form.maps_hint', 'Collez un lien Google Maps pour remplir automatiquement les coordonnées.')}
+            </p>
+          </div>
+
+          {/* Lat / Lng */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input label={t('sites.form.lat', 'Latitude') + ' *'} type="number" value={String(lat)} onChange={(e) => setLat(parseFloat(e.target.value) || 0)} error={errors.lat} step="0.000001" min="-90" max="90" />
             <Input label={t('sites.form.lng', 'Longitude') + ' *'} type="number" value={String(lng)} onChange={(e) => setLng(parseFloat(e.target.value) || 0)} error={errors.lng} step="0.000001" min="-180" max="180" />
           </div>
+
+          {/* Map picker */}
           <div className="rounded-xl overflow-hidden">
             <MapPicker lat={lat} lng={lng} onChange={handleMapChange} height="350px" />
           </div>

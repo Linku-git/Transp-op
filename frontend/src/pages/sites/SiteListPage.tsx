@@ -89,6 +89,19 @@ export function SiteListPage() {
   const [importResult, setImportResult] = useState<ImportCSVResult | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
+  const [csvMenuOpen, setCsvMenuOpen] = useState(false);
+  const csvMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!csvMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (csvMenuRef.current && !csvMenuRef.current.contains(e.target as Node)) {
+        setCsvMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [csvMenuOpen]);
 
   useEffect(() => {
     fetchSites({ page, page_size: PAGE_SIZE });
@@ -261,29 +274,52 @@ export function SiteListPage() {
             onChange={handleImportFile}
           />
 
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={() => importFileRef.current?.click()}
-            disabled={isImporting}
-          >
-            <span className="material-symbols-outlined text-base mr-1.5">
-              {isImporting ? 'sync' : 'upload'}
-            </span>
-            {isImporting ? t('common.importing', 'Import...') : t('common.import_csv', 'Import CSV')}
-          </Button>
+          {/* Import / Export dropdown */}
+          <div className="relative" ref={csvMenuRef}>
+            <button
+              type="button"
+              onClick={() => setCsvMenuOpen((o) => !o)}
+              disabled={isImporting || isExporting}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant/40 bg-surface-container-lowest hover:bg-surface-container text-on-surface text-sm font-sans font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              {isImporting || isExporting ? (
+                <span className="material-symbols-outlined text-base animate-spin">sync</span>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-base">upload</span>
+                  <span className="text-on-surface-variant/40">/</span>
+                  <span className="material-symbols-outlined text-base">download</span>
+                </>
+              )}
+              <span className="ml-0.5">
+                {isImporting ? t('common.importing', 'Import...') : isExporting ? t('common.exporting', 'Export...') : t('common.import_export', 'Import / Export')}
+              </span>
+              <span className={`material-symbols-outlined text-base text-on-surface-variant/60 transition-transform ${csvMenuOpen ? 'rotate-180' : ''}`}>
+                expand_more
+              </span>
+            </button>
 
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={handleExportCSV}
-            disabled={isExporting}
-          >
-            <span className="material-symbols-outlined text-base mr-1.5">
-              {isExporting ? 'sync' : 'download'}
-            </span>
-            {isExporting ? t('common.exporting', 'Export...') : t('common.export_csv', 'Export CSV')}
-          </Button>
+            {csvMenuOpen && (
+              <div className="absolute right-0 mt-1.5 w-48 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/20 overflow-hidden z-50 py-1">
+                <button
+                  type="button"
+                  onClick={() => { setCsvMenuOpen(false); importFileRef.current?.click(); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-container text-sm font-sans font-medium text-on-surface transition-colors"
+                >
+                  <span className="material-symbols-outlined text-base text-primary">upload</span>
+                  {t('common.import_csv', 'Import CSV')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setCsvMenuOpen(false); handleExportCSV(); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-container text-sm font-sans font-medium text-on-surface transition-colors"
+                >
+                  <span className="material-symbols-outlined text-base text-primary">download</span>
+                  {t('common.export_csv', 'Export CSV')}
+                </button>
+              </div>
+            )}
+          </div>
 
           <Link to="/sites/new">
             <Button>
