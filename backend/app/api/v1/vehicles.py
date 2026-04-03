@@ -90,9 +90,10 @@ async def list_vehicles(
     pages = max(1, (total + page_size - 1) // page_size)
 
     return {
-        "data": [_vehicle_to_response(v).model_dump(mode="json") for v in vehicles],
+        "items": [_vehicle_to_response(v).model_dump(mode="json") for v in vehicles],
         "total": total,
         "page": page,
+        "page_size": page_size,
         "pages": pages,
     }
 
