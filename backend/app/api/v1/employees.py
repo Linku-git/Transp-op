@@ -108,10 +108,10 @@ async def list_employees(
     pages = max(1, math.ceil(total / page_size))
     offset = (page - 1) * page_size
 
-    # Fetch page with eager-loaded site for site_name
+    # Fetch page with eager-loaded site and point_arret
     stmt = (
         select(Employee)
-        .options(selectinload(Employee.site))
+        .options(selectinload(Employee.site), selectinload(Employee.point_arret))
         .where(*conditions)
         .order_by(Employee.last_name.asc(), Employee.first_name.asc())
         .offset(offset)
@@ -227,7 +227,7 @@ async def get_employee(
     """Get a single employee by UUID, including site name."""
     stmt = (
         select(Employee)
-        .options(selectinload(Employee.site))
+        .options(selectinload(Employee.site), selectinload(Employee.point_arret))
         .where(
             Employee.id == employee_id,
             Employee.tenant_id == current_user.tenant_id,
@@ -355,7 +355,7 @@ async def update_employee(
     """Update an existing employee. Only provided fields are changed."""
     stmt = (
         select(Employee)
-        .options(selectinload(Employee.site))
+        .options(selectinload(Employee.site), selectinload(Employee.point_arret))
         .where(
             Employee.id == employee_id,
             Employee.tenant_id == current_user.tenant_id,

@@ -34,7 +34,7 @@ async def list_points_arret(
     site_id: uuid.UUID | None = Query(default=None),
     is_active: bool | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=50, ge=1, le=200),
+    page_size: int = Query(default=50, ge=1, le=2000),
     current_user: User = Depends(require_role("admin", "drh", "daf", "operateur")),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
