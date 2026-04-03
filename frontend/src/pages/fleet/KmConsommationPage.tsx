@@ -129,7 +129,10 @@ export function KmConsommationPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Type Véhicules & Consommation Gasoil</h1>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-2xl text-primary" style={{ fontVariationSettings: "'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 40" }}>local_gas_station</span>
+            <h1 className="text-2xl font-bold text-on-surface">Type Véhicules & Consommation Gasoil</h1>
+          </div>
           <p className="text-sm text-on-surface-variant mt-0.5">Statistiques par prestataire et type de véhicule</p>
         </div>
         <Button onClick={openCreate}>

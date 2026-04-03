@@ -262,9 +262,12 @@ export function SiteListPage() {
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
-            {t('nav.sites')}
-          </h1>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-3xl text-primary" style={{ fontVariationSettings: "'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 48" }}>location_on</span>
+            <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
+              {t('nav.sites')}
+            </h1>
+          </div>
           <p className="text-sm text-on-surface-variant font-sans mt-1">
             {t('sites.description', 'Gestion et configuration des sites industriels')}
           </p>

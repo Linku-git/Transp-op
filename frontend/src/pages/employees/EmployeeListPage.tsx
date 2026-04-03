@@ -348,9 +348,12 @@ export function EmployeeListPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
-            {t('nav.employees')}
-          </h1>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-3xl text-primary" style={{ fontVariationSettings: "'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 48" }}>group</span>
+            <h1 className="font-sans text-3xl font-black text-on-surface tracking-tight">
+              {t('nav.employees')}
+            </h1>
+          </div>
           <p className="text-sm text-on-surface-variant font-sans mt-1">
             {t('employees.description', 'Gestion et suivi des employes')}
           </p>
