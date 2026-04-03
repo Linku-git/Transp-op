@@ -221,28 +221,33 @@ export function SiteListPage() {
         key: 'actions',
         label: '',
         render: (row) => (
-          <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1 justify-end">
+            {/* Voir — always visible */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate(`/sites/${row.id}`)}
             >
+              <span className="material-symbols-outlined text-[15px] mr-1">visibility</span>
               {t('common.view', 'Voir')}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(`/sites/${row.id}/edit`)}
-            >
-              {t('common.edit')}
-            </Button>
-            <button
-              className="p-1.5 rounded-md hover:bg-surface-container transition-colors"
-              onClick={() => handleDelete(row.id, row.name)}
-              title={t('common.delete')}
-            >
-              <span className="material-symbols-outlined text-base text-on-surface-variant">more_vert</span>
-            </button>
+            {/* Edit + Delete — revealed on row hover */}
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/sites/${row.id}/edit`)}
+              >
+                {t('common.edit')}
+              </Button>
+              <button
+                className="p-1.5 rounded-md hover:bg-error-container/20 hover:text-error transition-colors text-on-surface-variant"
+                onClick={() => handleDelete(row.id, row.name)}
+                title={t('common.delete')}
+              >
+                <span className="material-symbols-outlined text-base">delete</span>
+              </button>
+            </div>
           </div>
         ),
       },
