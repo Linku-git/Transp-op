@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
 ];
 
 const fleetSubItems = [
-  { key: 'fleet-consumption', path: '/fleet/consumption', label: 'Km & Consommation', icon: 'local_gas_station' },
+  { key: 'fleet-consumption', path: '/fleet/consumption', label: 'Type Véhicules & Consommation', icon: 'local_gas_station' },
   { key: 'fleet-stops', path: '/fleet/stops', label: "Points d'Arrêt", icon: 'directions_bus' },
   { key: 'fleet-config', path: '/fleet/config', label: 'Config. Transport', icon: 'settings_applications' },
 ];

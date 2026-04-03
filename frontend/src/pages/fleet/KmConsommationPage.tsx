@@ -129,7 +129,7 @@ export function KmConsommationPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Km & Consommation Gasoil</h1>
+          <h1 className="text-2xl font-bold text-on-surface">Type Véhicules & Consommation Gasoil</h1>
           <p className="text-sm text-on-surface-variant mt-0.5">Statistiques par prestataire et type de véhicule</p>
         </div>
         <Button onClick={openCreate}>
@@ -144,7 +144,7 @@ export function KmConsommationPage() {
           Parc Véhicule
         </Link>
         <Link to="/fleet/consumption" className="text-sm font-medium text-primary border-b-2 border-primary pb-1 px-1">
-          Km & Consommation
+          Type Véhicules & Consommation
         </Link>
         <Link to="/fleet/stops" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
           Points d'Arrêt

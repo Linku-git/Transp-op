@@ -159,7 +159,7 @@ export function PointArretPage() {
           Parc Véhicule
         </Link>
         <Link to="/fleet/consumption" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
-          Km & Consommation
+          Type Véhicules & Consommation
         </Link>
         <Link to="/fleet/stops" className="text-sm font-medium text-primary border-b-2 border-primary pb-1 px-1">
           Points d'Arrêt

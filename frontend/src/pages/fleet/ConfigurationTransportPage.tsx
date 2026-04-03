@@ -152,7 +152,7 @@ export function ConfigurationTransportPage() {
           Parc Véhicule
         </Link>
         <Link to="/fleet/consumption" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
-          Km & Consommation
+          Type Véhicules & Consommation
         </Link>
         <Link to="/fleet/stops" className="text-sm font-medium text-on-surface-variant hover:text-on-surface px-1 pb-1">
           Points d'Arrêt
