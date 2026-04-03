@@ -1,8 +1,10 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { AdvancedMarker, InfoWindow } from '@vis.gl/react-google-maps';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { MapView } from '@/components/maps/MapView';
 import { getStopsAnalysis, type StopStat, type StopsAnalysis } from '@/api/transportOptimization';
+import { listEmployees } from '@/api/employees';
+import type { Employee } from '@/types/employee';
 
 /* ── AI suggestion types ─────────────────────────────────────────────────── */
 type SuggestionType = 'REMOVE' | 'RELOCATE' | 'ADD' | 'MERGE';
@@ -158,6 +160,66 @@ function buildSuggestions(stops: StopStat[]): StopSuggestion[] {
   return suggestions.sort((a, b) => a.priority - b.priority || b.confidence - a.confidence);
 }
 
+/* ── Employee cluster types ──────────────────────────────────────────────── */
+interface EmployeeCluster {
+  id: string;
+  lat: number;
+  lng: number;
+  count: number;
+  busModeCount: number;
+  carModeCount: number;
+  shifts: Record<string, number>;
+  nearestStop: StopStat | null;
+  nearestStopDist: number;
+  coverage: 'covered' | 'partial' | 'uncovered';
+}
+
+const GRID_DEG = 0.018; // ≈ 2 km per cell
+
+function buildEmployeeClusters(employees: Employee[], stops: StopStat[]): EmployeeCluster[] {
+  const grid: Record<string, Employee[]> = {};
+  for (const e of employees) {
+    if (e.lat == null || e.lng == null) continue;
+    const gk = `${Math.round(e.lat / GRID_DEG)}_${Math.round(e.lng / GRID_DEG)}`;
+    (grid[gk] = grid[gk] ?? []).push(e);
+  }
+
+  const withCoords = stops.filter((s) => s.lat && s.lng);
+
+  return Object.entries(grid).map(([key, emps]) => {
+    const lat = emps.reduce((s, e) => s + e.lat!, 0) / emps.length;
+    const lng = emps.reduce((s, e) => s + e.lng!, 0) / emps.length;
+
+    const shifts: Record<string, number> = {};
+    let busModeCount = 0;
+    let carModeCount = 0;
+    for (const e of emps) {
+      if (e.shift_time) shifts[e.shift_time] = (shifts[e.shift_time] ?? 0) + 1;
+      if (e.current_transport_mode === 'company_bus') busModeCount++;
+      else if (e.current_transport_mode === 'personal_car') carModeCount++;
+    }
+
+    let nearestStop: StopStat | null = null;
+    let nearestStopDist = Infinity;
+    for (const s of withCoords) {
+      const d = haversineMHaversineM(lat, lng, s.lat!, s.lng!);
+      if (d < nearestStopDist) { nearestStopDist = d; nearestStop = s; }
+    }
+
+    const coverage: EmployeeCluster['coverage'] =
+      nearestStopDist <= 800 ? 'covered' :
+      nearestStopDist <= 1500 ? 'partial' : 'uncovered';
+
+    return { id: key, lat, lng, count: emps.length, busModeCount, carModeCount, shifts, nearestStop, nearestStopDist, coverage };
+  }).sort((a, b) => b.count - a.count);
+}
+
+const COVERAGE_STYLE = {
+  covered:   { color: '#10b981', label: 'Couvert',       bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  partial:   { color: '#f59e0b', label: 'Partiel',       bg: 'bg-amber-50',   text: 'text-amber-700'   },
+  uncovered: { color: '#ef4444', label: 'Non couvert',   bg: 'bg-red-50',     text: 'text-red-700'     },
+};
+
 const SUGGESTION_STYLE: Record<SuggestionType, { bg: string; text: string; border: string; icon: string; markerColor: string; label: string }> = {
   ADD:      { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', icon: 'add_location', markerColor: '#10b981', label: 'Ajouter' },
   REMOVE:   { bg: 'bg-red-50',     text: 'text-red-700',     border: 'border-red-200',     icon: 'wrong_location', markerColor: '#ef4444', label: 'Supprimer' },
@@ -227,9 +289,15 @@ export function StopsAnalysisSection() {
   const [filterCity, setFilterCity] = useState('');
   const [sortBy, setSortBy] = useState<'walking_score' | 'utilization_score' | 'nom'>('walking_score');
   const [openMarkerId, setOpenMarkerId] = useState<string | null>(null);
-  const [tab, setTab] = useState<'analyse' | 'suggestions'>('analyse');
+  const [tab, setTab] = useState<'clusters' | 'analyse' | 'suggestions'>('clusters');
   const [selectedSuggestion, setSelectedSuggestion] = useState<StopSuggestion | null>(null);
   const [suggFilterType, setSuggFilterType] = useState<SuggestionType | ''>('');
+
+  // Employee cluster state
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [empLoading, setEmpLoading] = useState(false);
+  const [selectedCluster, setSelectedCluster] = useState<EmployeeCluster | null>(null);
+  const [clusterFilterCoverage, setClusterFilterCoverage] = useState<EmployeeCluster['coverage'] | ''>('');
 
   useEffect(() => {
     setLoading(true);
@@ -238,6 +306,25 @@ export function StopsAnalysisSection() {
       .catch((e) => setError(e.message || 'Erreur'))
       .finally(() => setLoading(false));
   }, []);
+
+  const fetchEmployeesForClusters = useCallback(async () => {
+    if (employees.length > 0) return;
+    setEmpLoading(true);
+    try {
+      const res = await listEmployees({ page: 1, page_size: 2000 });
+      setEmployees(res.data ?? []);
+    } catch {
+      // ignore
+    } finally {
+      setEmpLoading(false);
+    }
+  }, [employees.length]);
+
+  useEffect(() => {
+    if (tab === 'clusters') {
+      fetchEmployeesForClusters();
+    }
+  }, [tab, fetchEmployeesForClusters]);
 
   const filteredStops = useMemo(() => {
     if (!data) return [];
@@ -272,6 +359,25 @@ export function StopsAnalysisSection() {
     return KHOURIBGA;
   }, [selectedSuggestion]);
 
+  const employeeClusters = useMemo(
+    () => data ? buildEmployeeClusters(employees, data.stops) : [],
+    [employees, data],
+  );
+
+  const filteredClusters = useMemo(() => {
+    if (!clusterFilterCoverage) return employeeClusters;
+    return employeeClusters.filter((c) => c.coverage === clusterFilterCoverage);
+  }, [employeeClusters, clusterFilterCoverage]);
+
+  const clusterMapCenter = useMemo((): [number, number] => {
+    if (selectedCluster) return [selectedCluster.lat, selectedCluster.lng];
+    return KHOURIBGA;
+  }, [selectedCluster]);
+
+  const uncoveredClusters = useMemo(() => employeeClusters.filter((c) => c.coverage === 'uncovered'), [employeeClusters]);
+  const coveredCount = useMemo(() => employeeClusters.filter((c) => c.coverage === 'covered').length, [employeeClusters]);
+  const partialCount = useMemo(() => employeeClusters.filter((c) => c.coverage === 'partial').length, [employeeClusters]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64 text-slate-400">
@@ -290,7 +396,14 @@ export function StopsAnalysisSection() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tab toggle */}
-      <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-xl p-1.5 self-start">
+      <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-xl p-1.5 self-start flex-wrap">
+        <button onClick={() => setTab('clusters')}
+          className={['flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors relative', tab === 'clusters' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'].join(' ')}>
+          <span className="material-symbols-outlined text-base">bubble_chart</span>Clusters Employés
+          {uncoveredClusters.length > 0 && tab !== 'clusters' && (
+            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center">{uncoveredClusters.length}</span>
+          )}
+        </button>
         <button onClick={() => setTab('analyse')}
           className={['flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors', tab === 'analyse' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'].join(' ')}>
           <span className="material-symbols-outlined text-base">analytics</span>Analyse des arrêts
@@ -304,7 +417,166 @@ export function StopsAnalysisSection() {
         </button>
       </div>
 
-      {tab === 'suggestions' ? (
+      {tab === 'clusters' ? (
+        /* ── CLUSTERS EMPLOYÉS TAB ──────────────────────────────────────── */
+        <div className="flex flex-col gap-5">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-5 text-white flex items-start gap-4">
+            <span className="material-symbols-outlined text-4xl mt-1 opacity-90" style={{ fontVariationSettings: "'FILL' 1" }}>bubble_chart</span>
+            <div className="flex-1">
+              <p className="text-lg font-black">Clustering géographique des employés</p>
+              <p className="text-sm text-blue-100 mt-0.5">
+                Les {employees.length} employés sont regroupés en zones de ~2 km. Chaque cluster est analysé par rapport aux arrêts existants.
+              </p>
+            </div>
+            {empLoading && (
+              <span className="material-symbols-outlined text-2xl animate-spin opacity-70">progress_activity</span>
+            )}
+          </div>
+
+          {/* KPI strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <StatCard icon="bubble_chart" label="Clusters identifiés" value={employeeClusters.length} sub={`~${employees.length} employés`} />
+            <StatCard icon="check_circle" label="Bien couverts" value={coveredCount} sub="Arrêt < 800 m" />
+            <StatCard icon="warning" label="Couverture partielle" value={partialCount} sub="Arrêt 800–1500 m" />
+            <StatCard icon="cancel" label="Non couverts" value={uncoveredClusters.length} sub="Arrêt > 1500 m" />
+          </div>
+
+          {/* Filter row */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {(['', 'covered', 'partial', 'uncovered'] as const).map((f) => {
+              const st = f ? COVERAGE_STYLE[f] : null;
+              const cnt = f ? employeeClusters.filter((c) => c.coverage === f).length : employeeClusters.length;
+              return (
+                <button key={f} onClick={() => setClusterFilterCoverage(f)}
+                  className={['rounded-full px-3 py-1 text-xs font-bold border-2 transition-all', clusterFilterCoverage === f ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-300'].join(' ')}>
+                  {f ? `${st!.label} (${cnt})` : `Tous (${cnt})`}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {/* Left: cluster list */}
+            <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 540 }}>
+              {filteredClusters.map((cluster) => {
+                const st = COVERAGE_STYLE[cluster.coverage];
+                const isSelected = selectedCluster?.id === cluster.id;
+                const topShift = Object.entries(cluster.shifts).sort((a, b) => b[1] - a[1])[0];
+                return (
+                  <button key={cluster.id} onClick={() => setSelectedCluster(isSelected ? null : cluster)}
+                    className={['w-full text-left rounded-xl border p-3 transition-all', isSelected ? `ring-2 ring-blue-500 ${st.bg}` : 'bg-white border-slate-100 hover:border-slate-200'].join(' ')}>
+                    <div className="flex items-start gap-2">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-black shrink-0"
+                        style={{ backgroundColor: st.color }}>
+                        {cluster.count}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={['text-[10px] font-black px-2 py-0.5 rounded-full', st.bg, st.text].join(' ')}>{st.label}</span>
+                          {topShift && <span className="text-[10px] text-slate-400">Shift {topShift[0]} ({topShift[1]} emp.)</span>}
+                        </div>
+                        <p className="text-xs text-slate-600 mt-0.5">
+                          {cluster.count} employés · {cluster.busModeCount} bus · {cluster.carModeCount} voiture
+                        </p>
+                        {cluster.nearestStop && (
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            Arrêt le plus proche: {cluster.nearestStop.nom} ({Math.round(cluster.nearestStopDist)} m)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+              {filteredClusters.length === 0 && (
+                <div className="text-center py-8 text-slate-400 text-sm">Aucun cluster pour ce filtre</div>
+              )}
+            </div>
+
+            {/* Right: map */}
+            <div className="lg:col-span-2 flex flex-col gap-3">
+              {selectedCluster && (
+                <div className={['rounded-xl border p-4 flex flex-col gap-2', COVERAGE_STYLE[selectedCluster.coverage].bg, 'border-slate-200'].join(' ')}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className={['font-black text-sm', COVERAGE_STYLE[selectedCluster.coverage].text].join(' ')}>
+                        Zone: {selectedCluster.count} employés — {COVERAGE_STYLE[selectedCluster.coverage].label}
+                      </span>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {selectedCluster.busModeCount} bus · {selectedCluster.carModeCount} voitures personnelles
+                      </p>
+                    </div>
+                    <button onClick={() => setSelectedCluster(null)} className="text-slate-400 hover:text-slate-600">
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
+                  {selectedCluster.nearestStop && (
+                    <div className="bg-white/70 rounded-lg px-3 py-2">
+                      <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Arrêt le plus proche</p>
+                      <p className="text-xs text-slate-700 mt-0.5">
+                        {selectedCluster.nearestStop.nom} — {Math.round(selectedCluster.nearestStopDist)} m
+                        {selectedCluster.nearestStopDist > 1500 && <span className="ml-2 text-red-500 font-bold">→ Arrêt manquant suggéré</span>}
+                        {selectedCluster.nearestStopDist > 800 && selectedCluster.nearestStopDist <= 1500 && <span className="ml-2 text-amber-600 font-bold">→ Distance excessive</span>}
+                      </p>
+                    </div>
+                  )}
+                  <div className="bg-white/70 rounded-lg px-3 py-2">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Répartition Shifts</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Object.entries(selectedCluster.shifts).map(([shift, cnt]) => (
+                        <span key={shift} className="text-[10px] bg-slate-100 rounded-full px-2 py-0.5 text-slate-600 font-semibold">
+                          {shift}: {cnt}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <MapView center={clusterMapCenter} zoom={selectedCluster ? 13 : 11} height="460px" className="rounded-xl">
+                {/* Existing stops as small grey markers */}
+                {(data?.stops ?? []).filter((s) => s.lat && s.lng).map((s) => (
+                  <AdvancedMarker key={s.id} position={{ lat: s.lat!, lng: s.lng! }}>
+                    <div className="w-2 h-2 rounded-full bg-slate-400 border border-white shadow-sm opacity-70" />
+                  </AdvancedMarker>
+                ))}
+                {/* Employee cluster bubbles */}
+                {filteredClusters.map((cluster) => {
+                  const st = COVERAGE_STYLE[cluster.coverage];
+                  const isSelected = selectedCluster?.id === cluster.id;
+                  const size = Math.min(48, Math.max(24, 12 + cluster.count * 0.4));
+                  return (
+                    <AdvancedMarker key={cluster.id} position={{ lat: cluster.lat, lng: cluster.lng }}
+                      onClick={() => setSelectedCluster(isSelected ? null : cluster)}>
+                      <div className={['rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white font-black cursor-pointer transition-transform', isSelected ? 'scale-125' : 'hover:scale-110'].join(' ')}
+                        style={{ width: size, height: size, backgroundColor: st.color, fontSize: Math.max(9, size / 4) }}>
+                        {cluster.count}
+                      </div>
+                    </AdvancedMarker>
+                  );
+                })}
+              </MapView>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-4 justify-center">
+                {(['covered', 'partial', 'uncovered'] as const).map((cov) => {
+                  const st = COVERAGE_STYLE[cov];
+                  return (
+                    <span key={cov} className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: st.color }} />
+                      {st.label}
+                    </span>
+                  );
+                })}
+                <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <span className="w-2 h-2 rounded-full bg-slate-400" />Arrêt existant
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : tab === 'suggestions' ? (
         /* ── SUGGESTIONS IA TAB ─────────────────────────────────────────── */
         <div className="flex flex-col gap-5">
           {/* Header banner */}

@@ -5,11 +5,16 @@ import uuid
 from datetime import date
 
 from fastapi import APIRouter, Depends, Query, Response
+from sqlalchemy import func, select, case
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.middleware.rbac import require_role
 from app.models.auth import User
+from app.models.configuration_plan import ConfigurationPlan
+from app.models.configuration_transport import ConfigurationTransport
+from app.models.employee import Employee
+from app.models.vehicle import Vehicle
 from app.services.hr_analytics import compute_hr_kpis
 from app.services.kpi_service import (
     KPI_TYPES,
@@ -21,7 +26,114 @@ from app.services.rse_analytics import compute_rse_kpis, generate_dpef_pdf
 
 logger = logging.getLogger(__name__)
 
+CAPACITY: dict[str, int] = {"AUTOCAR": 54, "MINIBUS": 25, "MINICAR": 12}
+COST_PER_KM: dict[str, float] = {"AUTOCAR": 4.50, "MINIBUS": 3.20, "MINICAR": 2.50}
+FUEL_RATE_DEFAULT = 4.50
+AVG_CAR_KM_PER_DAY = 35
+CO2_PER_CAR_KM = 0.12
+
 router = APIRouter(prefix="/kpis")
+
+
+@router.get("/dashboard", response_model=dict)
+async def get_dashboard_kpis(
+    current_user: User = Depends(require_role("admin", "drh", "daf", "manager")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Return dashboard KPIs from real master data: parc véhicule, configuration transport, employees."""
+
+    # ── 1. Total vehicles from parc véhicule ──────────────────────────────
+    total_vehicles: int = await db.scalar(
+        select(func.count(Vehicle.id)).where(Vehicle.tenant_id == current_user.tenant_id)
+    ) or 0
+
+    # ── 2. Total km from current active configuration plan ─────────────────
+    total_km_raw = await db.scalar(
+        select(func.coalesce(func.sum(ConfigurationTransport.km), 0))
+        .join(ConfigurationPlan, ConfigurationTransport.plan_id == ConfigurationPlan.id)
+        .where(
+            ConfigurationPlan.tenant_id == current_user.tenant_id,
+            ConfigurationPlan.is_active.is_(True),
+        )
+    )
+    total_km: float = float(total_km_raw or 0)
+
+    # ── 3. Vehicle type breakdown from active config (for capacity / cost) ─
+    type_rows = (
+        await db.execute(
+            select(
+                ConfigurationTransport.type_vehicule,
+                func.count().label("cnt"),
+            )
+            .join(ConfigurationPlan, ConfigurationTransport.plan_id == ConfigurationPlan.id)
+            .where(
+                ConfigurationPlan.tenant_id == current_user.tenant_id,
+                ConfigurationPlan.is_active.is_(True),
+            )
+            .group_by(ConfigurationTransport.type_vehicule)
+        )
+    ).all()
+
+    total_circuits = sum(r.cnt for r in type_rows)
+    total_seats = 0
+    fuel_cost = 0.0
+    for row in type_rows:
+        vtype = (row.type_vehicule or "AUTOCAR").upper()
+        cap = CAPACITY.get(vtype, 54)
+        cpm = COST_PER_KM.get(vtype, FUEL_RATE_DEFAULT)
+        total_seats += row.cnt * cap
+        circuit_km = (total_km / total_circuits * row.cnt) if total_circuits else 0
+        fuel_cost += circuit_km * cpm
+
+    if not total_seats:
+        total_seats = total_vehicles * 54
+    if not fuel_cost:
+        fuel_cost = total_km * FUEL_RATE_DEFAULT
+
+    # ── 4. Employee modal split ────────────────────────────────────────────
+    emp_row = (
+        await db.execute(
+            select(
+                func.count(Employee.id).label("total"),
+                func.sum(
+                    case((Employee.current_transport_mode == "company_bus", 1), else_=0)
+                ).label("bus_users"),
+                func.sum(
+                    case((Employee.current_transport_mode == "personal_car", 1), else_=0)
+                ).label("car_users"),
+            ).where(
+                Employee.tenant_id == current_user.tenant_id,
+                Employee.active.is_(True),
+            )
+        )
+    ).first()
+
+    total_emp: int = int(emp_row.total or 0)
+    bus_users: int = int(emp_row.bus_users or 0)
+    car_users: int = int(emp_row.car_users or 0)
+
+    # ── 5. Avg occupancy = bus employees / total available seats ───────────
+    avg_occupancy: float = round((bus_users / total_seats * 100) if total_seats else 0, 1)
+
+    # ── 6. CO2 saved: each bus user not driving saves AVG_CAR_KM_PER_DAY km ─
+    co2_saved_kg: float = round(bus_users * AVG_CAR_KM_PER_DAY * CO2_PER_CAR_KM, 0)
+
+    logger.info(
+        "Dashboard KPIs: vehicles=%d km=%.0f bus_users=%d occupancy=%.1f%%",
+        total_vehicles, total_km, bus_users, avg_occupancy,
+    )
+
+    return {
+        "total_vehicles": total_vehicles,
+        "total_distance_km": total_km,
+        "avg_occupancy_rate": avg_occupancy,
+        "fuel_cost_mad": round(fuel_cost, 0),
+        "co2_saved_kg": co2_saved_kg,
+        "bus_users": bus_users,
+        "car_users": car_users,
+        "total_employees": total_emp,
+        "total_circuits": total_circuits,
+    }
 
 
 @router.get("/hr", response_model=dict)

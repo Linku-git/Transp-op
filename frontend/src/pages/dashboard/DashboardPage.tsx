@@ -6,6 +6,7 @@ import { listSites } from '@/api/sites';
 import { getEmployeeSummary } from '@/api/employees';
 import { getOptimizationHistory, getLatestOptimization } from '@/api/optimization';
 import { getModalStats } from '@/api/modal';
+import { getDashboardKpis, type DashboardKpiData } from '@/api/kpis';
 import { MapView } from '@/components/maps/MapView';
 import { SiteMarker } from '@/components/maps/SiteMarker';
 import type { Site } from '@/types/site';
@@ -618,10 +619,11 @@ export function DashboardPage() {
   const [optimizationHistory, setOptimizationHistory] = useState<OptimizationHistoryItem[]>([]);
   const [latestOptimization, setLatestOptimization] = useState<Optimization | null>(null);
   const [modalStats, setModalStats] = useState<ModalStats | null>(null);
+  const [dashboardKpis, setDashboardKpis] = useState<DashboardKpiData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /* Derived metrics from latest optimization */
+  /* Derived metrics from latest optimization (fallback only) */
   const metrics = useMemo<OptimizationMetrics | null>(() => {
     if (!latestOptimization) return null;
     const m = latestOptimization.metrics;
@@ -640,9 +642,10 @@ export function DashboardPage() {
       getOptimizationHistory(undefined, 1, 10),
       getLatestOptimization(),
       getModalStats(),
+      getDashboardKpis(),
     ]);
 
-    const [sitesResult, empResult, histResult, latestResult, modalResult] = results;
+    const [sitesResult, empResult, histResult, latestResult, modalResult, kpisResult] = results;
 
     if (sitesResult.status === 'fulfilled') {
       setSites(sitesResult.value.data);
@@ -659,6 +662,9 @@ export function DashboardPage() {
     if (modalResult.status === 'fulfilled') {
       setModalStats(modalResult.value);
     }
+    if (kpisResult.status === 'fulfilled') {
+      setDashboardKpis(kpisResult.value);
+    }
 
     const allFailed = results.every((r) => r.status === 'rejected');
     if (allFailed) {
@@ -672,12 +678,12 @@ export function DashboardPage() {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  /* KPI values */
-  const totalVehicles = metrics?.total_vehicles_used ?? 0;
-  const avgOccupancy = metrics?.avg_occupancy_rate ?? 0;
-  const totalDistance = metrics?.total_distance_km ?? 0;
-  const fuelCost = metrics?.estimated_fuel_cost_mad ?? 0;
-  const co2Saved = metrics?.co2_estimate_kg ?? 0;
+  /* KPI values — prefer real master data, fall back to last optimization run */
+  const totalVehicles = dashboardKpis?.total_vehicles ?? metrics?.total_vehicles_used ?? 0;
+  const avgOccupancy = dashboardKpis?.avg_occupancy_rate ?? metrics?.avg_occupancy_rate ?? 0;
+  const totalDistance = dashboardKpis?.total_distance_km ?? metrics?.total_distance_km ?? 0;
+  const fuelCost = dashboardKpis?.fuel_cost_mad ?? metrics?.estimated_fuel_cost_mad ?? 0;
+  const co2Saved = dashboardKpis?.co2_saved_kg ?? metrics?.co2_estimate_kg ?? 0;
 
   /* Error state */
   if (error && !isLoading && sites.length === 0) {

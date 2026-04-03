@@ -311,7 +311,7 @@ export function UnifiedMapPage() {
   const [stopActiveOnly, setStopActiveOnly]       = useState(true);
 
   useEffect(() => {
-    fetchEmployees({ page: 1, page_size: 500 });
+    fetchEmployees({ page: 1, page_size: 2000 });
     fetchSites({ page: 1, page_size: 100 });
     setStopsLoading(true);
     listPointsArret({ page_size: 200 })

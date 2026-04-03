@@ -70,7 +70,7 @@ async def list_employees(
     active: bool = Query(default=True, description="Filter by active status"),
     q: str | None = Query(default=None, description="Search name or matricule"),
     page: int = Query(default=1, ge=1, description="Page number"),
-    page_size: int = Query(default=20, ge=1, le=100, description="Items per page"),
+    page_size: int = Query(default=20, ge=1, le=2000, description="Items per page"),
     current_user: User = Depends(require_role("admin", "drh")),
     db: AsyncSession = Depends(get_db),
 ) -> EmployeeListResponse:
