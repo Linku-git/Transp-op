@@ -26,5 +26,7 @@ cd backend
 python -m alembic upgrade head
 echo "Migrations complete."
 
-# Start FastAPI — serves both the API and the built React SPA on port 8000
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Cloud Run sets PORT=8080; fall back to 8080 if not set
+APP_PORT="${PORT:-8080}"
+echo "Starting FastAPI on port ${APP_PORT}..."
+exec uvicorn app.main:app --host 0.0.0.0 --port "${APP_PORT}"
