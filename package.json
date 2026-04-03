@@ -4,7 +4,7 @@
   "description": "Enterprise SaaS platform for optimizing employee transport: clustering, route optimization, financial engineering, real-time tracking, and journey valorization.",
   "main": "index.js",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
+    "build": "(cd frontend && npm install && npm run build) && pip install -r backend/requirements.txt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
