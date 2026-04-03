@@ -9,6 +9,8 @@ export interface Employee {
   site_id: string;
   site_name: string | null;
   shift_time: string | null;
+  point_arret_id: string | null;
+  point_arret_nom: string | null;
   address: string | null;
   quartier: string | null;
   city: string | null;
@@ -41,6 +43,7 @@ export interface EmployeeCreate {
   last_name: string;
   site_id: string;
   shift_time?: string | null;
+  point_arret_id?: string | null;
   address?: string | null;
   quartier?: string | null;
   city?: string | null;

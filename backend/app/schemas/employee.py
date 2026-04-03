@@ -19,8 +19,9 @@ class EmployeeCreate(BaseModel):
     last_name: str = Field(..., max_length=100)
     site_id: uuid.UUID
 
-    # Shift
+    # Shift & stop
     shift_time: str | None = Field(default=None, max_length=50)
+    point_arret_id: uuid.UUID | None = None
 
     # Home address & geolocation
     address: str | None = None
@@ -74,8 +75,9 @@ class EmployeeUpdate(BaseModel):
     last_name: str | None = Field(default=None, max_length=100)
     site_id: uuid.UUID | None = None
 
-    # Shift
+    # Shift & stop
     shift_time: str | None = Field(default=None, max_length=50)
+    point_arret_id: uuid.UUID | None = None
 
     # Home address & geolocation
     address: str | None = None
@@ -138,6 +140,7 @@ class EmployeeResponse(BaseModel):
     last_name: str
     site_id: uuid.UUID
     shift_time: str | None
+    point_arret_id: uuid.UUID | None
 
     # Home address & geolocation
     address: str | None
@@ -177,8 +180,9 @@ class EmployeeResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    # Computed / joined field
+    # Computed / joined fields
     site_name: str | None = None
+    point_arret_nom: str | None = None
 
     # Note: geom (PostGIS internal column) is intentionally excluded.
 

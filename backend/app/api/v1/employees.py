@@ -41,11 +41,12 @@ router = APIRouter(prefix="/employees")
 
 
 def _employee_to_response(employee: Employee) -> EmployeeResponse:
-    """Build an EmployeeResponse from an ORM instance, including site_name."""
+    """Build an EmployeeResponse from an ORM instance, including site_name and point_arret_nom."""
     data = EmployeeResponse.model_validate(employee)
-    # Attach the related site name when the relationship is loaded.
     if employee.site is not None:
         data.site_name = employee.site.name
+    if employee.point_arret is not None:
+        data.point_arret_nom = employee.point_arret.nom
     return data
 
 

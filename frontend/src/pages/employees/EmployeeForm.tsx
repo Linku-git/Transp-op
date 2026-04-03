@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MapPicker } from '@/components/maps/MapPicker';
 import { useSiteStore } from '@/stores/siteStore';
+import { listPointsArret, type PointArret } from '@/api/vehicles';
 import type { EmployeeCreate, OptInChoice } from '@/types/employee';
 
 interface FieldErrors {
@@ -20,7 +21,7 @@ interface EmployeeFormProps {
   isEditMode?: boolean;
 }
 
-const SHIFT_OPTIONS = ['Matin', 'Apres-midi', 'Nuit'];
+const SHIFT_OPTIONS = ['P1', 'P2', 'P3', 'N', 'S'];
 const TRANSPORT_MODES = [
   'Voiture',
   'Bus',
@@ -121,10 +122,12 @@ export function EmployeeForm({
 }: EmployeeFormProps) {
   const { t } = useTranslation();
   const { sites, fetchSites } = useSiteStore();
+  const [pointsArret, setPointsArret] = useState<PointArret[]>([]);
 
-  /* Fetch sites for dropdown */
+  /* Fetch sites and stops for dropdowns */
   useEffect(() => {
     fetchSites({ page: 1, page_size: 100 });
+    listPointsArret({ page_size: 500 }).then((r) => setPointsArret(r.items ?? []));
   }, [fetchSites]);
 
   /* Form state - Identite */
@@ -140,6 +143,7 @@ export function EmployeeForm({
   /* Form state - Affectation */
   const [siteId, setSiteId] = useState(initialData?.site_id ?? '');
   const [shiftTime, setShiftTime] = useState(initialData?.shift_time ?? '');
+  const [pointArretId, setPointArretId] = useState(initialData?.point_arret_id ?? '');
 
   /* Form state - Localisation */
   const [address, setAddress] = useState(initialData?.address ?? '');
@@ -225,6 +229,7 @@ export function EmployeeForm({
         last_name: lastName.trim(),
         site_id: siteId,
         shift_time: shiftTime || null,
+        point_arret_id: pointArretId || null,
         address: address.trim() || null,
         quartier: quartier.trim() || null,
         city: city.trim() || null,
@@ -332,7 +337,7 @@ export function EmployeeForm({
 
       {/* Section: Affectation */}
       <Card title={t('employees.form.section_assignment', 'Affectation')}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <SelectField
             label={t('employees.form.site', 'Site') + ' *'}
             value={siteId}
@@ -348,16 +353,29 @@ export function EmployeeForm({
             }))}
           />
           <SelectField
-            label={t('employees.form.shift_time', 'Equipe')}
+            label={t('employees.form.shift_time', 'Horaire')}
             value={shiftTime}
             onChange={setShiftTime}
             placeholder={t(
               'employees.form.shift_placeholder',
-              'Selectionner une equipe...',
+              'Selectionner un horaire...',
             )}
             options={SHIFT_OPTIONS.map((s) => ({
               value: s,
               label: s,
+            }))}
+          />
+          <SelectField
+            label={t('employees.form.point_arret', "Point d'arrêt")}
+            value={pointArretId}
+            onChange={setPointArretId}
+            placeholder={t(
+              'employees.form.point_arret_placeholder',
+              "Selectionner un arrêt...",
+            )}
+            options={pointsArret.map((p) => ({
+              value: p.id,
+              label: `${p.code} — ${p.nom}${p.ville ? ` (${p.ville})` : ''}`,
             }))}
           />
         </div>

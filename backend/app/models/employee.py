@@ -43,11 +43,14 @@ class Employee(BaseModel):
     first_name: Mapped[str] = mapped_column(String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    # Site & shift
+    # Site, shift & stop
     site_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("site.id"), nullable=False
     )
     shift_time: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    point_arret_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("point_arret.id"), nullable=True
+    )
 
     # Home address & geolocation
     address: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -105,3 +108,4 @@ class Employee(BaseModel):
     # Relationships
     tenant: Mapped[Tenant] = relationship("Tenant", lazy="selectin")
     site: Mapped[Site] = relationship("Site", lazy="selectin")
+    point_arret: Mapped[PointArret | None] = relationship("PointArret", lazy="selectin")
