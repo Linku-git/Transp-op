@@ -453,18 +453,17 @@ async def create_site(
 
 
 # ---------------------------------------------------------------------------
-# PUT /sites/{site_id} — update site
+# PUT /sites/{site_id} and PATCH /sites/{site_id} — update site
 # ---------------------------------------------------------------------------
 
 
-@router.put("/{site_id}", response_model=SiteResponse)
-async def update_site(
+async def _apply_site_update(
     site_id: uuid.UUID,
     body: SiteUpdate,
-    current_user: User = Depends(require_role("admin", "drh")),
-    db: AsyncSession = Depends(get_db),
+    current_user: User,
+    db: AsyncSession,
 ) -> Site:
-    """Update an existing site. Only provided fields are changed."""
+    """Shared logic for PUT and PATCH: partial-update a site."""
     stmt = select(Site).where(
         Site.id == site_id,
         Site.tenant_id == current_user.tenant_id,
@@ -483,7 +482,6 @@ async def update_site(
     for field, value in update_data.items():
         setattr(site, field, value)
 
-    # Recalculate PostGIS geom if lat or lng changed
     new_lat = update_data.get("lat", site.lat)
     new_lng = update_data.get("lng", site.lng)
     if "lat" in update_data or "lng" in update_data:
@@ -494,6 +492,28 @@ async def update_site(
 
     logger.info("Site %s updated by user %s", site.id, current_user.id)
     return site
+
+
+@router.put("/{site_id}", response_model=SiteResponse)
+async def update_site(
+    site_id: uuid.UUID,
+    body: SiteUpdate,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Site:
+    """Update an existing site (PUT). Only provided fields are changed."""
+    return await _apply_site_update(site_id, body, current_user, db)
+
+
+@router.patch("/{site_id}", response_model=SiteResponse)
+async def patch_site(
+    site_id: uuid.UUID,
+    body: SiteUpdate,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> Site:
+    """Partially update an existing site (PATCH). Only provided fields are changed."""
+    return await _apply_site_update(site_id, body, current_user, db)
 
 
 # ---------------------------------------------------------------------------
