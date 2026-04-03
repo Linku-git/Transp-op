@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   listPointsArret,
@@ -150,10 +151,18 @@ export function PointArretPage() {
             {items.length} arrêt{items.length !== 1 ? 's' : ''} · {activeCount} actif{activeCount !== 1 ? 's' : ''}
           </p>
         </div>
-        <Button onClick={openCreate}>
-          <span className="material-symbols-outlined text-base">add</span>
-          Ajouter un arrêt
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link to="/map?layer=stops">
+            <Button variant="secondary">
+              <span className="material-symbols-outlined text-base mr-1">map</span>
+              Voir sur la carte
+            </Button>
+          </Link>
+          <Button onClick={openCreate}>
+            <span className="material-symbols-outlined text-base">add</span>
+            Ajouter un arrêt
+          </Button>
+        </div>
       </div>
 
 

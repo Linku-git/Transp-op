@@ -20,6 +20,7 @@ interface MasterSubItem {
 
 const topNavItems: NavItem[] = [
   { key: 'dashboard', path: '/dashboard', labelKey: 'nav.dashboard', icon: 'dashboard' },
+  { key: 'map',       path: '/map',       labelKey: 'nav.map',       icon: 'map' },
 ];
 
 const masterSubItems: MasterSubItem[] = [

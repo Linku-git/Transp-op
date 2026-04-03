@@ -14,7 +14,8 @@
     "settings": "Parametres",
     "import": "Import",
     "modal_analysis": "Analyse Modale",
-    "admin": "Administration"
+    "admin": "Administration",
+    "map": "Carte"
   },
   "common": {
     "save": "Enregistrer",

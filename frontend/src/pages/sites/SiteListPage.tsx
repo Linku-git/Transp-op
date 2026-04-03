@@ -273,6 +273,12 @@ export function SiteListPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Link to="/map?layer=sites">
+            <Button variant="secondary">
+              <span className="material-symbols-outlined text-lg mr-1.5">map</span>
+              Voir sur la carte
+            </Button>
+          </Link>
           {/* Hidden file input for CSV import */}
           <input
             ref={importFileRef}

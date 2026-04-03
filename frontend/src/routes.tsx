@@ -66,6 +66,12 @@ const EmployeeMapPage = lazy(() =>
   }))
 );
 
+const UnifiedMapPage = lazy(() =>
+  import('@/pages/map/UnifiedMapPage').then((m) => ({
+    default: m.UnifiedMapPage,
+  }))
+);
+
 const ExcelImportPage = lazy(() =>
   import('@/pages/import/ExcelImportPage').then((m) => ({
     default: m.ExcelImportPage,
@@ -251,6 +257,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <DashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'map',
+        element: (
+          <SuspenseWrapper>
+            <UnifiedMapPage />
           </SuspenseWrapper>
         ),
       },
