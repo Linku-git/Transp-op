@@ -96,6 +96,24 @@ const OptimizationHubPage = lazy(() =>
   }))
 );
 
+const OptimizationStopsPage = lazy(() =>
+  import('@/pages/optimization/OptimizationStopsPage').then((m) => ({
+    default: m.OptimizationStopsPage,
+  }))
+);
+
+const OptimizationFleetPage = lazy(() =>
+  import('@/pages/optimization/OptimizationFleetPage').then((m) => ({
+    default: m.OptimizationFleetPage,
+  }))
+);
+
+const OptimizationRoutesPage = lazy(() =>
+  import('@/pages/optimization/OptimizationRoutesPage').then((m) => ({
+    default: m.OptimizationRoutesPage,
+  }))
+);
+
 const OptimizationResultPage = lazy(() =>
   import('@/pages/optimization/OptimizationResultPage').then((m) => ({
     default: m.OptimizationResultPage,
@@ -364,6 +382,34 @@ export const router = createBrowserRouter([
       },
       {
         path: 'optimization',
+        element: <Navigate to="/optimization/stops" replace />,
+      },
+      {
+        path: 'optimization/stops',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationStopsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization/fleet',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationFleetPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization/routes',
+        element: (
+          <SuspenseWrapper>
+            <OptimizationRoutesPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'optimization/hub',
         element: (
           <SuspenseWrapper>
             <OptimizationHubPage />

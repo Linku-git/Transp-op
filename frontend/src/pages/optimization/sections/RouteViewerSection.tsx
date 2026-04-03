@@ -1,6 +1,108 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { AdvancedMarker, InfoWindow, Polyline } from '@vis.gl/react-google-maps';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { AdvancedMarker, InfoWindow, Polyline, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { MapView } from '@/components/maps/MapView';
+
+/* ── KML helpers ──────────────────────────────────────────────────────────── */
+function buildKml(tripId: string, path: google.maps.LatLngLiteral[], label?: string): string {
+  const coords = path.map((p) => `${p.lng},${p.lat},0`).join('\n                ');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Trip ${tripId}</name>
+    <description>${label ?? tripId}</description>
+    <Style id="route">
+      <LineStyle><color>ffFF6600</color><width>4</width></LineStyle>
+    </Style>
+    <Placemark>
+      <name>${label ?? 'Route'}</name>
+      <styleUrl>#route</styleUrl>
+      <LineString>
+        <tessellate>1</tessellate>
+        <coordinates>
+                ${coords}
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>`;
+}
+
+function downloadKml(tripId: string, path: google.maps.LatLngLiteral[], label?: string) {
+  const blob = new Blob([buildKml(tripId, path, label)], { type: 'application/vnd.google-earth.kml+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `trip_${tripId.slice(0, 8)}.kml`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ── Route cache (localStorage, 7-day TTL) ───────────────────────────────── */
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+function getCachedRoute(tripId: string): google.maps.LatLngLiteral[] | null {
+  try {
+    const raw = localStorage.getItem(`route_${tripId}`);
+    if (!raw) return null;
+    const { path, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(`route_${tripId}`); return null; }
+    return path;
+  } catch { return null; }
+}
+
+function setCachedRoute(tripId: string, path: google.maps.LatLngLiteral[]) {
+  try { localStorage.setItem(`route_${tripId}`, JSON.stringify({ path, ts: Date.now() })); } catch { /* storage full */ }
+}
+
+/* ── RouteSnapper: child of MapView (inside APIProvider) ─────────────────── */
+interface RouteSnapperProps {
+  tripId: string | null;
+  origin: google.maps.LatLngLiteral | null;
+  destination: google.maps.LatLngLiteral | null;
+  waypoints: google.maps.LatLngLiteral[];
+  onRouteReady: (path: google.maps.LatLngLiteral[]) => void;
+  onLoading: (v: boolean) => void;
+}
+function RouteSnapper({ tripId, origin, destination, waypoints, onRouteReady, onLoading }: RouteSnapperProps) {
+  const routesLib = useMapsLibrary('routes');
+  const prevTripId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!routesLib || !tripId || !origin || !destination) return;
+    if (prevTripId.current === tripId) return;
+    prevTripId.current = tripId;
+
+    // Check cache first
+    const cached = getCachedRoute(tripId);
+    if (cached) { onRouteReady(cached); return; }
+
+    onLoading(true);
+    const svc = new routesLib.DirectionsService();
+    svc.route(
+      {
+        origin,
+        destination,
+        waypoints: waypoints.map((wp) => ({ location: wp as google.maps.LatLngLiteral, stopover: false })),
+        travelMode: routesLib.TravelMode.DRIVING,
+        optimizeWaypoints: false,
+      },
+      (result, status) => {
+        onLoading(false);
+        if (status === 'OK' && result?.routes[0]) {
+          const overview = result.routes[0].overview_path;
+          const path = overview.map((pt) => ({ lat: pt.lat(), lng: pt.lng() }));
+          setCachedRoute(tripId, path);
+          onRouteReady(path);
+        } else {
+          // Fallback to straight-line if Directions API fails
+          const fallback: google.maps.LatLngLiteral[] = [origin, ...waypoints, destination];
+          onRouteReady(fallback);
+        }
+      }
+    );
+  }, [routesLib, tripId, origin, destination, waypoints, onRouteReady, onLoading]);
+
+  return null;
+}
 import { listConfigurationPlans } from '@/api/vehicles';
 import {
   getPlanTrips, getTripDetail,
@@ -87,6 +189,8 @@ export function RouteViewerSection() {
   const [detail, setDetail] = useState<TripDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [openInfoId, setOpenInfoId] = useState<string | null>(null);
+  const [roadPath, setRoadPath] = useState<google.maps.LatLngLiteral[]>([]);
+  const [dirLoading, setDirLoading] = useState(false);
 
   // Filters
   const [shift, setShift] = useState('');
@@ -133,6 +237,8 @@ export function RouteViewerSection() {
     setSelectedTrip(trip);
     setDetailLoading(true);
     setDetail(null);
+    setRoadPath([]);
+    setDirLoading(false);
     try {
       setDetail(await getTripDetail(trip.id));
     } finally {
@@ -160,6 +266,21 @@ export function RouteViewerSection() {
   }, [polylineCoords]);
 
   const mapZoom = polylineCoords.length >= 2 ? 11 : 10;
+
+  // Derived snap inputs
+  const snapOrigin = useMemo(() => detail?.start_point?.lat && detail.start_point.lng
+    ? { lat: detail.start_point.lat, lng: detail.start_point.lng } : null, [detail]);
+  const snapDest = useMemo(() => detail?.end_point?.lat && detail.end_point.lng
+    ? { lat: detail.end_point.lat, lng: detail.end_point.lng } : null, [detail]);
+  const snapWaypoints = useMemo(() =>
+    detail?.waypoints.filter((wp) => wp.lat && wp.lng).map((wp) => ({ lat: wp.lat!, lng: wp.lng! })) ?? [],
+    [detail]);
+
+  // The path to draw — road-snapped when available, else straight-line fallback
+  const activePath = roadPath.length >= 2 ? roadPath : polylineCoords;
+
+  const handleRouteReady = useCallback((path: google.maps.LatLngLiteral[]) => { setRoadPath(path); }, []);
+  const handleDirLoading = useCallback((v: boolean) => { setDirLoading(v); }, []);
 
   const selectCls = 'bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 appearance-none';
 
@@ -289,9 +410,28 @@ export function RouteViewerSection() {
                   <span><span className="text-slate-400">Dist.</span> <strong>{selectedTrip.km != null ? `${selectedTrip.km} km` : '—'}</strong></span>
                   <span><span className="text-slate-400">Rot.</span> <strong>{selectedTrip.rot ?? '—'}</strong></span>
                   <span><strong style={{ color: fillColor(selectedTrip.fill_pct) }}>{selectedTrip.fill_pct}%</strong> <span className="text-slate-400">rempli</span></span>
+                  {dirLoading && (
+                    <span className="flex items-center gap-1 text-slate-400 text-[10px]">
+                      <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>Snap…
+                    </span>
+                  )}
+                  {!dirLoading && roadPath.length >= 2 && (
+                    <span className="flex items-center gap-1 text-emerald-600 text-[10px] font-medium">
+                      <span className="material-symbols-outlined text-sm">alt_route</span>Snappé route
+                    </span>
+                  )}
+                  {activePath.length >= 2 && (
+                    <button
+                      onClick={() => downloadKml(selectedTrip!.id, activePath, `Poste ${selectedTrip!.poste} – Shift ${selectedTrip!.shift}`)}
+                      className="flex items-center gap-1 text-blue-500 hover:text-blue-700 font-medium text-xs"
+                      title="Télécharger KML"
+                    >
+                      <span className="material-symbols-outlined text-sm">download</span>KML
+                    </button>
+                  )}
                   {detail?.google_maps_url && (
                     <a href={detail.google_maps_url} target="_blank" rel="noreferrer"
-                      className="flex items-center gap-1 text-blue-500 hover:text-blue-700 font-medium">
+                      className="flex items-center gap-1 text-blue-500 hover:text-blue-700 font-medium text-xs">
                       <span className="material-symbols-outlined text-sm">open_in_new</span>Maps
                     </a>
                   )}
@@ -309,10 +449,22 @@ export function RouteViewerSection() {
                     </div>
                   )}
                   <MapView center={mapCenter} zoom={mapZoom} height="100%" className="rounded-xl h-full">
+                    <RouteSnapper
+                      tripId={selectedTrip?.id ?? null}
+                      origin={snapOrigin}
+                      destination={snapDest}
+                      waypoints={snapWaypoints}
+                      onRouteReady={handleRouteReady}
+                      onLoading={handleDirLoading}
+                    />
                     {detail && (
                       <>
-                        {polylineCoords.length >= 2 && (
-                          <Polyline path={polylineCoords} strokeColor="#3b82f6" strokeOpacity={0.85} strokeWeight={4} />
+                        {activePath.length >= 2 && (
+                          <Polyline path={activePath}
+                            strokeColor={roadPath.length >= 2 ? '#10b981' : '#3b82f6'}
+                            strokeOpacity={0.85}
+                            strokeWeight={4}
+                          />
                         )}
                         {detail.start_point?.lat && detail.start_point.lng && (
                           <AdvancedMarker
