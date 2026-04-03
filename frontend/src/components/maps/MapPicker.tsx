@@ -56,7 +56,7 @@ export function MapPicker({
   return (
     <div className="flex flex-col gap-2">
       <div className="rounded-lg overflow-hidden" style={{ height }}>
-        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+        <APIProvider apiKey={GOOGLE_MAPS_API_KEY} region="MA">
           <Map
             center={{ lat: centerLat, lng: centerLng }}
             zoom={DEFAULT_ZOOM}

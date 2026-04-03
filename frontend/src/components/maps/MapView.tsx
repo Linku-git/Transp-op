@@ -51,7 +51,7 @@ export function MapView({
       className={['rounded-xl overflow-hidden font-sans', className].join(' ')}
       style={{ height }}
     >
-      <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY} region="MA">
         <Map
           defaultCenter={gCenter}
           defaultZoom={zoom}
