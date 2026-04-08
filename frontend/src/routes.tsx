@@ -264,6 +264,12 @@ const ContentEditPage = lazy(() =>
   }))
 );
 
+const ContentAnalyticsPage = lazy(() =>
+  import('@/pages/content/ContentAnalyticsPage').then((m) => ({
+    default: m.ContentAnalyticsPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -635,6 +641,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ContentCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'content/analytics',
+        element: (
+          <SuspenseWrapper>
+            <ContentAnalyticsPage />
           </SuspenseWrapper>
         ),
       },
