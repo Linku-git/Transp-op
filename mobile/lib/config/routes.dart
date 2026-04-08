@@ -21,6 +21,7 @@ import '../screens/emergency/emergency_screen.dart';
 import '../screens/profile/security_questionnaire_screen.dart';
 import '../screens/content/content_feed_screen.dart';
 import '../screens/content/content_detail_screen.dart';
+import '../screens/content/training_player_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -115,9 +116,8 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'training/:id',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => PlaceholderScreen(
-                title: 'Formation ${state.pathParameters['id']}',
-                icon: Icons.school,
+              builder: (context, state) => TrainingPlayerScreen(
+                contentId: state.pathParameters['id']!,
               ),
             ),
             GoRoute(
