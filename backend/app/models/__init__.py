@@ -21,6 +21,9 @@ from app.models.scenario import Scenario
 from app.models.settings import ConstraintParam, OptimizationSettings
 from app.models.vehicle import Vehicle
 from app.models.weather import WeatherForecast
+from app.models.trip_booking import TripBooking
+from app.models.device_registration import DeviceRegistration
+from app.models.push_notification import PushNotification
 
 __all__ = [
     "BaseModel",
@@ -52,4 +55,7 @@ __all__ = [
     "OptimizationSettings",
     "Vehicle",
     "WeatherForecast",
+    "TripBooking",
+    "DeviceRegistration",
+    "PushNotification",
 ]

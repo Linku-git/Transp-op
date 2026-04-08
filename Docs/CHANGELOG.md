@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-54] — 2026-04-08
+### Added
+- **Backend**: 3 new database models: `TripBooking` (trip reservations), `DeviceRegistration` (FCM tokens), `PushNotification` (notification log)
+- Alembic migration `j5k6l7m8n9o0` creating 3 tables with 8 indexes
+- Mobile API router at `/api/v1/mobile/` with 8 endpoints: trip book/modify/cancel/list/upcoming, device register/unregister, offline manifest
+- `TripBookingService` with 30-minute modification/cancellation window enforcement
+- `OfflineManifestService` generating profile + trips + site + point_arrets package
+- Pydantic v2 schemas: TripBookingCreate/Update/Response, DeviceRegisterRequest/Response
+- 16 backend tests (models, schemas, 30-min validation)
+
 ## [Session-53] — 2026-04-08
 ### Added
 - `ProfileScreen` with avatar (initials), name, matricule, site/shift chips, transport mode badge, quick stats (trips/CO2/training), 8 menu items, logout with confirmation dialog
