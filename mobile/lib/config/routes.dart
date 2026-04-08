@@ -5,6 +5,7 @@ import '../screens/placeholder_screen.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/onboarding/onboarding_flow.dart';
+import '../screens/home/home_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -36,7 +37,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/home',
           pageBuilder: (context, state) => const NoTransitionPage(
-            child: PlaceholderScreen(title: 'Accueil', icon: Icons.home_outlined),
+            child: HomeScreen(),
           ),
         ),
 

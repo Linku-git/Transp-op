@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-48] — 2026-04-08
+### Added
+- Home screen (`HomeScreen`) with personalized greeting (Bonjour/Bon après-midi/Bonsoir + user name)
+- `NextDepartureCard` with live countdown timer (updates every second), color-coded (green >5min, orange 2-5min, red <2min), departure details (pickup, route, vehicle, driver)
+- `QuickActionsRow` with 3 action cards: Réserver, Carte, Mes trajets
+- `ContentCarousel` — horizontal scroll with type badges (Actualité, Formation, Sécurité, Sondage), unread indicators
+- `EmergencyButton` — red emergency button for night mode (20h-6h30)
+- `NightModeHelper` with configurable night hours and injectable DateTime for testing
+- `Departure` and `ContentItem` models with JSON parsing
+- `DepartureService` for next trip + latest content + notification count
+- `HomeNotifier` (Riverpod) with parallel data loading and pull-to-refresh
+- Notification bell with unread count badge (caps at 9+)
+- Empty state when no upcoming trips
+- 29 new tests (112 total passing)
+
 ## [Session-47] — 2026-04-08
 ### Added
 - 4-step onboarding wizard (`OnboardingFlow`) using PageView with progress bar navigation

@@ -12,12 +12,12 @@
 | Phase 1 — MVP Core (Modules A-D) | 06-30 | COMPLETE | 25/25 |
 | Phase 2 — Financial & Reporting | 31-44 | COMPLETE | 14/14 |
 | **Replit Deployment & Refinement** | **R01** | **COMPLETE** | **✅** |
-| Phase 3 — Mobile MVP | 45-56 | IN PROGRESS | 3/12 |
+| Phase 3 — Mobile MVP | 45-56 | IN PROGRESS | 4/12 |
 | Phase 4 — Security & RTI | 57-66 | NOT STARTED | 0/10 |
 | Phase 5 — Journey Valorization | 67-76 | NOT STARTED | 0/10 |
 | Phase 6 — Enterprise Integrations | 77-86 | NOT STARTED | 0/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total (core sessions)** | **92** | | **47/92** |
+| **Total (core sessions)** | **92** | | **48/92** |
 
 ---
 
@@ -106,7 +106,7 @@
 | 45 | [[sessions/session-45\|Flutter Project Setup]] | COMPLETE | 2026-04-08 | Flutter 3.38.5, 111 deps, 12 source files, 22 tests, GoRouter + Riverpod + Material 3 |
 | 46 | [[sessions/session-46\|Mobile Auth Flow]] | COMPLETE | 2026-04-08 | JWT auth, dio interceptor, auto-refresh, SplashScreen, LoginScreen, 50 total tests |
 | 47 | [[sessions/session-47\|Onboarding Wizard]] | COMPLETE | 2026-04-08 | 4-step PageView wizard, transport prefs, security questionnaire, permissions, 83 total tests |
-| 48 | [[sessions/session-48\|Home Screen]] | NOT STARTED | | Trip today, next stop, alerts |
+| 48 | [[sessions/session-48\|Home Screen]] | COMPLETE | 2026-04-08 | NextDepartureCard with live countdown, QuickActions, ContentCarousel, night mode emergency, 112 total tests |
 | 49 | [[sessions/session-49\|Trip Booking Screens]] | NOT STARTED | | Schedule view, book/cancel |
 | 50 | [[sessions/session-50\|Trip Management]] | NOT STARTED | | My trips list, history |
 | 51 | [[sessions/session-51\|RTI Display & Vehicle Tracking]] | NOT STARTED | | Real-time map, vehicle position |
