@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-63] — 2026-04-08
+### Added
+- Three-dimension security-constrained pooling: geographic (45%) + shift (30%) + security (25%) with configurable weights
+- Night-hour constraints: minimum group size 3, no isolated stops, lighting threshold 0.4, critical stop avoidance
+- `NightRouteResult` processing: filter critical/dark stops, suggest top-3 alternatives, validate route viability
+- Priority vehicle assignment for night routes and high-risk employees
+- `ClusteringConfig` model per site with all pooling parameters
+- `SecurityConstraintConfig` dataclass for runtime configuration
+- Alembic migration `p1q2r3s4t5u6`
+- 18 backend tests (night grouping, stop filtering, alternatives, 3D scoring, priority vehicle, night routing)
+
 ## [Session-62] — 2026-04-08
 ### Added
 - `SecurityScore` model: employee score (0-100), risk_level (low/medium/high/critical), contributing_factors JSONB
