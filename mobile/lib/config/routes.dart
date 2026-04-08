@@ -12,6 +12,7 @@ import '../screens/trips/trip_detail_screen.dart';
 import '../screens/trips/trip_history_screen.dart';
 import '../screens/tracking/rti_tracking_screen.dart';
 import '../screens/tracking/full_map_screen.dart';
+import '../screens/notifications/notification_list_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -172,8 +173,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/notifications',
-      builder: (context, state) =>
-          const PlaceholderScreen(title: 'Notifications', icon: Icons.notifications),
+      builder: (context, state) => const NotificationListScreen(),
     ),
   ],
 );

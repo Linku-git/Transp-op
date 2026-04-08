@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-52] — 2026-04-08
+### Added
+- Push notification service: `PushNotificationService` with FCM permission, token registration (POST /devices/register), foreground/background/tap handling, token refresh
+- `NotificationType` enum: 5 types (rti_alert, route_change, weather, content, emergency) with French labels, icons, target routes
+- `NotificationItem` model with fromJson, fromFCM factory, copyWith, smart targetRoute routing
+- `NotificationNotifier` (Riverpod) with stream subscription, markAsRead, markAllAsRead, dismiss, unreadCount, groupedByDate
+- `NotificationListScreen` with date-grouped list (Aujourd'hui/Hier), type-colored icons, unread dots, swipe-to-dismiss, "Tout lire" button
+- `NotificationChannels` config for Android notification channels
+- 15 new tests (206 total passing)
+
 ## [Session-51] — 2026-04-08
 ### Added
 - Real-time vehicle tracking: `RTITrackingScreen` with live ETA countdown (1s timer), color-coded (green <=90s, orange 90-180s, red >180s)
