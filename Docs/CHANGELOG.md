@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-56] — 2026-04-08 (Phase 3 Complete!)
+### Added
+- **Offline Mode**: Comprehensive offline-first architecture for the mobile app
+- `HiveStorageService`: user profile, trips, settings cache with TTL metadata per key
+- `SqliteStorageService`: trip history, content library, notifications with indexed tables
+- `CacheManager`: stale-while-revalidate pattern — serves stale cache immediately, refreshes in background when online
+- `OfflineQueue`: priority-based write queue (critical/high/medium/low), auto-sync on reconnect, 3 retries max per action
+- `ConnectivityService`: real-time online/offline/degraded state detection via connectivity_plus stream
+- `OfflineManifestSync`: downloads profile+trips+site+points on launch and every 6h on WiFi
+- `MapTileCache`: pre-cache strategy for home and site commute areas
+- `CacheConfig`: configurable TTLs (profile 24h, trips 1h, content 6h, RTI 30s), storage limits (300MB total)
+- `OfflineBanner`: displays "Vous êtes hors ligne" / degraded connection warning
+- `StaleDataBadge`: shows "Mis à jour il y a Xh" for stale cached data
+- `SyncSpinner`: animated sync indicator during queue processing
+- 20 new tests (279 total passing: 263 mobile + 16 backend)
+
+### Phase 3 — Mobile MVP: COMPLETE (12/12 sessions)
+
 ## [Session-55] — 2026-04-08
 ### Added
 - `StatisticsScreen` with period selector (Ce mois / Cette année / Tout), pull-to-refresh, empty state
