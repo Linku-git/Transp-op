@@ -18,7 +18,7 @@
 
 ## Process Documentation
 - [[agents]] — Coding agent instructions and conventions
-- [[Employee_Transport_Optimization_PRD_v3]] — Full PRD (v3.0)
+- [[PRD]] — Full Product Requirements Document (v4.0 — updated 2026-04-08)
 
 ## Architecture Decisions
 - [[knowledge/ADR-template]] — ADR template
@@ -40,6 +40,9 @@
 - [[sessions/session-31]] | [[sessions/session-32]] | [[sessions/session-33]] | [[sessions/session-34]] | [[sessions/session-35]]
 - [[sessions/session-36]] | [[sessions/session-37]] | [[sessions/session-38]] | [[sessions/session-39]] | [[sessions/session-40]]
 - [[sessions/session-41]] | [[sessions/session-42]] | [[sessions/session-43]] | [[sessions/session-44]]
+
+### Replit Deployment & Refinement
+- [[sessions/session-replit]] — Infrastructure setup, Google Maps migration, seed data, optimization rebuilt, production deployment
 
 ### Phase 3 — Mobile MVP (Sessions 45-56)
 - [[sessions/session-45]] | [[sessions/session-46]] | [[sessions/session-47]] | [[sessions/session-48]] | [[sessions/session-49]]
