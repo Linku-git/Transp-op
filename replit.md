@@ -1,105 +1,273 @@
 # Transpop — Replit Project
 
 ## Overview
-**Transpop** (Plateforme d'Orchestration Mobilité RH) is an enterprise SaaS platform for HR mobility orchestration. It manages employee transport optimization, route planning, clustering, vehicle assignments, and KPI tracking.
+**Transpop** (Plateforme d'Orchestration Mobilité RH) is an enterprise SaaS platform for HR mobility orchestration. It manages employee transport optimization, route planning, clustering, vehicle assignments, and KPI tracking for large organizations in Morocco.
 
-## Recent Changes
-- **Dashboard/Analyse Modale now shows real data**: `modal/stats`, `modal/shift-analysis`, `modal/mobility-scores`, `modal/shadow-zones`, and `modal/carpool-potential` endpoints all query the `employee` table directly (1200 employees, 5 transport modes). `mobility_scoring.py` fully rewritten to use `Employee` fields (`current_transport_mode`, `opt_in_company_transport`, `shift_time`, `has_private_car`) instead of empty `employee_modal` table.
-- **Pydantic v2 error rendering fixed across all pages**: `frontend/src/lib/apiError.ts` utility (`extractApiError()`) handles both `string` and `array of {type,loc,msg}` Pydantic v2 detail formats. Applied to all form pages: Login, Employee create/edit, Site create/edit, Scenario list, Constraints, Settings, Vehicle form, Point d'arrêt, Km Consommation.
-- **Production build fixed**: All pre-existing TypeScript errors resolved (recharts formatter types, unused variables, google.maps namespace via `@types/google.maps`, test file exclusion from tsconfig). `frontend/dist/` now builds cleanly (`✓ built in 965ms`).
-- **Production deployment configured**: `start_production.sh` builds `DATABASE_URL` from Replit env vars, runs Alembic migrations, starts uvicorn on port 8000. FastAPI `main.py` serves React SPA static files from `frontend/dist/` via catch-all route.
-- **ShadowZoneEmployee schema**: `distance_km` made optional (`float | None = None`) since employee table has no distance field.
-- **Optimization sections fully rebuilt** (3 separate pages under `/optimization/`):
-  - **StopsAnalysisSection** (`/optimization/stops`): Tab toggle between "Analyse des arrêts" (default KPI strip + city BarChart + map + stop list/detail panel with scores) and "Suggestions IA" (gradient banner, AI `buildSuggestions` algorithm — MERGE/REMOVE/RELOCATE/ADD — colored markers on map, suggestion detail panel with filters). Hooks order fixed (all useMemo moved before early returns).
-  - **FleetOptimizerSection** (`/optimization/fleet`): Mode toggle "Optimiser configuration existante" / "Nouvelle configuration". NewConfigMode wizard: plan name, target fill slider, max stops per route, shift toggles, prefer-smaller toggle, `generateNewConfig` API call, KPI cards, vehicle chart, shift summary, trip table with filters. Backend VRP-greedy `generate-new-config` endpoint added.
-  - **RouteViewerSection** (`/optimization/routes`): Manual-trigger "Calculer l'itinéraire" blue button (no auto-snap). RouteSnapper with chunked waypoints (MAX_WPS_PER_LEG=8), sequential multi-leg DirectionsService calls, user-facing error banners (REQUEST_DENIED / ZERO_RESULTS). `snapOrigin`/`snapDest` fall back to first/last resolved waypoints when `start_point`/`end_point` have no coordinates.
-- **Bug fixes**: `extractErrorMessage` in `optimizationStore.ts` now handles Pydantic v2 array-of-objects `detail` without crashing React renderer.
-- **Optimization Hub** (`/optimization`): New `OptimizationHubPage` with 3 tabs: (1) **Arrêts & Clusters** — Google Map with 58 colored stop markers (walking-score-colored), city distribution BarChart, clickable stop detail panel with score bars; (2) **Optimisation Flotte** — plan selector + sliders (min fill rate, fill assumption) + shift/secteur filters + RadarChart before/after comparison + VRP-lite optimizer results with savings per trip; (3) **Visualisation Routes** — paginated trip list with filters + map showing polyline route, AdvancedMarker start/end/waypoints, InfoWindows, capacity gauge, stop sequence panel + Google Maps link. Backend: new `transport_optimization` router with 5 endpoints (`/stops`, `/plan/:id/analysis`, `/plan/:id/optimize`, `/plan/:id/trips`, `/trip/:id`). Frontend API client: `transportOptimization.ts`.
-- **Multi-configuration support + real data seed:** `configuration_plan` table added (migration `h3i4j5k6l7m8`). `configuration_transport` redesigned with 19 real columns matching the XLSX source (conducteur, poste, prestataire, mle_vehicule, type_vehicule, type_moteur, secteur, entite, aller_retour, shift, heure_depart/arrivee, point_depart/arrivee, arrets_circuit, duree_trajet_min, km, rot, t_km). **591 rows seeded** from `attached_assets/config_1775180737219.xlsx` into plan "Configuration Initiale 2024". New API: `GET/POST/PATCH/DELETE /api/v1/configuration-plans`. New frontend page at `/fleet/config` shows plan cards + a full 19-column data grid with filters (prestataire, secteur, shift, A/R, type vehicule) + pagination. `seed_configuration.py` created.
-- **Sidebar collapse/expand:** `AppLayout` owns `collapsed` state (persisted in localStorage); `Sidebar` receives `collapsed` + `onToggle` props; collapses to 56px icon-only rail with tooltips; smooth transition via inline `marginLeft`.
-- **Map filter panel moved outside map:** `UnifiedMapPage` refactored to side-by-side layout — collapsible filter panel (expanded=288px, collapsed=56px) + map filling remaining width. Legend integrated into expanded panel. No overlays on map anymore.
-- **Shifts restructure:** Removed all "Equipes/Horaires" terminology. Company-wide shift management (create/edit/delete) moved to **Paramètres** page. Site create/edit form now has a **Shifts Actifs** selector (read-only table with checkboxes to activate per site). Site detail page shows `SiteActiveShiftsPanel`. `active_shift_ids` (JSONB) column added to `site` table (migration `g2h3i4j5k6l7`). "Horaires de Travail" removed from fleet sidebar navigation.
-- **CSV Export/Import (Sites):** `GET /api/v1/sites/export/csv` streams a UTF-8 CSV (headers-only when empty). `POST /api/v1/sites/import/csv` accepts a `.csv` file and upserts by `code` (no duplicates on re-import). Frontend: "Import CSV" + "Export CSV" buttons in SiteListPage header; result/error banners shown after import.
+- **Sessions completed:** 44 core + Replit deployment phase (R01)
+- **Platform status:** Live on Replit Reserved VM (deployed ✅)
+- **Next phase:** Phase 3 — Flutter Mobile MVP (sessions 45–56)
+
+---
 
 ## Architecture
+
 - **Backend:** Python 3.12 / FastAPI / SQLAlchemy 2.0 (async) / PostgreSQL + PostGIS / Redis + Celery / OR-Tools
-- **Frontend:** React 19 / TypeScript / Vite / TailwindCSS v4 / Zustand / Google Maps (`@vis.gl/react-google-maps`) / Recharts
-- **Database:** Replit managed PostgreSQL (host: helium, db: heliumdb)
+- **Frontend:** React 19 / TypeScript / Vite / TailwindCSS v4 / Zustand / `@vis.gl/react-google-maps` / Recharts
+- **Database:** Replit managed PostgreSQL (host: `helium`, db: `heliumdb`)
+- **Deployment:** Replit Reserved VM (`deploymentTarget = "vm"`)
 
-## Project Structure
-```
-backend/        FastAPI application (Python)
-frontend/       React web dashboard (TypeScript/Vite)
-Docs/           Project documentation (Obsidian vault)
-start_backend.sh  Startup script (Redis + uvicorn)
-```
+---
 
-## Running the Project
+## Running the Project (Development)
 
 ### Workflows
-- **Start application** — Frontend (Vite, port 5000, webview)
+- **Start application** — Frontend dev server (Vite, port 5000, webview)
 - **Backend API** — Redis + FastAPI uvicorn (port 8000, console)
 
 ### Manual startup
 ```bash
-# Backend (includes Redis)
+# Backend (Redis + uvicorn on port 8000)
 bash start_backend.sh
 
-# Frontend
+# Frontend (Vite on port 5000)
 cd frontend && npm run dev
 ```
 
-## Key Configuration
-
-### Backend Environment Variables
-Set in `start_backend.sh` (overrides Replit's system DATABASE_URL):
-- `DATABASE_URL` — `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`
-- `DATABASE_URL_SYNC` — `postgresql+psycopg2://postgres:password@helium:5432/heliumdb`
-- `REDIS_URL` — `redis://localhost:6379/0`
-- Weather — uses **Open-Meteo** (free, no API key required); live 5-day forecasts fetch automatically via `POST /api/v1/weather/{site_id}/refresh`
-
-### Frontend Environment Variables
-- `VITE_GOOGLE_MAPS_API_KEY` — Google Maps API key (already set); powers all map views and optimization maps
-
-### Frontend
-- Dev server: port 5000, host 0.0.0.0, all hosts allowed
-- API proxy: `/api` → `http://localhost:8000` (via Vite dev server proxy)
-- API client base URL: empty string (uses relative URLs)
-- Vite dedupe: `['react', 'react-dom']` — prevents multiple React instances from `@vis.gl/react-google-maps`
-
-## Health Check
+### Health check
 ```
 GET /api/v1/health
 → {"status":"healthy","db":true,"redis":true}
 ```
 
-## Database
-- 16 Alembic migrations applied (sessions 1–44 + fleet migration `f1a2b3c4d5e6`)
-- Extensions: PostGIS, pg_trgm
-- 41 tables across 10 groups
-- New fleet tables: `vehicle` (extended), `km_consommation`, `point_arret`, `configuration_transport`
+---
 
-## Fleet Module (XLSX schemas 2–6)
-### Backend
-- `backend/app/models/vehicle.py` — Vehicle, KmConsommation, PointArret, ConfigurationTransport models
-- `backend/app/schemas/vehicle.py` — Pydantic schemas for all 4 entities
-- `backend/app/api/v1/vehicles.py` — CRUD for Vehicle (paginated list, get, create, update, delete)
-- `backend/app/api/v1/km_consommation.py` — CRUD for Km & Consommation (list, create, update, delete)
-- `backend/app/api/v1/point_arret.py` — CRUD for Points d'Arrêt SOTREG
-- `backend/app/api/v1/configuration_transport.py` — CRUD for Configuration Transport-Véhicule
+## Key Configuration
 
-### Frontend
-- `frontend/src/types/vehicle.ts` — TypeScript types for all 4 entities
-- `frontend/src/api/vehicles.ts` — API client for all 4 entity CRUD operations
-- Pages: VehicleListPage, VehicleCreatePage, VehicleDetailPage, VehicleEditPage (with shared VehicleForm)
-- Fleet pages: KmConsommationPage, PointArretPage, ConfigurationTransportPage (modal CRUD with inline table)
-- Routes: `/vehicles`, `/vehicles/new`, `/vehicles/:id`, `/vehicles/:id/edit`, `/fleet/consumption`, `/fleet/stops`, `/fleet/config`
-- Sidebar: fleet sub-nav auto-expands under Parc Véhicule when on `/vehicles*` or `/fleet*` paths
+### Database
+- **URL (asyncpg):** `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`
+- **URL (sync):** `postgresql+psycopg2://postgres:password@helium:5432/heliumdb`
+- **Tenant ID:** `0cea9745-6aa2-4105-9bdc-341d95999048`
+- **Admin:** `admin@transpop.dev` / `admin123`
+- **Migrations:** 19 Alembic migrations applied
+
+### Backend Environment Variables
+Set in `start_backend.sh` (dev) and `start_production.sh` (prod):
+| Variable | Value |
+|----------|-------|
+| `DATABASE_URL` | `postgresql+asyncpg://postgres:password@helium:5432/heliumdb` |
+| `DATABASE_URL_SYNC` | `postgresql+psycopg2://postgres:password@helium:5432/heliumdb` |
+| `REDIS_URL` | `redis://localhost:6379/0` |
+| `ENVIRONMENT` | `development` / `production` |
+| `SECRET_KEY` | Set via Replit secret |
+| `PORT` | Injected by Cloud Run/Replit VM (8080 in production) |
+
+### Frontend Environment Variables
+| Variable | Value |
+|----------|-------|
+| `VITE_GOOGLE_MAPS_API_KEY` | Set as Replit secret — powers all map views |
+
+### Vite Config (`frontend/vite.config.ts`)
+- Dev server: port `5000`, host `0.0.0.0`, `allowedHosts: true`
+- API proxy: `/api` → `http://localhost:8000`
+- Dedupe: `['react', 'react-dom']` — prevents double React instance from `@vis.gl/react-google-maps`
+- Path alias: `@` → `/src`
+
+### API Client (`frontend/src/api/client.ts`)
+- `baseURL: ''` (empty string — uses relative URLs proxied through Vite)
+- **All API files MUST use full paths:** `/api/v1/...`
+- ❌ Never: `get('/kpis/dashboard')`
+- ✅ Always: `get('/api/v1/kpis/dashboard')`
+
+---
+
+## Production Deployment
+
+### Config (`.replit`)
+```toml
+[deployment]
+deploymentTarget = "vm"
+run = ["bash", "start_production.sh"]
+build = ["bash", "build.sh"]
+```
+
+### Build (`build.sh`)
+```bash
+cd frontend && npm install && npm run build
+pip install -r backend/requirements.txt
+```
+
+### Run (`start_production.sh`)
+- Builds `DATABASE_URL` from Replit env vars (`$PGHOST`, `$PGUSER`, `$PGPASSWORD`, `$PGDATABASE`)
+- Starts Redis (optional — failure does not abort)
+- Runs Alembic migrations
+- Starts uvicorn: `--port "${PORT:-8080}"` (Cloud Run sets PORT=8080)
+
+### Why Reserved VM?
+Replit Autoscale = single exposed port only. This app needs Redis (6379) and multiple services → must use Reserved VM. Cloud Run still applies → `${PORT:-8080}` is required.
+
+---
+
+## Database: 41 Tables, 19 Migrations
+
+| Group | Key Tables |
+|-------|-----------|
+| Auth | `user`, `role`, `tenant`, `user_role` |
+| Sites | `site` (PostGIS), `shift_type` |
+| Employees | `employee`, `employee_leave` |
+| Fleet | `vehicle`, `km_consommation`, `point_arret`, `configuration_transport`, `configuration_plan` |
+| Optimization | `optimization_run`, `cluster`, `route`, `vehicle_assignment` |
+| Scenarios | `transport_scenario`, `optimization_settings`, `constraint_param` |
+| Modal | `employee_modal` (legacy), mobility scoring via Employee fields |
+| Financial | `financial_scenario`, `tco_entry`, `roi_calculation`, `investment_comparison` |
+| Reporting | `generated_report`, `kpi_snapshot` |
+| Weather | `weather_forecast` |
+
+---
+
+## Live Demo Data
+
+| Entity | Count | Details |
+|--------|-------|---------|
+| Employees | 1,200 | All with lat/lng; 900=company_bus, 65=personal_car |
+| Vehicles | 106 | AUTOCAR(54 seats), MINIBUS(25), MINICAR(12) |
+| Configuration Transport | 591 | Seeded from XLSX, plan "Configuration Initiale 2024" |
+| Total fleet distance | 32,696 km | |
+| Sites | 4 | Casablanca: Ain Sebaa, Bouskoura, Moulay Rachid, Ain Chock |
+| KPI snapshots | 90 days | Trend data for all sites |
+
+---
+
+## Project Structure
+
+```
+backend/
+  app/
+    main.py              # FastAPI app + SPA static serving + CORS
+    config.py            # Settings from env vars
+    database.py          # SQLAlchemy async engine
+    models/              # SQLAlchemy models (41 tables)
+    schemas/             # Pydantic v2 request/response
+    api/v1/              # Route handlers (30+ files)
+    services/            # Business logic (clustering, routing, tco, roi, mobility_scoring, etc.)
+    tasks/               # Celery async tasks
+    middleware/           # Auth, RBAC
+  tests/                 # pytest tests
+  alembic/               # 19 DB migrations
+  requirements.txt
+  seed_*.py              # Seed scripts (idempotent)
+
+frontend/
+  src/
+    pages/               # Route-level pages
+      dashboard/         # KPI dashboard
+      sites/             # Site CRUD + CSV import/export
+      employees/         # Employee CRUD + map view
+      fleet/             # Vehicles, KmConsommation, PointArret, ConfigurationTransport
+      optimization/      # 3-section optimization hub
+      modal/             # Modal analysis (real Employee data)
+      financial/         # TCO + ROI dashboards
+      reports/           # Report generation
+      settings/          # OptimizationSettings + ConstraintParams + Shifts
+      scenarios/         # Scenario comparison
+      map/               # Unified map view
+    components/
+      ui/                # Button, Card, Modal, Input, Badge, DataTable, etc.
+      layout/            # Sidebar (collapsible), Header, AppLayout
+      maps/              # MapView, markers, routes (all @vis.gl/react-google-maps)
+      charts/            # PieChart, BarChart, GaugeChart, Histogram
+    api/                 # Axios API clients (ALL use /api/v1/... full paths)
+    lib/
+      apiError.ts        # extractApiError() — Pydantic v2 error utility
+    stores/              # Zustand state stores
+    types/               # TypeScript interfaces
+  vite.config.ts         # Port 5000, proxy /api, allowedHosts: true
+
+start_backend.sh         # Dev: Redis + uvicorn on port 8000
+start_production.sh      # Prod: migrations + uvicorn on ${PORT:-8080}
+build.sh                 # Prod build: frontend + pip install
+.replit                  # Replit config: vm deployment, build/run commands
+```
+
+---
 
 ## Design System: "Azure Velocity"
-- Primary: `#0058be` (Azure Blue)
-- Font: Inter
-- Icons: Material Symbols Outlined
+- **Primary:** `#0058be` (Azure Blue)
+- **Font:** Inter
+- **Icons:** Material Symbols Outlined
+- **Cards:** `bg-white rounded-xl shadow-sm border border-outline-variant/10`
+- Full spec: `Docs/DESIGN_SYSTEM.md`
 
-## Refinement Scope
-This is a refinement-only project. Sessions 1–44 are implemented. See `REPLIT_INSTRUCTIONS.md` for constraints and `REPLIT_CHANGES.md` for change log.
+---
+
+## Critical Patterns for New Code
+
+### 1. API Error Handling (Pydantic v2)
+```typescript
+import { extractApiError } from '@/lib/apiError';
+
+try {
+  await createSomething(data);
+} catch (err) {
+  setError(extractApiError(err, 'Une erreur est survenue'));
+}
+```
+
+### 2. Google Maps Components
+```tsx
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
+
+<APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} region="MA">
+  <Map defaultCenter={{ lat: 33.5731, lng: -7.5898 }} defaultZoom={11}>
+    <AdvancedMarker position={{ lat, lng }} />
+  </Map>
+</APIProvider>
+```
+
+### 3. Full API Paths (mandatory)
+```typescript
+// ✅ Correct
+const res = await apiClient.get('/api/v1/employees?page_size=2000');
+
+// ❌ Wrong — will 404
+const res = await apiClient.get('/employees');
+```
+
+### 4. Production Port
+```bash
+# In start_production.sh
+APP_PORT="${PORT:-8080}"
+exec uvicorn app.main:app --host 0.0.0.0 --port "${APP_PORT}"
+```
+
+---
+
+## Vehicle Constants
+```
+AUTOCAR:  capacity=54,  cost_per_km=4.50 MAD
+MINIBUS:  capacity=25,  cost_per_km=3.20 MAD
+MINICAR:  capacity=12,  cost_per_km=2.50 MAD
+```
+
+---
+
+## Replit Changes History
+See `REPLIT_CHANGES.md` for a full timestamped log of every change made during the Replit deployment sessions.
+
+See `Docs/sessions/session-replit.md` for the full session notes including what was changed, why, and what's next.
+
+---
+
+## What's Next: Phase 3 — Flutter Mobile App
+
+The next major work block is sessions 45–56: building the employee-facing Flutter mobile app.
+
+Key files to create:
+- `mobile/` — new Flutter project directory
+- `mobile/lib/main.dart` — app entry point
+- `mobile/lib/features/auth/` — login + biometric
+- `mobile/lib/features/home/` — home screen
+- `mobile/lib/features/trips/` — trip booking + management
+
+The mobile app will connect to the existing FastAPI backend via the `/api/v1/` endpoints. Session 54 adds mobile-specific backend endpoints.
+
+**After mobile is done:** Re-inject the project into Replit for final polishing, QA, and production deployment.
