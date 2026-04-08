@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-67] — 2026-04-08 (Phase 5 Start)
+### Added
+- `Content` model: title, body (rich text), content_type (news/training/safety/survey), media_url, JSONB audience targeting (sites/departments/shifts), published_at, expires_at, is_active
+- Alembic migration `r3s4t5u6v7w8` with 4 indexes
+- CRUD API: POST/GET/GET{id}/PUT/DELETE + POST /content/{id}/publish
+- `ContentService` with create, list (filtered+paginated), get, publish functions
+- Audience targeting: JSONB contains filtering by site_id
+- 12 backend tests (model, schemas, audience targeting)
+
 ## [Session-66] — 2026-04-08 (Phase 4 Complete!)
 ### Added
 - **Emergency Alert System**: full backend for emergency alert lifecycle
