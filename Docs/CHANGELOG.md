@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-76] — 2026-04-09 (Phase 5 Complete!)
+### Added
+- `valorization_engine.py`: core value calculation — commute_hours * engagement_rate * training_hour_cost
+- Baseline: 40min/day * 5d * 50wk = 166.67h annual commute; at 20% engagement = 33.33h recovered/employee
+- `ValorizationConfig` schema: configurable commute_minutes, engagement_rate, training_hour_cost, employee_count
+- `ValorizationMetrics` schema: annual/total hours, monetary values, rates, breakdown
+- `ValorizationKPI` schema: dashboard-formatted KPI data (label, value, unit, description)
+- `GET /valorization/metrics` — configurable valorization calculations via query params
+- `GET /kpis/valorization` — 6 KPIs formatted for dashboard widgets
+- `GET /valorization/roi-lever` — roi_journey lever for ROI calculator integration
+- Environment-variable-based defaults (VALORIZATION_* env vars)
+- 18 backend tests (calculations, KPIs, ROI lever, schemas, edge cases)
+
 ## [Session-75] — 2026-04-09
 ### Added
 - `GET /content/analytics` backend endpoint: aggregate views, completions, quiz scores, time spent, training hours

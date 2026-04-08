@@ -248,7 +248,9 @@
 | GET | `/training/completions` | Training completion records | Yes | DRH, Admin | 74 |
 | POST | `/training/sync-lms` | Trigger bidirectional LMS sync | Yes | Admin | 74 |
 | POST | `/training/webhook/{provider}` | LMS webhook handler | No | — | 74 |
-| GET | `/valorization/metrics` | Journey valorization KPIs | Yes | DRH, DAF, Admin | 76 |
+| GET | `/valorization/metrics` | Journey valorization metrics | Yes | DRH, DAF, Admin | 76 |
+| GET | `/kpis/valorization` | Valorization KPIs for dashboard | Yes | DRH, DAF, Admin | 76 |
+| GET | `/valorization/roi-lever` | ROI journey lever for calculator | Yes | DRH, DAF, Admin | 76 |
 
 ---
 
