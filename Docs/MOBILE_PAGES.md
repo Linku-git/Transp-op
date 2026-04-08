@@ -212,18 +212,16 @@
 - `TrainingService`: API fetch, quiz score submission, Hive offline caching
 - `TrainingPlayerProvider`: Riverpod state for playback, quiz flow, time tracking
 
-#### SurveyScreen `/content/survey/:id`
-- Survey title + description
-- Question list (dynamic rendering):
-  - Single choice (radio)
-  - Multiple choice (checkbox)
-  - Text input
-  - Rating (1-5 stars)
-  - Slider
-- Progress indicator (question X of Y)
-- Submit button
-- Anonymous indicator (if configured)
-- "Thank you" confirmation screen
+#### SurveyScreen `/content/survey/:id` ✅ Session 73
+- Survey title + description display
+- 5 question type widgets: `RadioQuestion` (RadioListTile), `CheckboxQuestion` (CheckboxListTile), `TextQuestion` (TextField), `RatingQuestion` (1-5 star icons), `SliderQuestion` (Slider with min/max/value labels)
+- `SurveyProgress` widget: "Question X sur Y" + answered count + LinearProgressIndicator
+- Submit button with required-field validation (disabled until all required answered)
+- `AnonymousIndicator` banner with visibility_off icon for anonymous surveys
+- Thank you confirmation screen (check_circle icon + "Merci !" + return button)
+- `SurveyService`: API submit + Hive offline queue with `submitQueuedResponses()` auto-retry
+- `SurveyScreenProvider`: Riverpod state for answers, validation, submission, offline fallback
+- Loading/error/empty states
 
 ---
 

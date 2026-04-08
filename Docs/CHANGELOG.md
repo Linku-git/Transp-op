@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-73] — 2026-04-09
+### Added
+- `SurveyScreen`: full survey interface with dynamic question rendering, progress bar, submit with validation
+- 5 question type widgets: `RadioQuestion` (single choice), `CheckboxQuestion` (multiple choice), `TextQuestion`, `RatingQuestion` (1-5 stars), `SliderQuestion`
+- `SurveyProgress` widget: question X of Y counter with linear progress bar
+- `AnonymousIndicator` widget: visibility_off icon with anonymous notice
+- Thank you confirmation screen after successful submission
+- `SurveyData`, `SurveyQuestion`, `SurveyOption`, `SurveyAnswer` models
+- `SurveyService`: API integration, Hive offline queue with auto-retry
+- `SurveyScreenProvider`: Riverpod state for answers, validation, submission, offline queue
+- Offline queue: stores responses in Hive when offline, `submitQueuedResponses()` on reconnect
+- Route: `/content/survey/:id` → SurveyScreen (replaced placeholder)
+- 25 mobile tests (models, question widgets, survey widgets, provider state)
+
 ## [Session-72] — 2026-04-09
 ### Added
 - `Survey` model: content_id, title, description, questions (JSONB), response_count, is_anonymous, is_active
