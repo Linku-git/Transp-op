@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-65] — 2026-04-08
+### Added
+- **Mobile Night Mode**: `NightModeNotifier` (Riverpod) with auto/manual/off preferences, 1-minute re-evaluation timer, persisted via flutter_secure_storage
+- **EmergencyScreen**: full red overlay (#DC2626), GPS location sharing, responder notification list, "Appeler les secours" button, cancel with confirmation dialog, haptic feedback on activation
+- **SecurityQuestionnaireScreen**: safety rating (1-5 stars), vulnerable time slots, night walking distance slider, night concerns text — submits to POST /security/questionnaire
+- **NightModeToggle** widget: switch with auto/manual label, dark/light mode icon
+- Routes updated: /emergency → real EmergencyScreen, /profile/security → SecurityQuestionnaireScreen
+- 5 new mobile tests (268 total mobile, 417 total project)
+
 ## [Session-64] — 2026-04-08
 ### Added
 - **Security Dashboard** at `/dashboard/security` with KPI cards (avg score, employees, critical stops, incidents)

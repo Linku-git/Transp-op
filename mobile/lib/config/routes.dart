@@ -17,6 +17,8 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/preferences_screen.dart';
 import '../screens/stats/statistics_screen.dart';
+import '../screens/emergency/emergency_screen.dart';
+import '../screens/profile/security_questionnaire_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -148,10 +150,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'security',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Sécurité',
-                icon: Icons.shield_outlined,
-              ),
+              builder: (context, state) => const SecurityQuestionnaireScreen(),
             ),
           ],
         ),
@@ -165,8 +164,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/emergency',
-      builder: (context, state) =>
-          const PlaceholderScreen(title: 'Urgence', icon: Icons.emergency),
+      builder: (context, state) => const EmergencyScreen(),
     ),
     GoRoute(
       path: '/notifications',
