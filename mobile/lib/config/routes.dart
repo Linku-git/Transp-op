@@ -7,6 +7,9 @@ import '../screens/auth/login_screen.dart';
 import '../screens/onboarding/onboarding_flow.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/trips/trip_booking_screen.dart';
+import '../screens/trips/trips_screen.dart';
+import '../screens/trips/trip_detail_screen.dart';
+import '../screens/trips/trip_history_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -46,7 +49,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/trips',
           pageBuilder: (context, state) => const NoTransitionPage(
-            child: PlaceholderScreen(title: 'Trajets', icon: Icons.calendar_today_outlined),
+            child: TripsScreen(),
           ),
           routes: [
             GoRoute(
@@ -55,19 +58,15 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) => const TripBookingScreen(),
             ),
             GoRoute(
-              path: ':id',
-              parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => PlaceholderScreen(
-                title: 'Trajet ${state.pathParameters['id']}',
-                icon: Icons.route,
-              ),
-            ),
-            GoRoute(
               path: 'history',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Historique',
-                icon: Icons.history,
+              builder: (context, state) => const TripHistoryScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) => TripDetailScreen(
+                tripId: state.pathParameters['id']!,
               ),
             ),
           ],

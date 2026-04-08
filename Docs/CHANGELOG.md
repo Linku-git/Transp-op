@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-50] — 2026-04-08
+### Added
+- Trip management: `TripsScreen` with À venir / Passés tabs, pull-to-refresh, cancel confirmation dialog
+- `TripDetailScreen` with FutureProvider, 4-step status timeline, detail card, CO2Badge, cancel action
+- `TripHistoryScreen` with stats header (trips, CO2, distance) and monthly grouped trip list (French month names)
+- `Trip` model (15 fields), `TripStatus` enum with French labels and fromString parsing, `TripStats` aggregate
+- `TripCard` widget with status chip (color-coded), CO2 badge, conditional modify/cancel actions (>30min rule)
+- `TripStatusTimeline` — 4-step visual progress (Réservé → Confirmé → En cours → Terminé)
+- `Co2Badge` — green badge with eco icon
+- `TripsNotifier` (Riverpod) with parallel load, cancelTrip, pastByMonth grouping
+- Extended `TripService` with getUpcomingTrips, getPastTrips, getTripDetail, cancelTrip, modifyTrip
+- 21 new tests (163 total passing)
+
 ## [Session-49] — 2026-04-08
 ### Added
 - Trip booking flow (`TripBookingScreen`) with date picker, shift selector, pickup point, summary, and confirm
