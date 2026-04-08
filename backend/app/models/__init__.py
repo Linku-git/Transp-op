@@ -28,6 +28,7 @@ from app.models.stop_risk_score import StopRiskScore
 from app.models.vehicle_position import VehiclePosition as VehiclePositionModel
 from app.models.rti_event import RTIEvent
 from app.models.rti_config import RTIConfig
+from app.models.security_questionnaire import SecurityQuestionnaire
 
 __all__ = [
     "BaseModel",
@@ -66,4 +67,5 @@ __all__ = [
     "VehiclePositionModel",
     "RTIEvent",
     "RTIConfig",
+    "SecurityQuestionnaire",
 ]

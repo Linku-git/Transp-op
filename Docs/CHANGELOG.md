@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-61] — 2026-04-08
+### Added
+- `SecurityQuestionnaire` model: employee_id, version (auto-increment), overall_safety_rating (1-5), responses JSONB, vulnerable_stops JSONB, night_concerns text, trigger_type (periodic/incident/initial)
+- Alembic migration `n9o0p1q2r3s4` with 3 indexes
+- `POST /security/questionnaire` — submit with auto-version per employee
+- `GET /security/questionnaire/{employee_id}` — latest response + full history summary
+- `POST /security/questionnaire/trigger-reassessment` — incident-triggered bulk reassessment
+- `ReassessmentScheduler` service: quarterly (90d) / semi-annual (180d) / annual (365d) intervals, due detection, next due date calculation
+- 18 backend tests (model, schema validation 1-5 rating, reassessment intervals, due detection)
+
 ## [Session-60] — 2026-04-08
 ### Added
 - **RTI Monitoring Dashboard** at `/dashboard/rti` with 30-second auto-refresh

@@ -35,6 +35,7 @@ from app.api.v1.rti_risk_stops import router as rti_risk_stops_router
 from app.api.v1.rti import router as rti_router
 from app.api.v1.rti_config import router as rti_config_router
 from app.api.v1.kpis_rti import router as kpis_rti_router
+from app.api.v1.security_questionnaire import router as security_questionnaire_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -71,3 +72,4 @@ api_router.include_router(rti_risk_stops_router, tags=["rti"])
 api_router.include_router(rti_router, tags=["rti"])
 api_router.include_router(rti_config_router, tags=["rti"])
 api_router.include_router(kpis_rti_router, tags=["kpis"])
+api_router.include_router(security_questionnaire_router, tags=["security"])
