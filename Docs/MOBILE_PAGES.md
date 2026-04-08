@@ -196,16 +196,21 @@
 - Records view + completion events with time_spent_seconds via engagement API
 - `FutureProvider.family` for content detail loading
 
-#### TrainingPlayerScreen `/content/training/:id`
-- Video/audio player with controls
-- Progress bar
-- Quiz section (after media completion):
-  - Multiple choice questions
-  - Submit button
-  - Score display
-  - "Retry" option
-- Completion certificate link (if passed)
-- Time tracking (seconds spent)
+#### TrainingPlayerScreen `/content/training/:id` ✅ Session 71
+- `TrainingMediaPlayer` widget: `video_player` integration with `VideoPlayerController.networkUrl`
+  - Play/pause, seek forward/backward 10s, progress slider
+  - Audio visual mode (icon + waveform placeholder) for .mp3/.wav
+  - Loading/error states for media initialization
+- Quiz section (appears after media completion):
+  - `QuizSection` widget: multiple choice `QuizQuestionWidget` with radio-button selection
+  - Progress counter (answered/total), submit button (disabled until all answered)
+  - `ScoreDisplay` widget: trophy (pass) or retry (fail), score %, correct count, passing threshold
+  - Retry button resets answers for failed quizzes
+- Completion certificate link placeholder (if passed)
+- Live time tracking in app bar (`StreamBuilder` with 1-second ticker, mm:ss format)
+- `TrainingContent` model: title, body, mediaUrl, mediaType, questions, passingScore
+- `TrainingService`: API fetch, quiz score submission, Hive offline caching
+- `TrainingPlayerProvider`: Riverpod state for playback, quiz flow, time tracking
 
 #### SurveyScreen `/content/survey/:id`
 - Survey title + description

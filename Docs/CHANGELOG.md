@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-71] — 2026-04-09
+### Added
+- `TrainingPlayerScreen`: full-featured micro-training player with video/audio playback
+- `TrainingMediaPlayer` widget: video_player integration with play/pause/seek/forward/backward controls, progress slider, audio visual mode
+- `QuizSection` widget: multiple choice questions with answer selection, progress counter, submit button
+- `ScoreDisplay` widget: pass/fail result with trophy/retry, score percentage, certificate link placeholder
+- `TrainingContent` model: media_url, media_type, quiz questions, passing_score
+- `QuizQuestion`, `QuizOption`, `QuizResult` models with score calculation
+- `TrainingService`: API integration, Hive offline caching, quiz score submission
+- `TrainingPlayerProvider`: Riverpod state for playback, quiz flow, time tracking
+- Live time tracking display in app bar (seconds spent on training)
+- Route: `/content/training/:id` → TrainingPlayerScreen (replaced placeholder)
+- Added `video_player` and `chewie` Flutter packages
+- 28 mobile tests (models, quiz widgets, score display, provider state)
+
 ## [Session-70] — 2026-04-09
 ### Added
 - `ContentFeedScreen`: tabbed content feed with All/News/Training/Safety/Surveys filter chips
