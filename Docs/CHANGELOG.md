@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-55] — 2026-04-08
+### Added
+- `StatisticsScreen` with period selector (Ce mois / Cette année / Tout), pull-to-refresh, empty state
+- `StatsSummaryCards`: 5 stat cards (trips, distance, CO2, training, quiz average)
+- `TripsBarChart`: custom-painted monthly bar chart with counts and month labels
+- `Co2TrendChart`: custom-painted line chart with area fill and date labels
+- `TransportModePieChart`: custom-painted pie chart with color legend and percentages
+- `ShareImpactCard`: blue impact card with trips/CO2/trees equivalent + share button
+- `Co2Calculator`: car baseline (120g/km) vs bus (30g/passenger-km), formatCo2, treesEquivalent
+- `StatisticsService` + `StatisticsNotifier` (Riverpod) with period filtering
+- 20 new tests (259 total passing)
+
 ## [Session-54] — 2026-04-08
 ### Added
 - **Backend**: 3 new database models: `TripBooking` (trip reservations), `DeviceRegistration` (FCM tokens), `PushNotification` (notification log)

@@ -16,6 +16,7 @@ import '../screens/notifications/notification_list_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/preferences_screen.dart';
+import '../screens/stats/statistics_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -160,8 +161,7 @@ final GoRouter appRouter = GoRouter(
     // Standalone screens (outside bottom nav)
     GoRoute(
       path: '/stats',
-      builder: (context, state) =>
-          const PlaceholderScreen(title: 'Statistiques', icon: Icons.bar_chart),
+      builder: (context, state) => const StatisticsScreen(),
     ),
     GoRoute(
       path: '/emergency',
