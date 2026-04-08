@@ -390,11 +390,13 @@
 - Edit and delete action buttons
 - Engagement metrics placeholder (session 69)
 
-#### ContentAnalyticsPage `/content/analytics`
-- Engagement overview (views, completions, avg quiz score)
-- Content performance ranking
-- Training hours recovered metric
-- Monetary value estimate
+#### ContentAnalyticsPage `/content/analytics` ✅ Session 75
+- **Overview KPIs (4 cards):** total views, completions, avg quiz score, avg time spent
+- **Training Hours Hero Card:** gradient card showing total recovered training hours (seconds→hours)
+- **Engagement by Type Chart:** horizontal bar chart with type-colored bars (news, training, safety, survey)
+- **Engagement Rates Card:** view rate + completion rate progress bars, delivery/completion totals
+- **Content Ranking Table:** sorted by completions, columns: title, type, views, completions, avg score, avg time
+- API: `GET /api/v1/content/analytics` → overview + content_ranking + by_type
 
 ---
 

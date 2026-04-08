@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-75] — 2026-04-09
+### Added
+- `GET /content/analytics` backend endpoint: aggregate views, completions, quiz scores, time spent, training hours
+- `analytics_service`: SQL aggregation queries for overview, per-content ranking, by-type breakdown
+- `ContentAnalyticsPage` at `/content/analytics`: full dashboard with 4 KPI cards, training hours hero card, type breakdown bars, engagement rates, ranking table
+- `EngagementOverview`: views, completions, avg score, avg time KPI cards
+- `TrainingHoursCard`: gradient hero card with total recovered training hours
+- `EngagementByTypeChart`: horizontal bar chart by content type
+- `EngagementRatesCard`: view rate + completion rate progress bars with totals
+- `ContentRankingTable`: content items sorted by completions with type, score, time columns
+- Frontend API client: `getContentAnalytics()` typed function
+- Route: `/content/analytics` registered before `/content/:id`
+- 14 tests (9 backend analytics, 5 frontend dashboard)
+
 ## [Session-74] — 2026-04-09
 ### Added
 - `TrainingModule` model: content_id, lms_provider, lms_external_id, duration_minutes, is_mandatory, certification_name, lms_metadata, last_synced_at
