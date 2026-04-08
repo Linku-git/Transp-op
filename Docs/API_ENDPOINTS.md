@@ -246,7 +246,8 @@
 | POST | `/surveys/{id}/respond` | Submit survey response | Yes | Salarie | 72 |
 | GET | `/surveys/{id}/aggregation` | Response aggregation | Yes | DRH, Admin | 72 |
 | GET | `/training/completions` | Training completion records | Yes | DRH, Admin | 74 |
-| POST | `/training/sync-lms` | Trigger LMS sync | Yes | Admin | 74 |
+| POST | `/training/sync-lms` | Trigger bidirectional LMS sync | Yes | Admin | 74 |
+| POST | `/training/webhook/{provider}` | LMS webhook handler | No | — | 74 |
 | GET | `/valorization/metrics` | Journey valorization KPIs | Yes | DRH, DAF, Admin | 76 |
 
 ---

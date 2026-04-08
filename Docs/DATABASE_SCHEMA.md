@@ -44,6 +44,7 @@
 | [content_delivery](#content_delivery) | — | 10 | Content engagement tracking per employee |
 | [survey](#survey) | — | 10 | Survey/poll definitions with JSONB questions |
 | [survey_response](#survey_response) | — | 8 | Survey response submissions |
+| [training_module](#training_module) | — | 13 | LMS training module mapping |
 
 ---
 
@@ -852,6 +853,30 @@ Individual survey response. Created in Session 72.
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** tenant_id, survey_id, employee_id
+
+---
+
+## training_module
+
+Maps content to external LMS training modules. Created in Session 74.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| content_id | uuid | NO | | FK → content.id |
+| lms_provider | varchar(50) | NO | | cornerstone/360learning/talentlms |
+| lms_external_id | varchar(255) | NO | | External course/program ID |
+| duration_minutes | int | YES | | Training duration |
+| is_mandatory | bool | NO | false | Mandatory training flag |
+| certification_name | varchar(500) | YES | | Certification awarded |
+| lms_metadata | jsonb | YES | | Provider-specific metadata |
+| last_synced_at | timestamptz | YES | | Last sync timestamp |
+| is_active | bool | NO | true | |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** tenant_id, content_id, lms_provider, UNIQUE(tenant_id, lms_provider, lms_external_id)
 
 ---
 

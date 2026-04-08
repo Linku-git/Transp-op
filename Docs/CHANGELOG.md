@@ -6,6 +6,22 @@
 
 ---
 
+## [Session-74] — 2026-04-09
+### Added
+- `TrainingModule` model: content_id, lms_provider, lms_external_id, duration_minutes, is_mandatory, certification_name, lms_metadata, last_synced_at
+- Alembic migration `u6v7w8x9y0z1` with 4 indexes including unique (tenant, provider, external_id)
+- `BaseLMSConnector` abstract class: fetch_catalog, export_completion, handle_webhook, test_connection
+- `CornerstoneConnector`: Cornerstone OnDemand integration (OData API stubs)
+- `Learning360Connector`: 360Learning integration (programs API stubs)
+- `TalentLMSConnector`: TalentLMS integration (courses API stubs)
+- Connector factory: `get_connector(provider)` with registry pattern
+- `sync_service`: bidirectional sync (catalog import + completion export), full_sync, get_completions
+- `POST /training/sync-lms` — trigger full bidirectional sync
+- `GET /training/completions` — completion records with training module enrichment
+- `POST /training/webhook/{provider}` — real-time LMS webhook processing
+- `LMSCourse`, `LMSCompletion` standardized dataclasses
+- 22 backend tests (model, schemas, connectors, webhooks)
+
 ## [Session-73] — 2026-04-09
 ### Added
 - `SurveyScreen`: full survey interface with dynamic question rendering, progress bar, submit with validation
