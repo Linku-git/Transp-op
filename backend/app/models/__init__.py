@@ -34,6 +34,8 @@ from app.models.clustering_config import ClusteringConfig
 from app.models.emergency_alert import EmergencyAlert
 from app.models.content import Content
 from app.models.content_delivery import ContentDelivery
+from app.models.survey import Survey
+from app.models.survey_response import SurveyResponse
 
 __all__ = [
     "BaseModel",
@@ -78,4 +80,6 @@ __all__ = [
     "EmergencyAlert",
     "Content",
     "ContentDelivery",
+    "Survey",
+    "SurveyResponse",
 ]

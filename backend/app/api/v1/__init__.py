@@ -42,6 +42,7 @@ from app.api.v1.kpis_security import router as kpis_security_router
 from app.api.v1.emergency import router as emergency_router
 from app.api.v1.content_feed import router as content_feed_router
 from app.api.v1.content import router as content_router
+from app.api.v1.surveys import router as surveys_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -85,3 +86,4 @@ api_router.include_router(kpis_security_router, tags=["kpis"])
 api_router.include_router(emergency_router, tags=["security"])
 api_router.include_router(content_feed_router, tags=["content"])
 api_router.include_router(content_router, tags=["content"])
+api_router.include_router(surveys_router, tags=["surveys"])
