@@ -178,22 +178,23 @@
 
 ### 6. Content & Training (Sessions 70-73)
 
-#### ContentFeedScreen `/content`
-- **Tabs:** All | News | Training | Safety | Surveys
-- Card list:
-  - Title, snippet, type badge, date
-  - Media thumbnail (if video/image)
-  - Completion indicator (for training)
-  - "New" badge for unread items
-- Pull-to-refresh
-- Offline indicator (cached content available)
+#### ContentFeedScreen `/content` ✅ Session 70
+- **Tabs:** All | News | Training | Safety | Surveys (FilterChip horizontal scroll)
+- `ContentCard` widget: title, snippet (HTML-stripped), type badge with icon+color, date, media thumbnail or icon placeholder, "NEW" badge for undelivered, check icon for completed
+- `ContentTabs` widget: horizontal filter chip tabs with icons
+- Pull-to-refresh via `RefreshIndicator`
+- `OfflineIndicator` banner when displaying Hive-cached content
+- Loading/error/empty states
+- Riverpod `ContentFeedProvider` with type filtering + offline fallback
+- `ContentFeedService` with Hive caching (30-min TTL)
 
-#### ContentDetailScreen `/content/:id`
-- Full article view
-- Rich text body
-- Image gallery / video player
-- "Mark as Read" auto-trigger on scroll
-- Share button (internal)
+#### ContentDetailScreen `/content/:id` ✅ Session 70
+- Full article view with `SingleChildScrollView`
+- Type badge, title, date, media (image or video placeholder)
+- Rich text body rendering (simple HTML-to-text with paragraph/heading/list support)
+- "Mark as Read" auto-trigger at 90% scroll completion
+- Records view + completion events with time_spent_seconds via engagement API
+- `FutureProvider.family` for content detail loading
 
 #### TrainingPlayerScreen `/content/training/:id`
 - Video/audio player with controls

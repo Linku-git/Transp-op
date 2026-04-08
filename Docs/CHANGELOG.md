@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-70] — 2026-04-09
+### Added
+- `ContentFeedScreen`: tabbed content feed with All/News/Training/Safety/Surveys filter chips
+- `ContentDetailScreen`: full article view with rich text rendering, media display, auto "Mark as Read" on scroll completion
+- `ContentCard` widget: title, snippet, type badge, date, media thumbnail, NEW badge, completion indicator
+- `ContentTabs` widget: horizontal filter chip tabs for content types
+- `OfflineIndicator` widget: banner for cached content display
+- `FeedContent` model: extended content model with delivery/view/completion status, HTML snippet extraction
+- `ContentFeedService`: API integration with Hive-based offline caching (30-min TTL)
+- `ContentFeedProvider`: Riverpod state management with type filtering, offline fallback
+- Route registration: `/content` → ContentFeedScreen, `/content/:id` → ContentDetailScreen
+- 27 mobile tests (model, widgets, screen state, feed filtering)
+
 ## [Session-69] — 2026-04-08
 ### Added
 - `ContentDelivery` model: content_id, employee_id, delivered_at, viewed_at, completed_at, quiz_score, time_spent_seconds
