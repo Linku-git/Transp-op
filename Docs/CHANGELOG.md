@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-58] — 2026-04-08
+### Added
+- **RTI Backend System**: Real-time vehicle tracking infrastructure
+- `VehiclePosition` model with PostGIS POINT geometry (GIST index), heading, speed, recorded_at
+- `RTIEvent` model for compliance tracking: event_type (arrival/departure/delay/breakdown), scheduled_at, actual_at, auto-computed wait_duration_seconds
+- Alembic migration `l7m8n9o0p1q2` creating 2 tables with 6 indexes
+- `POST /rti/vehicle-position` — GPS update stored in DB + Redis (30s TTL)
+- `GET /rti/vehicle-position/{id}` — Redis-first lookup with DB fallback
+- `GET /rti/stop/{id}/eta` — ETA via haversine distance + vehicle speed
+- `POST /rti/events` — log event with auto wait_duration computation
+- `GET /rti/compliance` — compliance % (arrivals within 90s threshold)
+- WebSocket `ws://localhost:8000/ws/rti/{vehicle_id}` — broadcast positions to subscribed clients
+- `EtaCalculator` with haversine great-circle distance, configurable speed (default 25 km/h urban)
+- 14 backend tests (models, ETA, Redis serialization, schemas)
+
 ## [Session-57] — 2026-04-08 (Phase 4 Start)
 ### Added
 - **StopRiskScore** model: PostGIS POINT geometry with GIST spatial index, 5 risk factor scores (isolation, lighting, TC frequency, night multiplier, employee perception), computed composite score, critical flag

@@ -25,6 +25,8 @@ from app.models.trip_booking import TripBooking
 from app.models.device_registration import DeviceRegistration
 from app.models.push_notification import PushNotification
 from app.models.stop_risk_score import StopRiskScore
+from app.models.vehicle_position import VehiclePosition as VehiclePositionModel
+from app.models.rti_event import RTIEvent
 
 __all__ = [
     "BaseModel",
@@ -60,4 +62,6 @@ __all__ = [
     "DeviceRegistration",
     "PushNotification",
     "StopRiskScore",
+    "VehiclePositionModel",
+    "RTIEvent",
 ]
