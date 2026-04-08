@@ -24,6 +24,7 @@ from app.models.weather import WeatherForecast
 from app.models.trip_booking import TripBooking
 from app.models.device_registration import DeviceRegistration
 from app.models.push_notification import PushNotification
+from app.models.stop_risk_score import StopRiskScore
 
 __all__ = [
     "BaseModel",
@@ -58,4 +59,5 @@ __all__ = [
     "TripBooking",
     "DeviceRegistration",
     "PushNotification",
+    "StopRiskScore",
 ]

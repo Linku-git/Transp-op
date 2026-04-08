@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-57] — 2026-04-08 (Phase 4 Start)
+### Added
+- **StopRiskScore** model: PostGIS POINT geometry with GIST spatial index, 5 risk factor scores (isolation, lighting, TC frequency, night multiplier, employee perception), computed composite score, critical flag
+- Weighted risk scoring algorithm: `Risk = w1*Isolation + w2*(1-Lighting) + w3*(1-TC) + w4*Night + w5*(1-Perception)` with configurable `RiskWeights` dataclass
+- Critical threshold at 0.7 — stops above are auto-flagged
+- `compute_and_flag()` evaluates both day and night scenarios, takes worst-case
+- API endpoints: `GET /rti/risk-stops` (filter by site_id, is_critical), `POST /rti/risk-stops` (create with auto-score), `PUT /rti/risk-stops/{id}` (update + recompute)
+- Alembic migration `k6l7m8n9o0p1` with GIST spatial index
+- 20 backend tests (algorithm, critical flag, model, schemas)
+
 ## [Session-56] — 2026-04-08 (Phase 3 Complete!)
 ### Added
 - **Offline Mode**: Comprehensive offline-first architecture for the mobile app
