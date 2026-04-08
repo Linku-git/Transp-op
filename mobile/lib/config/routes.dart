@@ -19,6 +19,8 @@ import '../screens/profile/preferences_screen.dart';
 import '../screens/stats/statistics_screen.dart';
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/profile/security_questionnaire_screen.dart';
+import '../screens/content/content_feed_screen.dart';
+import '../screens/content/content_detail_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -100,15 +102,14 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/content',
           pageBuilder: (context, state) => const NoTransitionPage(
-            child: PlaceholderScreen(title: 'Contenu', icon: Icons.article_outlined),
+            child: ContentFeedScreen(),
           ),
           routes: [
             GoRoute(
               path: ':id',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => PlaceholderScreen(
-                title: 'Article ${state.pathParameters['id']}',
-                icon: Icons.article,
+              builder: (context, state) => ContentDetailScreen(
+                contentId: state.pathParameters['id']!,
               ),
             ),
             GoRoute(
