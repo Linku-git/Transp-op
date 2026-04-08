@@ -14,13 +14,13 @@ Build a full-screen map view of all employees with filtering, and add bulk actio
 
 ## Tasks
 
-- [x] Create `frontend/src/pages/employees/EmployeeMapPage.tsx` — Full-screen Leaflet map:
+- [x] Create `frontend/src/pages/employees/EmployeeMapPage.tsx` — Full-screen Google Maps map:
   - Employee markers color-coded by site
   - Click marker -> popup with name, matricule, site, shift, PMR badge
   - Filter overlay (site, shift, PMR dropdowns)
   - Heatmap toggle (employee density)
   - Site location markers (different icon)
-- [x] Create `frontend/src/components/maps/MapView.tsx` — Base Leaflet map wrapper (reusable)
+- [x] Create `frontend/src/components/maps/MapView.tsx` — Base Google Maps map wrapper (reusable)
 - [x] Create `frontend/src/components/maps/EmployeeMarker.tsx` — Employee map marker with popup
 - [x] Create `frontend/src/components/maps/SiteMarker.tsx` — Site location marker
 - [x] Add bulk actions to `EmployeeListPage.tsx`:
@@ -65,6 +65,7 @@ Build a full-screen map view of all employees with filtering, and add bulk actio
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages

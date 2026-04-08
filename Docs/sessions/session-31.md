@@ -72,6 +72,7 @@ Create the SQLAlchemy models, Alembic migrations, Pydantic schemas, and CRUD API
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages

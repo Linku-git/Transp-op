@@ -20,7 +20,7 @@ Build the optimization page interactive map with clusters, routes, meeting zones
 - [x] Create `frontend/src/pages/optimization/OptimizationPage.tsx`:
   - Controls panel (left): site selector, date picker, condition type, algorithm settings
   - "Run Optimization" button (triggers async, shows progress)
-  - Map area (center/right): full interactive Leaflet map
+  - Map area (center/right): full interactive Google Maps map
 - [x] Create `frontend/src/components/maps/ClusterRegion.tsx` — Cluster boundary circle
 - [x] Create `frontend/src/components/maps/RoutePolyline.tsx` — Vehicle route polyline (solid line, colored per vehicle)
 - [x] Create `frontend/src/components/maps/MeetingZoneMarker.tsx` — Meeting zone radius circle
@@ -72,6 +72,7 @@ Build the optimization page interactive map with clusters, routes, meeting zones
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[ARCHITECTURE]] — System architecture
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference

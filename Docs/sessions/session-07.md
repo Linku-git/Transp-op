@@ -28,7 +28,7 @@ Build the site management frontend pages: list, create, edit with map-based GPS 
   - ZFE toggle, security profile dropdown
   - Contact name, phone
   - Notes fields
-- [x] Create `frontend/src/components/maps/MapPicker.tsx` — Click-to-place GPS coordinate picker using Leaflet
+- [x] Create `frontend/src/components/maps/MapPicker.tsx` — Click-to-place GPS coordinate picker using Google Maps
 - [x] Create `frontend/src/pages/sites/SiteEditPage.tsx` — Pre-filled form (reuse SiteCreatePage form)
 - [x] Create `frontend/src/pages/sites/SiteDetailPage.tsx` — Read-only view with mini-map
 - [x] Add site routes to `routes.tsx`
@@ -70,13 +70,14 @@ Build the site management frontend pages: list, create, edit with map-based GPS 
 
 ## Notes
 - Extracted shared SiteForm component used by both Create and Edit pages
-- Leaflet mocks required for jsdom: mock leaflet, CSS, image imports, and react-leaflet per test file
+- Google Maps mocks required for jsdom: mock leaflet, CSS, image imports, and @vis.gl/react-google-maps per test file
 - MapPicker uses draggable marker + click-to-place + coordinate display
 - All pages follow design system: surface nesting, no borders, Manrope/Inter fonts, low-chrome chips for ZFE/security
 
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[ARCHITECTURE]] — System architecture
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference

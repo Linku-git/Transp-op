@@ -67,6 +67,7 @@ Extend the export engine with new report types, a GeneratedReport model for pers
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages
 - [[ROADMAP]] — Project timeline

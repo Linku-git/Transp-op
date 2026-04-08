@@ -62,6 +62,7 @@ Implement a KPI snapshot system that captures daily KPI values for all sites, en
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[DATABASE_SCHEMA]] — Database tables
 - [[ROADMAP]] — Project timeline

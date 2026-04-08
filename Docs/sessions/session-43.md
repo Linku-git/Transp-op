@@ -71,6 +71,7 @@ Build the frontend pages for browsing generated report history and generating ne
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages
 - [[ROADMAP]] — Project timeline

@@ -30,7 +30,7 @@ Build scenario management and comparison frontend with side-by-side metrics and 
   - "Create Rain Scenario" one-click button
 - [x] Add weather widget to OptimizationPage
 - [x] Add scenario routes to navigation
-- [x] **Browser verification**: Open `http://localhost:5173` in Chrome, verify new pages render correctly, check DevTools Console for errors, test navigation
+- [x] **Browser verification**: Open `http://localhost:5000` in Chrome, verify new pages render correctly, check DevTools Console for errors, test navigation
 
 ## Files to Create/Modify
 - `frontend/src/api/scenarios.ts` (create)
@@ -78,6 +78,7 @@ Build scenario management and comparison frontend with side-by-side metrics and 
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages
 - [[ROADMAP]] — Project timeline

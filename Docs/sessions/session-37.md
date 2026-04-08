@@ -59,6 +59,7 @@ Build cost-per-trip calculations (per available seat, per occupied seat, per emp
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages

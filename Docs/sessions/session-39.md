@@ -55,6 +55,7 @@ Build the backend analytics service and API endpoint that powers the HR dashboar
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[FRONTEND_PAGES]] — Web pages
 - [[ROADMAP]] — Project timeline

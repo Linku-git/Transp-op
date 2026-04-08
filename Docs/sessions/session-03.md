@@ -17,7 +17,7 @@ Scaffold the React frontend with Vite, TypeScript strict mode, TailwindCSS, rout
 - [x] Initialize Vite React TypeScript project: `npm create vite@latest frontend -- --template react-ts`
 - [x] Configure TypeScript strict mode in `tsconfig.json`
 - [x] Install and configure TailwindCSS
-- [x] Install dependencies: `react-router-dom`, `zustand`, `axios`, `recharts`, `react-leaflet`, `leaflet`, `react-i18next`, `i18next`
+- [x] Install dependencies: `react-router-dom`, `zustand`, `axios`, `recharts`, `@vis.gl/react-google-maps`, `leaflet`, `react-i18next`, `i18next`
 - [x] Create `frontend/src/routes.tsx` — Route configuration with lazy loading
 - [x] Create `frontend/src/api/client.ts` — Axios instance with base URL, interceptors, auth header
 - [x] Create `frontend/src/components/layout/AppLayout.tsx` — Sidebar + Header + Content
@@ -38,7 +38,7 @@ Scaffold the React frontend with Vite, TypeScript strict mode, TailwindCSS, rout
 - [x] Create `frontend/src/pages/dashboard/DashboardPage.tsx` — Placeholder
 - [x] Create `frontend/src/pages/LoginPage.tsx` — Placeholder login page
 - [x] Create `frontend/Dockerfile` (Node 18, build, serve with nginx)
-- [x] Verify `npm run dev` starts dev server at localhost:5173
+- [x] Verify `npm run dev` starts dev server at localhost:5000
 - [x] Verify layout renders with sidebar and header
 - [x] Verify routing works (navigate between placeholder pages)
 

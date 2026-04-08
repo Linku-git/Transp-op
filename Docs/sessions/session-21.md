@@ -67,6 +67,7 @@ Implement vehicle-to-cluster assignment using bin-packing, including cluster spl
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[ARCHITECTURE]] — System architecture
 - [[DATABASE_SCHEMA]] — Database tables
 - [[API_ENDPOINTS]] — API reference

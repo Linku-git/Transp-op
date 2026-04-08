@@ -51,7 +51,7 @@ Implement settings and constraints management (backend + frontend) for optimizat
 - [x] Create `backend/tests/test_settings.py` — 6 backend tests
 - [x] Create `frontend/src/pages/settings/__tests__/SettingsPage.test.tsx` — 6 tests
 - [x] Create `frontend/src/pages/settings/__tests__/ConstraintsPage.test.tsx` — 10 tests
-- [x] **Browser verification**: Open `http://localhost:5173` in Chrome, verify new pages render correctly, check DevTools Console for errors, test navigation
+- [x] **Browser verification**: Open `http://localhost:5000` in Chrome, verify new pages render correctly, check DevTools Console for errors, test navigation
 
 ## Files Created
 - `backend/app/models/settings.py`
@@ -111,6 +111,7 @@ Implement settings and constraints management (backend + frontend) for optimizat
 ---
 ## Related Documentation
 - [[PROGRESS]] — Track session completion
+- [[PRD]] — Product Requirements Document v4.0
 - [[API_ENDPOINTS]] — API reference
 - [[DATABASE_SCHEMA]] — Database schema
 - [[FRONTEND_PAGES]] — Web pages

@@ -72,4 +72,5 @@ Set up GitHub Actions CI pipeline, linting, formatting, pre-commit hooks, and ve
 
 ## Related Documentation
 - [[PROGRESS]] — Progress tracker
+- [[PRD]] — Product Requirements Document v4.0
 - [[agents]] — Development rules

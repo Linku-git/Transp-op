@@ -34,7 +34,7 @@
 - [[sessions/session-11]] | [[sessions/session-12]] | [[sessions/session-13]] | [[sessions/session-14]] | [[sessions/session-15]]
 - [[sessions/session-16]] | [[sessions/session-17]] | [[sessions/session-18]] | [[sessions/session-19]] | [[sessions/session-20]]
 - [[sessions/session-21]] | [[sessions/session-22]] | [[sessions/session-23]] | [[sessions/session-24]] | [[sessions/session-25]]
-- [[sessions/session-26]] | [[sessions/session-27]] | [[sessions/session-28]] | [[sessions/session-29]] | [[sessions/session-30]]
+- [[sessions/session-26\|26 — Weather API]] | [[sessions/session-27\|27 — Scenario Backend]] | [[sessions/session-28]] | [[sessions/session-29]] | [[sessions/session-30]]
 
 ### Phase 2 — Financial & Reporting (Sessions 31-44)
 - [[sessions/session-31]] | [[sessions/session-32]] | [[sessions/session-33]] | [[sessions/session-34]] | [[sessions/session-35]]
