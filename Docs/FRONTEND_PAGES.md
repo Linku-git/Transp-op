@@ -354,17 +354,41 @@
 
 ### Content Management (Sessions 67-68, 75)
 
-#### ContentListPage `/content`
-- Table: title, type, status, published date, audience, engagement
-- Filters: type (news, training, safety, survey), status
-- "Create Content" button
+#### ContentListPage `/content` ✅ Session 68
+- Data table: title, type chip (news/training/safety/survey with icons), status badge (draft/published/archived), published date, audience summary
+- Filters: content_type dropdown, status dropdown, text search
+- Stats bento: total, published, drafts counts
+- Pagination with page controls
+- Row actions: view, edit, publish/unpublish, delete (hover reveal)
+- "Créer du contenu" primary CTA
+- Components: inline stats, filter bar, action buttons
 
-#### ContentCreatePage `/content/new`
-- Title, body (rich text editor), type selector
-- Media upload (video, image, audio)
-- Audience targeting (sites, departments, shifts)
-- Schedule: publish date, expiry date
-- Preview button
+#### ContentCreatePage `/content/new` ✅ Session 68
+- `ContentForm` shared component with card-based sections
+- Title input, TipTap rich text editor (bold, italic, lists, headings toolbar)
+- Content type selector (news, training, safety, survey)
+- Media URL input with image preview
+- `AudienceTargeting` component: site dropdown (from API), department/shift chip inputs
+- Expiry date datetime-local picker
+- Preview toggle button (shows rendered content inline)
+- Validation: title required
+- Components: `RichTextEditor`, `AudienceTargeting`, `ContentForm`
+
+#### ContentEditPage `/content/:id/edit` ✅ Session 68
+- Same `ContentForm` with `initialData` pre-fill
+- Breadcrumb navigation: Contenu > {title} > Modifier
+- Loads content from store on mount
+- Loading/error/not-found states
+
+#### ContentDetailPage `/content/:id` ✅ Session 68
+- Read-only view with title, type badge, status badge
+- Rendered HTML body (dangerouslySetInnerHTML)
+- Media display (image preview or link)
+- Audience targeting display (sites, departments, shifts)
+- Date info: created, updated, published, expires
+- Publish/unpublish toggle button
+- Edit and delete action buttons
+- Engagement metrics placeholder (session 69)
 
 #### ContentAnalyticsPage `/content/analytics`
 - Engagement overview (views, completions, avg quiz score)

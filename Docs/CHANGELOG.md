@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-68] — 2026-04-08
+### Added
+- Content management frontend: 4 CRUD pages (list, create, edit, detail)
+- `ContentListPage`: table with type/status filters, pagination, publish/unpublish actions
+- `ContentCreatePage`: form with rich text editor, audience targeting, media URL, schedule
+- `ContentEditPage`: pre-filled form from existing content
+- `ContentDetailPage`: read-only view with audience info, dates, engagement metrics placeholder
+- `RichTextEditor` component: TipTap-based with bold, italic, lists, headings toolbar
+- `AudienceTargeting` component: multi-select for sites, departments, shifts with chip UI
+- `ContentForm` shared component with validation and preview button
+- Zustand store (`contentStore`), API client, TypeScript types for content module
+- Sidebar navigation: "Contenu" added to Outils group
+- Routes: /content, /content/new, /content/:id, /content/:id/edit
+- 26 frontend tests (6 test files, all passing)
+
 ## [Session-67] — 2026-04-08 (Phase 5 Start)
 ### Added
 - `Content` model: title, body (rich text), content_type (news/training/safety/survey), media_url, JSONB audience targeting (sites/departments/shifts), published_at, expires_at, is_active
