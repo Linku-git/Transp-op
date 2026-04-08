@@ -240,6 +240,30 @@ const HoraireTravailPage = lazy(() =>
   }))
 );
 
+const ContentListPage = lazy(() =>
+  import('@/pages/content/ContentListPage').then((m) => ({
+    default: m.ContentListPage,
+  }))
+);
+
+const ContentCreatePage = lazy(() =>
+  import('@/pages/content/ContentCreatePage').then((m) => ({
+    default: m.ContentCreatePage,
+  }))
+);
+
+const ContentDetailPage = lazy(() =>
+  import('@/pages/content/ContentDetailPage').then((m) => ({
+    default: m.ContentDetailPage,
+  }))
+);
+
+const ContentEditPage = lazy(() =>
+  import('@/pages/content/ContentEditPage').then((m) => ({
+    default: m.ContentEditPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -595,6 +619,38 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <HoraireTravailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'content',
+        element: (
+          <SuspenseWrapper>
+            <ContentListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'content/new',
+        element: (
+          <SuspenseWrapper>
+            <ContentCreatePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'content/:id',
+        element: (
+          <SuspenseWrapper>
+            <ContentDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'content/:id/edit',
+        element: (
+          <SuspenseWrapper>
+            <ContentEditPage />
           </SuspenseWrapper>
         ),
       },

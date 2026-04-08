@@ -40,6 +40,7 @@ const OUTILS_GROUP: NavGroup = {
     { key: 'outils-modal',     path: '/modal-analysis', label: 'Analyse Modale', icon: 'bar_chart' },
     { key: 'outils-financial', path: '/financial',      label: 'Finance',        icon: 'payments' },
     { key: 'outils-scenarios', path: '/scenarios',      label: 'Scénarios',      icon: 'cloud' },
+    { key: 'outils-content',  path: '/content',        label: 'Contenu',        icon: 'feed' },
     { key: 'outils-reports',   path: '/reports',        label: 'Rapports',       icon: 'article' },
     { key: 'outils-import',    path: '/import',         label: 'Import',         icon: 'upload_file' },
   ],

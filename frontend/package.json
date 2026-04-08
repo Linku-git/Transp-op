@@ -15,6 +15,10 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css}\""
   },
   "dependencies": {
+    "@tiptap/extension-placeholder": "^3.22.3",
+    "@tiptap/pm": "^3.22.3",
+    "@tiptap/react": "^3.22.3",
+    "@tiptap/starter-kit": "^3.22.3",
     "axios": "^1.14.0",
     "i18next": "^26.0.3",
     "i18next-browser-languagedetector": "^8.2.1",
