@@ -235,6 +235,9 @@
 | POST | `/content/{id}/publish` | Publish content | Yes | DRH, Admin | 67 |
 | GET | `/content/feed` | Personalized feed (mobile) | Yes | Salarie | 69 |
 | GET | `/content/{id}/engagement` | Engagement metrics | Yes | DRH, Admin | 69 |
+| POST | `/content/{id}/deliver` | Record delivery event | Yes | DRH, Admin | 69 |
+| POST | `/content/{id}/view` | Record view event | Yes | All | 69 |
+| POST | `/content/{id}/complete` | Record completion event | Yes | All | 69 |
 | GET | `/content/analytics` | Aggregate analytics | Yes | DRH, Admin | 75 |
 | POST | `/surveys/{id}/respond` | Submit survey response | Yes | Salarie | 72 |
 | GET | `/training/completions` | Training completion records | Yes | DRH, Admin | 74 |

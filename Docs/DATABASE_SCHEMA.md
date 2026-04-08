@@ -41,6 +41,7 @@
 | [scenario](#scenario) | 64 kB | 11 | Simulation scenario (what-if) |
 | [generated_report](#generated_report) | 48 kB | 10 | Async report metadata |
 | [weather_forecast](#weather_forecast) | 64 kB | 12 | Open-Meteo forecasts per site |
+| [content_delivery](#content_delivery) | — | 10 | Content engagement tracking per employee |
 
 ---
 
@@ -783,8 +784,32 @@ tenant
   │     └── roi_calculation (financial_scenario_id)
   ├── scenario (tenant_id) ──→ site, optimization
   ├── generated_report (tenant_id) ──→ user
-  └── weather_forecast ──→ site
+  ├── weather_forecast ──→ site
+  ├── content (tenant_id) ──→ user
+  └── content_delivery (tenant_id) ──→ content, employee
 ```
+
+---
+
+## content_delivery
+
+Tracks engagement metrics per content-employee pair. Created in Session 69.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| content_id | uuid | NO | | FK → content.id |
+| employee_id | uuid | NO | | FK → employee.id |
+| delivered_at | timestamptz | NO | | When content was served |
+| viewed_at | timestamptz | YES | | When content was opened |
+| completed_at | timestamptz | YES | | When content was fully consumed |
+| quiz_score | float | YES | | Quiz result (0-100) |
+| time_spent_seconds | int | YES | | Seconds spent consuming content |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** tenant_id, content_id, employee_id, UNIQUE(content_id, employee_id)
 
 ---
 

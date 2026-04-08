@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-69] — 2026-04-08
+### Added
+- `ContentDelivery` model: content_id, employee_id, delivered_at, viewed_at, completed_at, quiz_score, time_spent_seconds
+- Alembic migration `s4t5u6v7w8x9` with 4 indexes including unique content+employee constraint
+- `GET /content/feed`: personalized feed filtered by employee's site, department, shift; excludes expired/unpublished
+- `GET /content/{id}/engagement`: aggregated metrics (deliveries, views, completions, rates, avg quiz/time)
+- `POST /content/{id}/deliver`: record delivery event
+- `POST /content/{id}/view`: record view event
+- `POST /content/{id}/complete`: record completion with optional quiz score and time spent
+- `EngagementService` with get_or_create_delivery, record_delivery/view/completion, metrics aggregation, personalized feed
+- Auto-delivery tracking when content appears in feed
+- 18 backend tests (model, schemas, engagement metrics, feed personalization)
+
 ## [Session-68] — 2026-04-08
 ### Added
 - Content management frontend: 4 CRUD pages (list, create, edit, detail)
