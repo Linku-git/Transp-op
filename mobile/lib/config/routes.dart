@@ -22,6 +22,7 @@ import '../screens/profile/security_questionnaire_screen.dart';
 import '../screens/content/content_feed_screen.dart';
 import '../screens/content/content_detail_screen.dart';
 import '../screens/content/training_player_screen.dart';
+import '../screens/content/survey_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -123,9 +124,8 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'survey/:id',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => PlaceholderScreen(
-                title: 'Sondage ${state.pathParameters['id']}',
-                icon: Icons.poll,
+              builder: (context, state) => SurveyScreen(
+                surveyId: state.pathParameters['id']!,
               ),
             ),
           ],
