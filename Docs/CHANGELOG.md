@@ -6,6 +6,45 @@
 
 ---
 
+## [Session-47] — 2026-04-08
+### Added
+- 4-step onboarding wizard (`OnboardingFlow`) using PageView with progress bar navigation
+- Welcome carousel (3 slides: Transport optimisé, Suivi en temps réel, Impact positif)
+- Transport preferences step: 8 transport mode chips, company transport/private car/volunteer driver switches, carpool seats slider, walking distance slider (200m-2km)
+- Security questionnaire step: 5-star safety rating, 6 time slot chips, night walking distance slider, night concerns text input
+- Permissions step: location + notification permission cards with grant status, RGPD privacy note
+- `TransportPreferences` model (currentMode, hasPrivateCar, volunteerDriver, carpoolSeats, maxWalkingDistance, pickup lat/lng)
+- `SecurityPreferences` model (safetyRating, vulnerableTimeSlots, concernZones, nightConcerns, maxNightWalkingDistance)
+- `OnboardingService` for PATCH /employees/me/preferences
+- `OnboardingNotifier` (Riverpod StateNotifier) managing wizard state across 4 steps
+- 33 new tests (83 total passing)
+
+## [Session-46] — 2026-04-08
+### Added
+- JWT authentication flow: `AuthService` (login, refresh, logout, getProfile)
+- `ApiClient` with dio interceptor: auto-injects Bearer token, auto-refreshes on 401, retries original request
+- `AuthNotifier` (Riverpod StateNotifier) with 5 states: initial, loading, authenticated, unauthenticated, error
+- `SplashScreen`: auto-login check via stored refresh token, branded loading
+- `LoginScreen`: email/password form, validation, error banner (Pydantic v2 format), password visibility toggle
+- `User` model matching backend UserResponse schema
+- `AuthToken` model (access_token, refresh_token, token_type)
+- `extractApiError()` utility for Pydantic v2 error extraction
+- 28 new tests (50 total passing)
+
+## [Session-45] — 2026-04-08
+### Added
+- Flutter project initialized in `mobile/` (Flutter 3.38.5, Dart 3.10.4)
+- 111 dependencies resolved: flutter_riverpod, go_router, dio, google_maps_flutter, firebase_messaging, hive, sqflite, flutter_secure_storage, connectivity_plus, socket_io_client, google_fonts
+- Folder structure: `lib/config`, `models`, `services`, `providers`, `screens`, `widgets`, `utils`, `l10n`
+- `ApiConfig` with base URL + `--dart-define` override for dev/prod
+- `AppColors` with full color system (light, dark, night mode, semantic tokens)
+- `AppTypography` using Inter via google_fonts
+- `AppTheme` with Material 3 light + dark themes (primary #0058be)
+- `GoRouter` configuration with 17 routes (ShellRoute for bottom nav + standalone)
+- Bottom navigation bar: 5 tabs (Accueil, Trajets, Suivi, Contenu, Profil)
+- Base widgets: `AppScaffold`, `LoadingIndicator`, `AppErrorWidget`, `EmptyState`
+- 22 tests passing
+
 ## [Session-44] — 2026-04-02
 ### Added
 - KPISnapshot SQLAlchemy model (tenant_id, site_id, snapshot_date, kpi_type, value JSONB) + Alembic migration
