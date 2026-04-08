@@ -33,6 +33,7 @@ from app.models.security_score import SecurityScore
 from app.models.clustering_config import ClusteringConfig
 from app.models.emergency_alert import EmergencyAlert
 from app.models.content import Content
+from app.models.content_delivery import ContentDelivery
 
 __all__ = [
     "BaseModel",
@@ -76,4 +77,5 @@ __all__ = [
     "ClusteringConfig",
     "EmergencyAlert",
     "Content",
+    "ContentDelivery",
 ]
