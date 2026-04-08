@@ -6,6 +6,24 @@
 
 ---
 
+## [Session-72] — 2026-04-09
+### Added
+- `Survey` model: content_id, title, description, questions (JSONB), response_count, is_anonymous, is_active
+- `SurveyResponse` model: survey_id, employee_id (nullable for anonymous), responses (JSONB), submitted_at
+- Alembic migration `t5u6v7w8x9y0` with 6 indexes across both tables
+- 5 question types: single_choice, multiple_choice, text, rating (1-5), slider (0-100)
+- `POST /surveys` — create survey linked to content
+- `GET /surveys` — list surveys with pagination
+- `GET /surveys/{id}` — get survey details
+- `PUT /surveys/{id}` — update survey
+- `POST /surveys/{id}/respond` — submit response with schema validation
+- `GET /surveys/{id}/aggregation` — response aggregation (counts, averages, distributions, text responses)
+- Response validation: type checking, range validation, option validation, required field enforcement
+- Anonymous survey support (employee_id cleared automatically)
+- Duplicate response prevention for non-anonymous surveys
+- `SurveyService` with create, list, submit, validate, aggregate functions
+- 26 backend tests (models, schemas, validation, aggregation)
+
 ## [Session-71] — 2026-04-09
 ### Added
 - `TrainingPlayerScreen`: full-featured micro-training player with video/audio playback

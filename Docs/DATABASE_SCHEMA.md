@@ -42,6 +42,8 @@
 | [generated_report](#generated_report) | 48 kB | 10 | Async report metadata |
 | [weather_forecast](#weather_forecast) | 64 kB | 12 | Open-Meteo forecasts per site |
 | [content_delivery](#content_delivery) | — | 10 | Content engagement tracking per employee |
+| [survey](#survey) | — | 10 | Survey/poll definitions with JSONB questions |
+| [survey_response](#survey_response) | — | 8 | Survey response submissions |
 
 ---
 
@@ -810,6 +812,46 @@ Tracks engagement metrics per content-employee pair. Created in Session 69.
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** tenant_id, content_id, employee_id, UNIQUE(content_id, employee_id)
+
+---
+
+## survey
+
+Survey/poll definition linked to content. Created in Session 72.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| content_id | uuid | NO | | FK → content.id |
+| title | varchar(500) | NO | | Survey title |
+| description | varchar(2000) | YES | | Description |
+| questions | jsonb | NO | | Array of {id, text, question_type, options, required, min/max} |
+| response_count | int | NO | 0 | Auto-incremented on submission |
+| is_anonymous | bool | NO | false | Clears employee_id on response |
+| is_active | bool | NO | true | Closes survey when false |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Question types:** single_choice, multiple_choice, text, rating (1-5), slider (0-100)
+**Indexes:** tenant_id, content_id, is_active
+
+## survey_response
+
+Individual survey response. Created in Session 72.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| survey_id | uuid | NO | | FK → survey.id |
+| employee_id | uuid | YES | | FK → employee.id (null for anonymous) |
+| responses | jsonb | NO | | Array of {question_id, value} |
+| submitted_at | timestamptz | NO | | Submission timestamp |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** tenant_id, survey_id, employee_id
 
 ---
 

@@ -239,7 +239,12 @@
 | POST | `/content/{id}/view` | Record view event | Yes | All | 69 |
 | POST | `/content/{id}/complete` | Record completion event | Yes | All | 69 |
 | GET | `/content/analytics` | Aggregate analytics | Yes | DRH, Admin | 75 |
+| POST | `/surveys` | Create survey | Yes | DRH, Admin | 72 |
+| GET | `/surveys` | List surveys | Yes | DRH, Admin | 72 |
+| GET | `/surveys/{id}` | Get survey | Yes | All | 72 |
+| PUT | `/surveys/{id}` | Update survey | Yes | DRH, Admin | 72 |
 | POST | `/surveys/{id}/respond` | Submit survey response | Yes | Salarie | 72 |
+| GET | `/surveys/{id}/aggregation` | Response aggregation | Yes | DRH, Admin | 72 |
 | GET | `/training/completions` | Training completion records | Yes | DRH, Admin | 74 |
 | POST | `/training/sync-lms` | Trigger LMS sync | Yes | Admin | 74 |
 | GET | `/valorization/metrics` | Journey valorization KPIs | Yes | DRH, DAF, Admin | 76 |
