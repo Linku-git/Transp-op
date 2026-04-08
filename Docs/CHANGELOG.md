@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-62] — 2026-04-08
+### Added
+- `SecurityScore` model: employee score (0-100), risk_level (low/medium/high/critical), contributing_factors JSONB
+- Weighted scoring engine: questionnaire rating (35%) + vulnerable stop count (25%) + night commute exposure (25%) + stop isolation (15%)
+- Risk classification: critical <=25, high <=50, medium <=75, low >75
+- Night hour detection (20h00-6h30) with 80% risk elevation for night time slots
+- 8-slot security heatmap generator with day/night distinction
+- Group aggregation service by site/team/shift with risk distribution counts
+- `GET /security/scores` (filtered by risk_level) + `GET /security/scores/{employee_id}` (detailed breakdown)
+- Alembic migration `o0p1q2r3s4t5`
+- 22 backend tests (scoring, classification, night detection, heatmap, aggregation, model)
+
 ## [Session-61] — 2026-04-08
 ### Added
 - `SecurityQuestionnaire` model: employee_id, version (auto-increment), overall_safety_rating (1-5), responses JSONB, vulnerable_stops JSONB, night_concerns text, trigger_type (periodic/incident/initial)

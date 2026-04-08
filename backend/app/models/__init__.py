@@ -29,6 +29,7 @@ from app.models.vehicle_position import VehiclePosition as VehiclePositionModel
 from app.models.rti_event import RTIEvent
 from app.models.rti_config import RTIConfig
 from app.models.security_questionnaire import SecurityQuestionnaire
+from app.models.security_score import SecurityScore
 
 __all__ = [
     "BaseModel",
@@ -68,4 +69,5 @@ __all__ = [
     "RTIEvent",
     "RTIConfig",
     "SecurityQuestionnaire",
+    "SecurityScore",
 ]
