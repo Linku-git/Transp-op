@@ -13,6 +13,9 @@ import '../screens/trips/trip_history_screen.dart';
 import '../screens/tracking/rti_tracking_screen.dart';
 import '../screens/tracking/full_map_screen.dart';
 import '../screens/notifications/notification_list_screen.dart';
+import '../screens/profile/profile_screen.dart';
+import '../screens/profile/edit_profile_screen.dart';
+import '../screens/profile/preferences_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -128,24 +131,18 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/profile',
           pageBuilder: (context, state) => const NoTransitionPage(
-            child: PlaceholderScreen(title: 'Profil', icon: Icons.person_outline),
+            child: ProfileScreen(),
           ),
           routes: [
             GoRoute(
               path: 'edit',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Modifier le profil',
-                icon: Icons.edit,
-              ),
+              builder: (context, state) => const EditProfileScreen(),
             ),
             GoRoute(
               path: 'preferences',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Préférences',
-                icon: Icons.settings,
-              ),
+              builder: (context, state) => const PreferencesScreen(),
             ),
             GoRoute(
               path: 'security',

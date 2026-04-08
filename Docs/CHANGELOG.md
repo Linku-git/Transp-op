@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-53] — 2026-04-08
+### Added
+- `ProfileScreen` with avatar (initials), name, matricule, site/shift chips, transport mode badge, quick stats (trips/CO2/training), 8 menu items, logout with confirmation dialog
+- `EditProfileScreen` with phone, pickup address, PMR toggle, read-only SIRH fields
+- `PreferencesScreen` with 8-mode transport selector, walking distance slider, volunteer driver, 4 notification toggles, auto night mode
+- `UserProfile` model with fromJson, displayName, initials; `ProfileStats`, `NotificationPreferences`
+- `ProfileService` (getProfile, updateProfile, updatePreferences, updateNotificationPreferences)
+- `ProfileNotifier` (Riverpod) with load, updateProfile, updatePreferences, clearMessages
+- `ProfileHeader` + `TransportModeBadge` + `QuickStatsRow` widgets
+- 17 new tests (223 total passing)
+
 ## [Session-52] — 2026-04-08
 ### Added
 - Push notification service: `PushNotificationService` with FCM permission, token registration (POST /devices/register), foreground/background/tap handling, token refresh
