@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-51] — 2026-04-08
+### Added
+- Real-time vehicle tracking: `RTITrackingScreen` with live ETA countdown (1s timer), color-coded (green <=90s, orange 90-180s, red >180s)
+- `FullMapScreen` with ETA overlay, legend panel, LIVE indicator
+- `VehicleArrivalCard` with countdown, vehicle info, "Carte complète" button
+- `TrackingMiniMap` with legend (Vous, Arrêt, Véhicule) and EN DIRECT badge
+- `WebSocketService` (socket_io_client) with auth token, vehicle subscription, position stream
+- `VehicleTrackingService` REST fallback (getLatestPosition, getTrackingInfo)
+- `TrackingNotifier` (Riverpod) with WebSocket primary + 10s polling fallback
+- `MapUtils` for ETA color coding and formatting (formatEta, formatEtaShort)
+- `VehiclePosition` + `TrackingInfo` models
+- Connection status indicator (EN DIRECT / HORS LIGNE)
+- 28 new tests (191 total passing)
+
 ## [Session-50] — 2026-04-08
 ### Added
 - Trip management: `TripsScreen` with À venir / Passés tabs, pull-to-refresh, cancel confirmation dialog

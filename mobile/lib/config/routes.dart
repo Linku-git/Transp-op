@@ -10,6 +10,8 @@ import '../screens/trips/trip_booking_screen.dart';
 import '../screens/trips/trips_screen.dart';
 import '../screens/trips/trip_detail_screen.dart';
 import '../screens/trips/trip_history_screen.dart';
+import '../screens/tracking/rti_tracking_screen.dart';
+import '../screens/tracking/full_map_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -76,16 +78,13 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/tracking',
           pageBuilder: (context, state) => const NoTransitionPage(
-            child: PlaceholderScreen(title: 'Suivi', icon: Icons.location_on_outlined),
+            child: RTITrackingScreen(),
           ),
           routes: [
             GoRoute(
               path: 'map',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Carte en direct',
-                icon: Icons.map,
-              ),
+              builder: (context, state) => const FullMapScreen(),
             ),
           ],
         ),
