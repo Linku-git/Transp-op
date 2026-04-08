@@ -1,883 +1,797 @@
-# Transpop — Complete Database Schema
+# Database Schema — Transpop
 
-> PostgreSQL 15+ with PostGIS extension
-> ORM: SQLAlchemy 2.0 + GeoAlchemy2
-> Migrations: Alembic
->
-> See also: [[ARCHITECTURE]] | [[API_ENDPOINTS]] | [[agents]]
-
-## Table Overview
-
-| Group | Tables | Session |
-|-------|--------|---------|
-| Auth & Multi-Tenant | Tenant, User, Role, Permission, RolePermission | [[sessions/session-04\|04]] |
-| Core — Sites | Site | [[sessions/session-06\|06]] |
-| Core — Employees | Employee, EmployeeModal, EmployeeLeave | [[sessions/session-09\|09]], [[sessions/session-12\|12]], [[sessions/session-15\|15]] |
-| Core — Vehicles | Vehicle | [[sessions/session-20\|20]] |
-| Core — Constraints | OptimizationSettings, ConstraintParam | [[sessions/session-29\|29]] |
-| Optimization | Cluster, Route, Optimization, Scenario | [[sessions/session-18\|18]], [[sessions/session-22\|22]], [[sessions/session-23\|23]], [[sessions/session-27\|27]] |
-| Weather | WeatherForecast | [[sessions/session-26\|26]] |
-| Financial | FinancialScenario, TCOEntry, ROICalculation, VehicleReference | [[sessions/session-31\|31]] |
-| Content | Content, ContentDelivery, TrainingModule, Survey, SurveyResponse | [[sessions/session-67\|67]], [[sessions/session-69\|69]], [[sessions/session-72\|72]] |
-| RTI | StopRiskScore, VehiclePosition, RTIEvent, RTIConfig | [[sessions/session-57\|57]], [[sessions/session-58\|58]] |
-| Security | SecurityQuestionnaire, SecurityScore, EmergencyAlert | [[sessions/session-61\|61]], [[sessions/session-62\|62]] |
-| SIRH | SIRHConnection, SyncLog, SyncConflict | [[sessions/session-77\|77]] |
-| Mobile | TripBooking, DeviceRegistration, PushNotification | [[sessions/session-54\|54]] |
-| Operator | Operator, SizingPlanExport | [[sessions/session-82\|82]] |
-| Reporting | GeneratedReport, KPISnapshot | [[sessions/session-42\|42]], [[sessions/session-44\|44]] |
-
-**Total: 40 tables**
+**Database:** PostgreSQL 15 + PostGIS  
+**Connection:** `postgresql+asyncpg://postgres:password@helium:5432/heliumdb`  
+**Backup:** `transpop_backup_20260408.sql` (root folder, 736 KB)  
+**Tenant:** `0cea9745-6aa2-4105-9bdc-341d95999048` (OCP Transpop)  
+**Live data:** 1,200 employees · 106 vehicles · 591 config_transport rows · 32,696 km total  
+**Last updated:** 2026-04-08 (extracted from live DB)
 
 ---
 
-## Group 1: Auth & Multi-Tenant
+## Table Index
 
-### Tenant
-```sql
-CREATE TABLE tenant (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name            VARCHAR(255) NOT NULL,
-    code            VARCHAR(100) UNIQUE NOT NULL,
-    config          JSONB DEFAULT '{}',      -- branding, defaults, feature flags
-    data_region     VARCHAR(50) DEFAULT 'eu-west',
-    is_active       BOOLEAN DEFAULT true,
-    created_at      TIMESTAMPTZ DEFAULT now()
-);
-```
-
-### User
-```sql
-CREATE TABLE "user" (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    email           VARCHAR(255) NOT NULL,
-    password_hash   VARCHAR(255),
-    first_name      VARCHAR(100),
-    last_name       VARCHAR(100),
-    role_id         UUID NOT NULL REFERENCES role(id),
-    employee_id     UUID REFERENCES employee(id),  -- nullable, for Salarie role
-    mfa_enabled     BOOLEAN DEFAULT false,
-    mfa_secret      VARCHAR(255),                   -- encrypted
-    last_login_at   TIMESTAMPTZ,
-    is_active       BOOLEAN DEFAULT true,
-    created_at      TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(tenant_id, email)
-);
-```
-
-### Role
-```sql
-CREATE TABLE role (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    name            VARCHAR(50) NOT NULL,  -- drh, daf, salarie, operateur, admin
-    permissions     JSONB DEFAULT '[]',
-    is_system_role  BOOLEAN DEFAULT false,
-    created_at      TIMESTAMPTZ DEFAULT now()
-);
-```
-
-### Permission
-```sql
-CREATE TABLE permission (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    resource        VARCHAR(100) NOT NULL,  -- sites, employees, optimization, financial, content, security, admin
-    action          VARCHAR(50) NOT NULL,   -- read, write, delete, supervise, emit
-    UNIQUE(resource, action)
-);
-```
-
-### RolePermission
-```sql
-CREATE TABLE role_permission (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    role_id         UUID NOT NULL REFERENCES role(id) ON DELETE CASCADE,
-    permission_id   UUID NOT NULL REFERENCES permission(id) ON DELETE CASCADE,
-    UNIQUE(role_id, permission_id)
-);
-```
+| Table | Size | Columns | Description |
+|---|---|---|---|
+| [tenant](#tenant) | 48 kB | 8 | Multi-tenant root |
+| [site](#site) | 80 kB | 38 | Industrial sites (plants) |
+| [user](#user) | 48 kB | 14 | Admin/operator accounts |
+| [role](#role) | 32 kB | 7 | RBAC roles |
+| [permission](#permission) | 16 kB | 5 | RBAC permissions |
+| [role_permission](#role_permission) | 16 kB | 5 | Role ↔ Permission mapping |
+| [employee](#employee) | 656 kB | 33 | Employee master data with GPS |
+| [employee_modal](#employee_modal) | 32 kB | 20 | Transport preferences survey |
+| [employee_leave](#employee_leave) | 64 kB | 8 | Leaves and absences |
+| [vehicle](#vehicle) | 128 kB | 23 | Fleet inventory |
+| [vehicle_reference](#vehicle_reference) | 32 kB | 11 | Reference catalog per type |
+| [point_arret](#point_arret) | 96 kB | 15 | Bus stops / gathering points |
+| [configuration_plan](#configuration_plan) | 48 kB | 9 | Transport plan version |
+| [configuration_transport](#configuration_transport) | 272 kB | 26 | Detailed circuit rows |
+| [optimization](#optimization) | 48 kB | 11 | Optimization run results |
+| [optimization_settings](#optimization_settings) | 64 kB | 14 | Optimizer parameters |
+| [cluster](#cluster) | 56 kB | 12 | Employee geo-clusters |
+| [route](#route) | 96 kB | 12 | Computed routes per vehicle |
+| [horaire_travail](#horaire_travail) | 64 kB | 11 | Shift schedule templates |
+| [constraint_param](#constraint_param) | 32 kB | 9 | Configurable business rules |
+| [kpi_snapshot](#kpi_snapshot) | 168 kB | 8 | Daily KPI cache |
+| [km_consommation](#km_consommation) | 48 kB | 15 | Monthly mileage actuals |
+| [financial_scenario](#financial_scenario) | 64 kB | 11 | TCO/ROI scenario |
+| [tco_entry](#tco_entry) | 40 kB | 15 | TCO line items per vehicle type |
+| [roi_calculation](#roi_calculation) | 40 kB | 20 | ROI results per scenario |
+| [scenario](#scenario) | 64 kB | 11 | Simulation scenario (what-if) |
+| [generated_report](#generated_report) | 48 kB | 10 | Async report metadata |
+| [weather_forecast](#weather_forecast) | 64 kB | 12 | Open-Meteo forecasts per site |
 
 ---
 
-## Group 2: Core — Sites
+## tenant
 
-### Site
-```sql
-CREATE TABLE site (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id           UUID NOT NULL REFERENCES tenant(id),
-    code                VARCHAR(20) UNIQUE NOT NULL,   -- e.g., S01
-    name                VARCHAR(255) NOT NULL,
-    address             TEXT NOT NULL,
-    city                VARCHAR(100) NOT NULL,
-    lat                 DOUBLE PRECISION NOT NULL,
-    lng                 DOUBLE PRECISION NOT NULL,
-    geom                GEOMETRY(Point, 4326),         -- PostGIS point
-    num_shifts          INTEGER NOT NULL DEFAULT 1,    -- 1-3
-    shift_1_entry       TIME,
-    shift_1_exit        TIME,
-    shift_2_entry       TIME,
-    shift_2_exit        TIME,
-    shift_3_entry       TIME,
-    shift_3_exit        TIME,
-    working_days        VARCHAR(100) DEFAULT 'Lundi-Vendredi',
-    days_per_week       INTEGER DEFAULT 5,
-    contact_name        VARCHAR(100),
-    contact_phone       VARCHAR(50),
-    access_notes        TEXT,
-    parking_notes       TEXT,
-    zfe_zone            BOOLEAN DEFAULT false,
-    security_profile    VARCHAR(20) DEFAULT 'normal',  -- normal, elevated, critical
-    timezone            VARCHAR(50) DEFAULT 'Europe/Paris',
-    observations        TEXT,
-    created_at          TIMESTAMPTZ DEFAULT now(),
-    updated_at          TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_site_tenant ON site(tenant_id);
-CREATE INDEX idx_site_geom ON site USING GIST(geom);
-```
+Root entity. One row per company/client.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| name | varchar(255) | ✓ | | Company name |
+| code | varchar(100) | ✓ | | **UNIQUE** — e.g. `OCP` |
+| config | jsonb | ✓ | `{}` | Tenant config blob |
+| data_region | varchar(50) | ✓ | `eu-west` | Data residency |
+| is_active | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `tenant_pkey`, `tenant_code_key` (UNIQUE)
 
 ---
 
-## Group 3: Core — Employees
+## site
 
-### Employee
-```sql
-CREATE TABLE employee (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id               UUID NOT NULL REFERENCES tenant(id),
-    matricule               VARCHAR(50) NOT NULL,
-    first_name              VARCHAR(100) NOT NULL,
-    last_name               VARCHAR(100) NOT NULL,
-    site_id                 UUID NOT NULL REFERENCES site(id),
-    shift_time              VARCHAR(50),           -- e.g., Matin, Apres-midi, Nuit
-    address                 TEXT,
-    quartier                VARCHAR(100),
-    city                    VARCHAR(100),
-    lat                     DOUBLE PRECISION,
-    lng                     DOUBLE PRECISION,
-    geom                    GEOMETRY(Point, 4326),
-    preferred_pickup_address TEXT,
-    preferred_pickup_lat    DOUBLE PRECISION,
-    preferred_pickup_lng    DOUBLE PRECISION,
-    is_pmr                  BOOLEAN DEFAULT false,
-    function_role           VARCHAR(100),
-    phone                   VARCHAR(50),
-    department              VARCHAR(100),
-    transport_required      BOOLEAN DEFAULT true,
-    current_transport_mode  VARCHAR(50),
-    opt_in_company_transport VARCHAR(20) DEFAULT 'Non',  -- Oui, Non, Sous conditions
-    has_private_car         BOOLEAN DEFAULT false,
-    volunteer_driver        BOOLEAN DEFAULT false,
-    carpool_seats           INTEGER DEFAULT 0,
-    active                  BOOLEAN DEFAULT true,
-    sirh_external_id        VARCHAR(100),
-    hire_date               DATE,
-    end_date                DATE,
-    created_at              TIMESTAMPTZ DEFAULT now(),
-    updated_at              TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(tenant_id, matricule)
-);
-CREATE INDEX idx_employee_tenant ON employee(tenant_id);
-CREATE INDEX idx_employee_site ON employee(site_id);
-CREATE INDEX idx_employee_geom ON employee USING GIST(geom);
-CREATE INDEX idx_employee_active ON employee(active);
-```
+Industrial plant / deployment site.
 
-### EmployeeModal
-```sql
-CREATE TABLE employee_modal (
-    id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id                 UUID NOT NULL REFERENCES employee(id) ON DELETE CASCADE,
-    primary_mode                VARCHAR(50) NOT NULL,
-    alternative_mode            VARCHAR(50),
-    distance_km                 DECIMAL(8,2),
-    travel_time_min             INTEGER,
-    frequency                   VARCHAR(50),      -- Quotidien, 3-4 fois/semaine, Occasionnel
-    interest_company_transport  VARCHAR(30),       -- Oui, Non, Sous conditions
-    reason_current_mode         TEXT,
-    departure_time              TIME,
-    accepts_common_pickup       BOOLEAN DEFAULT true,
-    max_pickup_distance_meters  INTEGER DEFAULT 500,
-    has_private_car             BOOLEAN DEFAULT false,
-    volunteer_driver            BOOLEAN DEFAULT false,
-    carpool_seats_available     INTEGER DEFAULT 0,
-    max_detour_minutes          INTEGER,
-    bonus_opt_in                BOOLEAN DEFAULT false,
-    observations                TEXT,
-    created_at                  TIMESTAMPTZ DEFAULT now(),
-    updated_at                  TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(employee_id)
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| code | varchar(20) | ✓ | | **UNIQUE** |
+| name | varchar(255) | ✓ | | |
+| address | text | ✓ | | |
+| city | varchar(100) | ✓ | | |
+| lat | float8 | ✓ | | |
+| lng | float8 | ✓ | | |
+| geom | geometry(Point,4326) | | | PostGIS point |
+| num_shifts | integer | ✓ | 1 | 1–3 shifts |
+| shift_1_entry | time | | | |
+| shift_1_exit | time | | | |
+| shift_1_type | varchar(50) | | | e.g. `matin` |
+| shift_1_depart_h2 | time | | | 2nd departure slot |
+| shift_1_retour_h2 | time | | | 2nd return slot |
+| shift_2_entry | time | | | |
+| shift_2_exit | time | | | |
+| shift_2_type | varchar(50) | | | |
+| shift_2_depart_h2 | time | | | |
+| shift_2_retour_h2 | time | | | |
+| shift_3_entry | time | | | |
+| shift_3_exit | time | | | |
+| shift_3_type | varchar(50) | | | |
+| shift_3_depart_h2 | time | | | |
+| shift_3_retour_h2 | time | | | |
+| active_shift_ids | jsonb | ✓ | `[]` | Active shift IDs array |
+| working_days | varchar(100) | | `Lundi-Vendredi` | |
+| days_per_week | integer | | 5 | |
+| contact_name | varchar(100) | | | |
+| contact_phone | varchar(50) | | | |
+| access_notes | text | | | |
+| parking_notes | text | | | |
+| zfe_zone | boolean | ✓ | false | Low emission zone |
+| security_profile | varchar(20) | ✓ | `normal` | `normal`/`elevated`/`high` |
+| timezone | varchar(50) | ✓ | `Europe/Paris` | |
+| observations | text | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### EmployeeLeave
-```sql
-CREATE TABLE employee_leave (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id     UUID NOT NULL REFERENCES employee(id) ON DELETE CASCADE,
-    leave_type      VARCHAR(50) NOT NULL,  -- vacation, sick, unpaid, formation, mission, other
-    start_date      DATE NOT NULL,
-    end_date        DATE NOT NULL,
-    notes           TEXT,
-    created_at      TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_leave_employee ON employee_leave(employee_id);
-CREATE INDEX idx_leave_dates ON employee_leave(start_date, end_date);
-```
+**Indexes:** `site_pkey`, `site_code_key` (UNIQUE), `ix_site_tenant_id`, `idx_site_geom` (GIST), `ix_site_geom` (GIST)
 
 ---
 
-## Group 4: Core — Vehicles
+## user
 
-### Vehicle
-```sql
-CREATE TABLE vehicle (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id           UUID NOT NULL REFERENCES tenant(id),
-    type                VARCHAR(50) NOT NULL,       -- Minibus, Midibus, Bus standard, etc.
-    brand_model         VARCHAR(100),
-    capacity            INTEGER NOT NULL,
-    year                INTEGER,
-    owner_type          VARCHAR(50),                -- proprietaire, loueur, sous-traitant
-    monthly_cost_mad    DECIMAL(12,2),
-    monthly_km          DECIMAL(10,2),
-    condition           VARCHAR(20) DEFAULT 'Bon',  -- Bon, Moyen, Mauvais
-    site_id             UUID REFERENCES site(id),
-    is_pmr_accessible   BOOLEAN DEFAULT false,
-    fuel_consumption    DECIMAL(6,2),               -- L/100km
-    cost_per_km         DECIMAL(8,4),
-    motorization        VARCHAR(30),                -- diesel, hybrid, electric, hydrogen, gnv
-    length_meters       DECIMAL(5,2),
-    zfe_compliant       BOOLEAN DEFAULT false,
-    observations        TEXT,
-    created_at          TIMESTAMPTZ DEFAULT now(),
-    updated_at          TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_vehicle_tenant ON vehicle(tenant_id);
-CREATE INDEX idx_vehicle_site ON vehicle(site_id);
-```
+Portal accounts (admin, operator, viewer).
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| email | varchar(255) | ✓ | | UNIQUE per tenant |
+| password_hash | varchar(255) | | | bcrypt |
+| first_name | varchar(100) | | | |
+| last_name | varchar(100) | | | |
+| role_id | uuid | ✓ | | FK → role.id |
+| employee_id | uuid | | | FK → employee.id (optional) |
+| mfa_enabled | boolean | ✓ | false | |
+| mfa_secret | varchar(255) | | | TOTP secret |
+| last_login_at | timestamptz | | | |
+| is_active | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `user_pkey`, `uq_user_tenant_email` UNIQUE(tenant_id, email)
 
 ---
 
-## Group 5: Core — Constraints & Settings
+## role
 
-### OptimizationSettings
-```sql
-CREATE TABLE optimization_settings (
-    id                              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id                       UUID UNIQUE NOT NULL REFERENCES tenant(id),
-    meeting_radius_meters           INTEGER DEFAULT 500,
-    max_walking_distance_meters     INTEGER DEFAULT 800,
-    max_route_duration_seconds      INTEGER DEFAULT 5400,       -- 90 minutes
-    fuel_cost_per_liter             DECIMAL(6,2) DEFAULT 12.0,
-    fuel_consumption_l_per_100km    DECIMAL(6,2) DEFAULT 15.0,
-    co2_kg_per_liter                DECIMAL(6,3) DEFAULT 2.31,
-    rti_threshold_minutes           INTEGER DEFAULT 90,
-    night_mode_start                TIME DEFAULT '20:00',
-    night_mode_end                  TIME DEFAULT '06:30',
-    min_night_group_size            INTEGER DEFAULT 3,
-    created_at                      TIMESTAMPTZ DEFAULT now(),
-    updated_at                      TIMESTAMPTZ DEFAULT now()
-);
-```
+RBAC roles per tenant.
 
-### ConstraintParam
-```sql
-CREATE TABLE constraint_param (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    key             VARCHAR(100) NOT NULL,
-    value           TEXT NOT NULL,
-    category        VARCHAR(50) NOT NULL,  -- duree, accessibilite, budget, saisonnalite, securite, rti, zfe
-    description     TEXT,
-    is_active       BOOLEAN DEFAULT true,
-    created_at      TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(tenant_id, key)
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| name | varchar(100) | ✓ | | e.g. `admin` |
+| description | text | | | |
+| is_system | boolean | ✓ | false | Built-in role flag |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `role_pkey`
 
 ---
 
-## Group 6: Optimization
+## permission
 
-### Optimization
-```sql
-CREATE TABLE optimization (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    site_id         UUID REFERENCES site(id),       -- null for global
-    condition_type  VARCHAR(30) DEFAULT 'normal',    -- normal, rain, strike, peak, night, transit_failure
-    status          VARCHAR(20) DEFAULT 'pending',   -- pending, running, completed, failed
-    params          JSONB DEFAULT '{}',
-    metrics         JSONB DEFAULT '{}',
-    target_date     DATE,
-    created_at      TIMESTAMPTZ DEFAULT now(),
-    completed_at    TIMESTAMPTZ
-);
-CREATE INDEX idx_optimization_tenant ON optimization(tenant_id);
-```
+RBAC permission actions.
 
-### Cluster
-```sql
-CREATE TABLE cluster (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    optimization_id     UUID NOT NULL REFERENCES optimization(id) ON DELETE CASCADE,
-    site_id             UUID NOT NULL REFERENCES site(id),
-    centroid_lat        DOUBLE PRECISION NOT NULL,
-    centroid_lng        DOUBLE PRECISION NOT NULL,
-    centroid_geom       GEOMETRY(Point, 4326),
-    employee_count      INTEGER DEFAULT 0,
-    pmr_count           INTEGER DEFAULT 0,
-    security_risk_level VARCHAR(20) DEFAULT 'low',  -- low, medium, high
-    employee_ids        UUID[] DEFAULT '{}',
-    created_at          TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_cluster_optimization ON cluster(optimization_id);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| action | varchar(100) | ✓ | | **UNIQUE** e.g. `vehicles:write` |
+| resource | varchar(50) | ✓ | | |
+| description | text | | | |
+| created_at | timestamptz | ✓ | now() | |
 
-### Route
-```sql
-CREATE TABLE route (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    optimization_id     UUID NOT NULL REFERENCES optimization(id) ON DELETE CASCADE,
-    vehicle_id          UUID REFERENCES vehicle(id),
-    site_id             UUID NOT NULL REFERENCES site(id),
-    ordered_stops       JSONB NOT NULL DEFAULT '[]',
-    total_distance_km   DECIMAL(10,2),
-    total_time_minutes  DECIMAL(8,2),
-    polyline            TEXT,                -- encoded polyline
-    geom                GEOMETRY(LineString, 4326),
-    rti_compliance_pct  DECIMAL(5,2),
-    created_at          TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_route_optimization ON route(optimization_id);
-```
-
-### Scenario
-```sql
-CREATE TABLE scenario (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id               UUID NOT NULL REFERENCES tenant(id),
-    site_id                 UUID REFERENCES site(id),
-    baseline_optimization_id UUID REFERENCES optimization(id),
-    name                    VARCHAR(255),
-    condition_type          VARCHAR(30) NOT NULL DEFAULT 'normal',  -- normal, rain, strike, peak, night, transit_failure
-    demand_multiplier       DECIMAL(4,2) DEFAULT 1.0,
-    custom_params           JSONB DEFAULT '{}',
-    estimated_metrics       JSONB DEFAULT '{}',
-    created_at              TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_scenario_tenant ON scenario(tenant_id);
-CREATE INDEX idx_scenario_site ON scenario(site_id);
-```
+**Indexes:** `permission_pkey`, UNIQUE(action)
 
 ---
 
-## Group 7: Weather
+## role_permission
 
-### WeatherForecast
-```sql
-CREATE TABLE weather_forecast (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id             UUID NOT NULL REFERENCES site(id),
-    date                DATE NOT NULL,
-    condition_summary   VARCHAR(100),
-    precipitation_mm    DECIMAL(6,2),
-    temp_min_c          DECIMAL(5,2),
-    temp_max_c          DECIMAL(5,2),
-    wind_kph            DECIMAL(6,2),
-    fetched_at          TIMESTAMPTZ DEFAULT now(),
-    source              VARCHAR(50),
-    UNIQUE(site_id, date, source)
-);
-```
+Many-to-many Role ↔ Permission mapping.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| role_id | uuid | ✓ | | FK → role.id |
+| permission_id | uuid | ✓ | | FK → permission.id |
+| created_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `role_permission_pkey`, `uq_role_permission` UNIQUE(role_id, permission_id)
 
 ---
 
-## Group 8: Financial Engineering
+## employee
 
-### FinancialScenario
-```sql
-CREATE TABLE financial_scenario (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id           UUID NOT NULL REFERENCES tenant(id),
-    name                VARCHAR(255) NOT NULL,
-    investment_model    VARCHAR(30) NOT NULL,  -- capex, mise_a_disposition, opex
-    duration_years      INTEGER NOT NULL DEFAULT 5,
-    fleet_composition   JSONB DEFAULT '{}',
-    params              JSONB DEFAULT '{}',
-    results             JSONB DEFAULT '{}',
-    created_by          UUID REFERENCES "user"(id),
-    created_at          TIMESTAMPTZ DEFAULT now(),
-    updated_at          TIMESTAMPTZ DEFAULT now()
-);
-```
+Core employee master data with geo-coordinates. **1,200 rows seeded.**
 
-### TCOEntry
-```sql
-CREATE TABLE tco_entry (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    financial_scenario_id   UUID NOT NULL REFERENCES financial_scenario(id) ON DELETE CASCADE,
-    vehicle_type            VARCHAR(50) NOT NULL,
-    motorization            VARCHAR(30),
-    quantity                INTEGER NOT NULL DEFAULT 1,
-    purchase_price          DECIMAL(14,2),
-    annual_maintenance_cost DECIMAL(12,2),
-    energy_cost_per_km      DECIMAL(8,4),
-    annual_km               DECIMAL(12,2),
-    residual_value          DECIMAL(14,2),
-    infrastructure_cost     DECIMAL(14,2),
-    tco_per_vehicle         DECIMAL(14,2),
-    tco_total               DECIMAL(14,2)
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| matricule | varchar(50) | ✓ | | UNIQUE per tenant |
+| first_name | varchar(100) | ✓ | | |
+| last_name | varchar(100) | ✓ | | |
+| department | varchar(100) | | | |
+| function_role | varchar(100) | | | |
+| phone | varchar(50) | | | |
+| shift_time | varchar(50) | | | `P1`/`P2`/`P3`/`N`/`St` |
+| address | text | | | |
+| quartier | varchar(100) | | | Neighbourhood |
+| city | varchar(100) | | | |
+| lat | float8 | | | Home GPS latitude |
+| lng | float8 | | | Home GPS longitude |
+| geom | geometry(Point,4326) | | | PostGIS home point |
+| preferred_pickup_address | text | | | |
+| preferred_pickup_lat | float8 | | | |
+| preferred_pickup_lng | float8 | | | |
+| is_pmr | boolean | ✓ | false | Reduced mobility |
+| transport_required | boolean | ✓ | true | |
+| current_transport_mode | varchar(50) | | | |
+| opt_in_company_transport | varchar(20) | ✓ | `Non` | `Oui`/`Non` |
+| has_private_car | boolean | ✓ | false | |
+| volunteer_driver | boolean | ✓ | false | Carpooling driver |
+| carpool_seats | integer | ✓ | 0 | |
+| active | boolean | ✓ | true | |
+| sirh_external_id | varchar(100) | | | SIRH sync key |
+| hire_date | date | | | |
+| end_date | date | | | |
+| point_arret_id | uuid | | | FK → point_arret.id |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### ROICalculation
-```sql
-CREATE TABLE roi_calculation (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    financial_scenario_id   UUID NOT NULL REFERENCES financial_scenario(id) ON DELETE CASCADE,
-    baseline_absence_rate   DECIMAL(5,4),
-    target_absence_rate     DECIMAL(5,4),
-    headcount               INTEGER,
-    daily_cost              DECIMAL(10,2),
-    replacement_cost        DECIMAL(12,2),
-    turnover_rate_before    DECIMAL(5,4),
-    turnover_rate_after     DECIMAL(5,4),
-    training_hour_cost      DECIMAL(8,2),
-    engagement_rate         DECIMAL(5,4),
-    annual_travel_hours     DECIMAL(8,2),
-    roi_absenteeism         DECIMAL(14,2),
-    roi_retention           DECIMAL(14,2),
-    roi_journey             DECIMAL(14,2),
-    roi_fleet_optimization  DECIMAL(14,2),
-    roi_total               DECIMAL(14,2),
-    payback_months          DECIMAL(6,1)
-);
-```
-
-### VehicleReference
-```sql
-CREATE TABLE vehicle_reference (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    type                    VARCHAR(50) NOT NULL,  -- minibus, midibus, bus_standard, grand_bus, vehicule_leger
-    capacity_min            INTEGER,
-    capacity_max            INTEGER,
-    motorizations_available JSONB DEFAULT '[]',
-    recommended_use         TEXT,
-    reference_tco_5y        JSONB DEFAULT '{}',    -- per motorization
-    length_meters           DECIMAL(5,2),
-    zfe_compliant           BOOLEAN DEFAULT true
-);
-```
+**Indexes:** `employee_pkey`, `uq_employee_tenant_matricule` UNIQUE(tenant_id, matricule), `ix_employee_tenant_id`, `ix_employee_site_id`, `ix_employee_active`, `idx_employee_geom` (GIST), `ix_employee_geom` (GIST), `ix_employee_point_arret_id`
 
 ---
 
-## Group 9: Content & Journey Valorization
+## employee_modal
 
-### Content
-```sql
-CREATE TABLE content (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id           UUID NOT NULL REFERENCES tenant(id),
-    title               VARCHAR(255) NOT NULL,
-    body                TEXT,
-    content_type        VARCHAR(30) NOT NULL,  -- news, training, safety, survey
-    media_url           TEXT,
-    target_sites        JSONB,                 -- array of site_ids, null = all
-    target_departments  JSONB,
-    target_shifts       JSONB,
-    published_at        TIMESTAMPTZ,
-    expires_at          TIMESTAMPTZ,
-    created_by          UUID REFERENCES "user"(id),
-    is_active           BOOLEAN DEFAULT true,
-    created_at          TIMESTAMPTZ DEFAULT now(),
-    updated_at          TIMESTAMPTZ DEFAULT now()
-);
-```
+Transport mode survey per employee (one-to-one with employee).
 
-### ContentDelivery
-```sql
-CREATE TABLE content_delivery (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    content_id          UUID NOT NULL REFERENCES content(id) ON DELETE CASCADE,
-    employee_id         UUID NOT NULL REFERENCES employee(id),
-    delivered_at        TIMESTAMPTZ DEFAULT now(),
-    viewed_at           TIMESTAMPTZ,
-    completed_at        TIMESTAMPTZ,
-    quiz_score          DECIMAL(5,2),
-    time_spent_seconds  INTEGER DEFAULT 0
-);
-CREATE INDEX idx_delivery_content ON content_delivery(content_id);
-CREATE INDEX idx_delivery_employee ON content_delivery(employee_id);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| employee_id | uuid | ✓ | | FK → employee.id — **UNIQUE** |
+| primary_mode | varchar(50) | ✓ | | `company_bus`/`personal_car`/`walk` |
+| alternative_mode | varchar(50) | | | |
+| distance_km | numeric | | | |
+| travel_time_min | integer | | | |
+| frequency | varchar(50) | | | |
+| interest_company_transport | varchar(30) | | | |
+| reason_current_mode | text | | | |
+| departure_time | time | | | |
+| accepts_common_pickup | boolean | ✓ | true | |
+| max_pickup_distance_meters | integer | ✓ | 500 | |
+| has_private_car | boolean | ✓ | false | |
+| volunteer_driver | boolean | ✓ | false | |
+| carpool_seats_available | integer | ✓ | 0 | |
+| max_detour_minutes | integer | | | |
+| bonus_opt_in | boolean | ✓ | false | |
+| observations | text | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### TrainingModule
-```sql
-CREATE TABLE training_module (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    content_id          UUID NOT NULL REFERENCES content(id) ON DELETE CASCADE,
-    lms_external_id     VARCHAR(255),
-    duration_minutes    INTEGER,
-    is_mandatory        BOOLEAN DEFAULT false,
-    certification_name  VARCHAR(255)
-);
-```
-
-### Survey
-```sql
-CREATE TABLE survey (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    content_id          UUID NOT NULL REFERENCES content(id) ON DELETE CASCADE,
-    questions           JSONB NOT NULL DEFAULT '[]',
-    response_count      INTEGER DEFAULT 0,
-    is_anonymous        BOOLEAN DEFAULT true
-);
-```
-
-### SurveyResponse
-```sql
-CREATE TABLE survey_response (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    survey_id           UUID NOT NULL REFERENCES survey(id) ON DELETE CASCADE,
-    employee_id         UUID REFERENCES employee(id),  -- nullable if anonymous
-    responses           JSONB NOT NULL,
-    submitted_at        TIMESTAMPTZ DEFAULT now()
-);
-```
+**Indexes:** `employee_modal_pkey`, UNIQUE(employee_id)
 
 ---
 
-## Group 10: RTI (Real-Time Information)
+## employee_leave
 
-### StopRiskScore
-```sql
-CREATE TABLE stop_risk_score (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id                 UUID NOT NULL REFERENCES site(id),
-    location_lat            DOUBLE PRECISION NOT NULL,
-    location_lng            DOUBLE PRECISION NOT NULL,
-    geom                    GEOMETRY(Point, 4326),
-    stop_name               VARCHAR(255),
-    isolation_score         DECIMAL(3,2) DEFAULT 0,   -- 0-1
-    lighting_score          DECIMAL(3,2) DEFAULT 0,   -- 0-1
-    tc_frequency_score      DECIMAL(3,2) DEFAULT 0,   -- 0-1
-    night_risk_multiplier   DECIMAL(3,2) DEFAULT 1.0,
-    employee_perception_avg DECIMAL(3,2) DEFAULT 0,
-    composite_risk_score    DECIMAL(3,2) DEFAULT 0,   -- 0-1
-    is_critical             BOOLEAN DEFAULT false,
-    last_assessed_at        TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_stop_risk_site ON stop_risk_score(site_id);
-CREATE INDEX idx_stop_risk_geom ON stop_risk_score USING GIST(geom);
-```
+Leaves / absences tracking.
 
-### VehiclePosition
-```sql
-CREATE TABLE vehicle_position (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    vehicle_id          UUID NOT NULL REFERENCES vehicle(id),
-    route_id            UUID REFERENCES route(id),
-    lat                 DOUBLE PRECISION NOT NULL,
-    lng                 DOUBLE PRECISION NOT NULL,
-    heading             DECIMAL(5,2),
-    speed_kph           DECIMAL(6,2),
-    timestamp           TIMESTAMPTZ DEFAULT now(),
-    next_stop_eta_seconds INTEGER
-);
-CREATE INDEX idx_vpos_vehicle ON vehicle_position(vehicle_id);
-CREATE INDEX idx_vpos_timestamp ON vehicle_position(timestamp);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| employee_id | uuid | ✓ | | FK → employee.id |
+| leave_type | varchar(50) | ✓ | | `conge_annuel`/`maladie`/etc. |
+| start_date | date | ✓ | | |
+| end_date | date | ✓ | | |
+| notes | text | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### RTIEvent
-```sql
-CREATE TABLE rti_event (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    stop_id             UUID NOT NULL REFERENCES stop_risk_score(id),
-    route_id            UUID NOT NULL REFERENCES route(id),
-    scheduled_arrival   TIMESTAMPTZ NOT NULL,
-    actual_arrival      TIMESTAMPTZ,
-    wait_time_seconds   INTEGER,
-    compliant           BOOLEAN,        -- <=90s
-    date                DATE NOT NULL
-);
-CREATE INDEX idx_rti_event_date ON rti_event(date);
-```
-
-### RTIConfig
-```sql
-CREATE TABLE rti_config (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id                 UUID UNIQUE NOT NULL REFERENCES site(id),
-    max_wait_seconds        INTEGER DEFAULT 90,
-    compliance_target_pct   DECIMAL(5,2) DEFAULT 95.0,
-    buffer_vehicle_count    INTEGER DEFAULT 0,
-    night_mode_start        TIME DEFAULT '20:00',
-    night_mode_end          TIME DEFAULT '06:30'
-);
-```
+**Indexes:** `employee_leave_pkey`, `idx_leave_dates` BTREE(start_date, end_date)
 
 ---
 
-## Group 11: Security
+## vehicle
 
-### SecurityQuestionnaire
-```sql
-CREATE TABLE security_questionnaire (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id             UUID NOT NULL REFERENCES employee(id),
-    submitted_at            TIMESTAMPTZ DEFAULT now(),
-    questionnaire_version   INTEGER DEFAULT 1,
-    overall_safety_rating   INTEGER,           -- 1-5
-    responses               JSONB DEFAULT '{}',
-    vulnerable_stops        JSONB DEFAULT '[]', -- [{lat, lng, description}]
-    night_concerns          TEXT
-);
-CREATE INDEX idx_secq_employee ON security_questionnaire(employee_id);
-```
+Fleet inventory. **106 rows seeded.**  
+Default rates: AUTOCAR 4.50 MAD/km · MINIBUS 3.20 MAD/km · MINICAR 2.50 MAD/km
 
-### SecurityScore
-```sql
-CREATE TABLE security_score (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id             UUID UNIQUE NOT NULL REFERENCES employee(id),
-    score                   INTEGER,            -- 0-100, higher = safer
-    risk_level              VARCHAR(20),        -- low, medium, high, critical
-    last_calculated_at      TIMESTAMPTZ DEFAULT now(),
-    contributing_factors    JSONB DEFAULT '{}'
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | | | FK → site.id |
+| type | varchar(50) | ✓ | | `AUTOCAR`/`MINIBUS`/`MINICAR` |
+| brand_model | varchar(100) | | | |
+| matricule | varchar(30) | | | License plate |
+| capacity | integer | ✓ | | Seating capacity |
+| year | integer | | | |
+| motorization | varchar(30) | | | `Diesel`/`CNG`/`Electric` |
+| owner_type | varchar(50) | | | Ownership category |
+| prestataire | varchar(100) | | | Operator company name |
+| monthly_cost_mad | numeric | | | MAD/month |
+| monthly_km | numeric | | | |
+| condition | varchar(20) | ✓ | `Bon` | `Bon`/`Moyen`/`Mauvais` |
+| is_pmr_accessible | boolean | ✓ | false | Wheelchair accessible |
+| fuel_consumption | numeric | | | L/100km |
+| cost_per_km | numeric | | | MAD/km |
+| length_meters | numeric | | | |
+| zfe_compliant | boolean | ✓ | false | Low emission zone |
+| circulation_date | date | | | First registration |
+| observations | text | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### EmergencyAlert
-```sql
-CREATE TABLE emergency_alert (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id             UUID NOT NULL REFERENCES employee(id),
-    triggered_at            TIMESTAMPTZ DEFAULT now(),
-    location_lat            DOUBLE PRECISION,
-    location_lng            DOUBLE PRECISION,
-    alert_type              VARCHAR(30),        -- emergency_button, system_trigger
-    responders_notified     JSONB DEFAULT '[]',
-    resolved_at             TIMESTAMPTZ,
-    resolution_notes        TEXT
-);
-```
+**Indexes:** `vehicle_pkey`, `idx_vehicle_tenant`, `idx_vehicle_site`
 
 ---
 
-## Group 12: SIRH Sync
+## vehicle_reference
 
-### SIRHConnection
-```sql
-CREATE TABLE sirh_connection (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    provider        VARCHAR(50) NOT NULL,   -- sap, workday, talentsoft, sage
-    config          JSONB DEFAULT '{}',     -- encrypted credentials, endpoints
-    sync_frequency  VARCHAR(20) DEFAULT 'daily',
-    last_sync_at    TIMESTAMPTZ,
-    status          VARCHAR(20) DEFAULT 'active'  -- active, error, disabled
-);
-```
+Standard reference catalog per vehicle type (not fleet-specific).
 
-### SyncLog
-```sql
-CREATE TABLE sync_log (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sirh_connection_id  UUID NOT NULL REFERENCES sirh_connection(id),
-    started_at          TIMESTAMPTZ DEFAULT now(),
-    completed_at        TIMESTAMPTZ,
-    records_created     INTEGER DEFAULT 0,
-    records_updated     INTEGER DEFAULT 0,
-    records_failed      INTEGER DEFAULT 0,
-    errors              JSONB DEFAULT '[]',
-    status              VARCHAR(20) DEFAULT 'running'  -- running, success, partial, failed
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| type | varchar(50) | ✓ | | `AUTOCAR`/`MINIBUS`/`MINICAR` |
+| capacity_min | integer | | | |
+| capacity_max | integer | | | |
+| motorizations_available | jsonb | | `[]` | Available motorizations array |
+| recommended_use | text | | | |
+| reference_tco_5y | jsonb | | `{}` | 5-year TCO reference data |
+| length_meters | numeric | | | |
+| zfe_compliant | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
 
-### SyncConflict
-```sql
-CREATE TABLE sync_conflict (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sync_log_id     UUID NOT NULL REFERENCES sync_log(id),
-    employee_id     UUID REFERENCES employee(id),
-    field_name      VARCHAR(100),
-    platform_value  TEXT,
-    sirh_value      TEXT,
-    resolution      VARCHAR(30) DEFAULT 'pending',  -- pending, platform_wins, sirh_wins, manual
-    resolved_at     TIMESTAMPTZ,
-    resolved_by     UUID REFERENCES "user"(id)
-);
-```
+**Indexes:** `vehicle_reference_pkey`
 
 ---
 
-## Group 13: Mobile & Operator
+## point_arret
 
-### TripBooking
-```sql
-CREATE TABLE trip_booking (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id     UUID NOT NULL REFERENCES employee(id),
-    route_id        UUID REFERENCES route(id),
-    pickup_stop_id  UUID REFERENCES stop_risk_score(id),
-    booking_date    DATE NOT NULL,
-    shift           VARCHAR(50),
-    status          VARCHAR(20) DEFAULT 'booked',  -- booked, confirmed, cancelled, completed, no_show
-    booked_at       TIMESTAMPTZ DEFAULT now(),
-    cancelled_at    TIMESTAMPTZ
-);
-CREATE INDEX idx_trip_employee ON trip_booking(employee_id);
-CREATE INDEX idx_trip_date ON trip_booking(booking_date);
-```
+Bus stops / gathering points on routes.
 
-### DeviceRegistration
-```sql
-CREATE TABLE device_registration (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         UUID NOT NULL REFERENCES "user"(id),
-    device_token    VARCHAR(500) NOT NULL,
-    platform        VARCHAR(10) NOT NULL,   -- ios, android
-    app_version     VARCHAR(20),
-    registered_at   TIMESTAMPTZ DEFAULT now(),
-    is_active       BOOLEAN DEFAULT true
-);
-```
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| name | varchar(200) | ✓ | | |
+| address | text | | | |
+| city | varchar(100) | | | |
+| lat | float8 | ✓ | | |
+| lng | float8 | ✓ | | |
+| geom | geometry(Point,4326) | | | PostGIS point |
+| quartier | varchar(100) | | | |
+| is_active | boolean | ✓ | true | |
+| capacity | integer | | | Max passengers |
+| security_risk | varchar(20) | ✓ | `low` | `low`/`medium`/`high` |
+| observations | text | | | |
+| created_at | timestamptz | ✓ | now() | |
 
-### PushNotification
-```sql
-CREATE TABLE push_notification (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         UUID NOT NULL REFERENCES "user"(id),
-    type            VARCHAR(30) NOT NULL,   -- rti_alert, route_change, weather, content, emergency
-    title           VARCHAR(255),
-    body            TEXT,
-    data            JSONB DEFAULT '{}',
-    sent_at         TIMESTAMPTZ DEFAULT now(),
-    delivered_at    TIMESTAMPTZ,
-    read_at         TIMESTAMPTZ
-);
-```
-
-### Operator
-```sql
-CREATE TABLE operator (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    name            VARCHAR(255) NOT NULL,
-    type            VARCHAR(30),            -- via, swvl, local, internal
-    api_config      JSONB DEFAULT '{}',
-    contact_name    VARCHAR(100),
-    contact_email   VARCHAR(255),
-    contact_phone   VARCHAR(50),
-    is_active       BOOLEAN DEFAULT true
-);
-```
-
-### SizingPlanExport
-```sql
-CREATE TABLE sizing_plan_export (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    optimization_id UUID NOT NULL REFERENCES optimization(id),
-    operator_id     UUID NOT NULL REFERENCES operator(id),
-    exported_at     TIMESTAMPTZ DEFAULT now(),
-    format          VARCHAR(10),            -- json, xml, pdf
-    file_url        TEXT,
-    status          VARCHAR(20) DEFAULT 'draft'  -- draft, sent, acknowledged
-);
-```
+**Indexes:** `point_arret_pkey`, `idx_point_arret_site`, `idx_point_arret_geom` (GIST)
 
 ---
 
-## Group 14: Reporting
+## configuration_plan
 
-### GeneratedReport
-```sql
-CREATE TABLE generated_report (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    report_type     VARCHAR(50) NOT NULL,
-    params          JSONB DEFAULT '{}',
-    file_url        TEXT,
-    format          VARCHAR(10),            -- pdf, xlsx, csv, geojson
-    generated_at    TIMESTAMPTZ DEFAULT now(),
-    generated_by    UUID REFERENCES "user"(id)
-);
+Versioned transport plan container. One plan flagged `is_current=true` at a time.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| name | varchar(200) | ✓ | | |
+| description | text | | | |
+| is_active | boolean | ✓ | true | |
+| is_current | boolean | ✓ | false | Only one true at a time |
+| source | varchar(50) | | | `upload`/`optimizer` |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `configuration_plan_pkey`, `ix_configuration_plan_tenant`
+
+---
+
+## configuration_transport
+
+Individual circuit rows within a plan. **591 rows seeded** (imported from Excel).
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| plan_id | uuid | ✓ | | FK → configuration_plan.id |
+| site_id | uuid | | | FK → site.id |
+| prestataire | varchar(100) | ✓ | | Transport operator |
+| conducteur | varchar(200) | | | Driver name |
+| mle_vehicule | varchar(50) | | | Vehicle registration |
+| type_vehicule | varchar(50) | | | `AUTOCAR`/`MINIBUS`/`MINICAR` |
+| type_moteur | varchar(50) | | | Engine type |
+| poste | varchar(20) | | | Internal circuit code |
+| shift | varchar(10) | | | `P1`/`P2`/`P3`/`N`/`St` |
+| secteur | varchar(100) | | | Zone/sector |
+| entite | varchar(200) | | | Business unit |
+| aller_retour | varchar(10) | | | `ALLER`/`RETOUR` |
+| heure_depart | varchar(25) | | | Departure time (string) |
+| point_depart | varchar(200) | | | Origin stop name |
+| point_arrivee | varchar(200) | | | Destination stop name |
+| heure_arrivee | varchar(25) | | | Arrival time (string) |
+| arrets_circuit | varchar(500) | | | Intermediate stops string |
+| duree_trajet_min | integer | | | Trip duration minutes |
+| km | numeric(8,2) | | | Distance km |
+| rot | numeric(6,2) | | | Number of rotations |
+| t_km | numeric(8,2) | | | Total km (km × rot) |
+| is_active | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `configuration_transport_pkey`, `ix_configuration_transport_tenant`, `ix_configuration_transport_plan`, `ix_configuration_transport_poste`
+
+---
+
+## optimization
+
+Optimization run metadata and aggregated results.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| status | varchar(20) | ✓ | `pending` | `pending`/`running`/`completed`/`failed` |
+| algorithm | varchar(50) | | | `kmeans`/`vrp`/`greedy` |
+| total_vehicles | integer | | | |
+| total_distance_km | numeric | | | |
+| total_cost_mad | numeric | | | |
+| results_summary | jsonb | | `{}` | Key metrics blob |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `optimization_pkey`, `idx_optimization_tenant`, `idx_optimization_site`
+
+---
+
+## optimization_settings
+
+Optimizer parameters per run.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| max_walking_distance_m | integer | ✓ | 500 | |
+| max_detour_pct | numeric | ✓ | 20 | |
+| algorithm | varchar(50) | ✓ | `kmeans` | |
+| vehicle_types | jsonb | | `[]` | Allowed vehicle types |
+| shift_ids | jsonb | | `[]` | Target shifts |
+| pmr_dedicated_vehicle | boolean | ✓ | false | |
+| zfe_only | boolean | ✓ | false | |
+| max_route_duration_min | integer | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `optimization_settings_pkey`
+
+---
+
+## cluster
+
+Geo-clusters of employees produced by the optimizer.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| optimization_id | uuid | ✓ | | FK → optimization.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| centroid_lat | float8 | ✓ | | |
+| centroid_lng | float8 | ✓ | | |
+| centroid_geom | geometry(Point,4326) | | | PostGIS centroid |
+| employee_count | integer | ✓ | 0 | |
+| pmr_count | integer | ✓ | 0 | |
+| security_risk_level | varchar(20) | ✓ | `low` | |
+| employee_ids | uuid[] | ✓ | `{}` | Array of employee UUIDs |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `cluster_pkey`, `idx_cluster_optimization`, `idx_cluster_centroid_geom` (GIST)
+
+---
+
+## route
+
+Computed vehicle route per optimization run.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| optimization_id | uuid | ✓ | | FK → optimization.id |
+| vehicle_id | uuid | | | FK → vehicle.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| ordered_stops | jsonb | ✓ | `[]` | Ordered stop list with coordinates |
+| total_distance_km | numeric | | | |
+| total_time_minutes | numeric | | | |
+| polyline | text | | | Encoded Google polyline |
+| geom | geometry | | | Route line geometry |
+| rti_compliance_pct | numeric | | | RTI compliance percentage |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `route_pkey`, `idx_route_optimization`, `idx_route_geom` (GIST)
+
+---
+
+## horaire_travail
+
+Shift schedule templates per site.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| shift_code | varchar(10) | ✓ | | `P1`/`P2`/`P3`/`N` |
+| entry_time | time | ✓ | | |
+| exit_time | time | ✓ | | |
+| days_of_week | jsonb | | `[]` | Active days array |
+| effective_from | date | | | |
+| is_active | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `horaire_travail_pkey`
+
+---
+
+## constraint_param
+
+Configurable business rules (key-value store per tenant).
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| key | varchar(100) | ✓ | | UNIQUE per tenant |
+| value | varchar(500) | ✓ | | |
+| category | varchar(50) | ✓ | `general` | `general`/`optimizer`/`financial` |
+| description | varchar(500) | | | |
+| is_active | boolean | ✓ | true | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `constraint_param_pkey`, `uq_constraint_param_tenant_key` UNIQUE(tenant_id, key), `idx_constraint_param_tenant`
+
+---
+
+## kpi_snapshot
+
+Daily KPI cache — pre-aggregated metrics for dashboard performance.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | | | FK → site.id |
+| snapshot_date | date | ✓ | | |
+| metrics | jsonb | ✓ | `{}` | All KPIs as JSON blob |
+| computed_at | timestamptz | ✓ | now() | |
+| created_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `kpi_snapshot_pkey`, `idx_kpi_snapshot_date`
+
+---
+
+## km_consommation
+
+Monthly mileage actuals per vehicle.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | | | FK → site.id |
+| vehicle_id | uuid | | | FK → vehicle.id |
+| period_month | integer | ✓ | | 1–12 |
+| period_year | integer | ✓ | | |
+| km_planned | numeric | | | |
+| km_actual | numeric | | | |
+| cost_mad | numeric | | | |
+| fuel_liters | numeric | | | |
+| notes | text | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `km_consommation_pkey`
+
+---
+
+## financial_scenario
+
+TCO/ROI financial simulation container.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| name | varchar(255) | ✓ | | |
+| investment_model | varchar(30) | ✓ | | `achat`/`leasing`/`prestataire` |
+| duration_years | integer | ✓ | 5 | |
+| fleet_composition | jsonb | | `{}` | Vehicle type mix |
+| params | jsonb | | `{}` | Input parameters |
+| results | jsonb | | `{}` | Computed results blob |
+| created_by | uuid | | | FK → user.id |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `financial_scenario_pkey`, `idx_financial_scenario_tenant`
+
+---
+
+## tco_entry
+
+TCO line items per vehicle type within a financial scenario.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| financial_scenario_id | uuid | ✓ | | FK → financial_scenario.id |
+| vehicle_type | varchar(50) | ✓ | | `AUTOCAR`/`MINIBUS`/`MINICAR` |
+| motorization | varchar(30) | | | |
+| quantity | integer | ✓ | 1 | |
+| purchase_price | numeric | | | MAD |
+| annual_maintenance_cost | numeric | | | MAD/year |
+| energy_cost_per_km | numeric | | | MAD/km |
+| annual_km | numeric | | | |
+| residual_value | numeric | | | MAD at end of period |
+| infrastructure_cost | numeric | | | MAD |
+| tco_per_vehicle | numeric | | | Computed |
+| tco_total | numeric | | | Computed |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `tco_entry_pkey`, `idx_tco_entry_financial_scenario`
+
+---
+
+## roi_calculation
+
+ROI outputs per year per financial scenario.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| financial_scenario_id | uuid | ✓ | | FK → financial_scenario.id |
+| year | integer | ✓ | | Year 1–N |
+| revenue_mad | numeric | | | |
+| cost_mad | numeric | | | |
+| net_mad | numeric | | | |
+| cumulative_net_mad | numeric | | | |
+| employee_contribution | numeric | | | |
+| savings_vs_baseline | numeric | | | |
+| co2_saved_tons | numeric | | | |
+| accidents_avoided | numeric | | | |
+| absenteeism_reduction_pct | numeric | | | |
+| productivity_gain_mad | numeric | | | |
+| irr_pct | numeric | | | Internal Rate of Return |
+| npv_mad | numeric | | | Net Present Value |
+| payback_months | numeric | | | |
+| tco_per_employee_mad | numeric | | | |
+| cost_per_km_mad | numeric | | | |
+| vehicles_needed | integer | | | |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `roi_calculation_pkey`
+
+---
+
+## scenario
+
+What-if simulation scenarios using demand multipliers.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| site_id | uuid | ✓ | | FK → site.id |
+| baseline_optimization_id | uuid | | | FK → optimization.id |
+| name | varchar(100) | | | |
+| condition_type | varchar(30) | ✓ | `normal` | `normal`/`greve`/`intemperie`/`effectif_reduit` |
+| demand_multiplier | float8 | ✓ | 1.0 | Applied to employee count |
+| custom_params | json | ✓ | `{}` | Override parameters |
+| estimated_metrics | json | ✓ | `{}` | Computed scenario metrics |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `scenario_pkey`, `idx_scenario_tenant`, `idx_scenario_site`
+
+---
+
+## generated_report
+
+Async report generation metadata and download links.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| tenant_id | uuid | ✓ | | FK → tenant.id |
+| report_type | varchar(50) | ✓ | | `kpi_monthly`/`fleet_audit`/`roi`/etc. |
+| params | jsonb | | `{}` | Generation parameters |
+| file_url | text | | | Download URL |
+| format | varchar(10) | | | `pdf`/`xlsx` |
+| generated_at | timestamptz | ✓ | now() | |
+| generated_by | uuid | | | FK → user.id |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `generated_report_pkey`
+
+---
+
+## weather_forecast
+
+Open-Meteo forecast cache per site (no API key required).
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| **id** | uuid | ✓ | gen_random_uuid() | **PK** |
+| site_id | uuid | ✓ | | FK → site.id |
+| date | date | ✓ | | Forecast date |
+| condition_summary | varchar(100) | | | e.g. `Partly Cloudy` |
+| precipitation_mm | numeric | | | |
+| temp_min_c | numeric | | | |
+| temp_max_c | numeric | | | |
+| wind_kph | numeric | | | |
+| fetched_at | timestamptz | ✓ | now() | |
+| source | varchar(50) | | | `open-meteo` |
+| created_at | timestamptz | ✓ | now() | |
+| updated_at | timestamptz | ✓ | now() | |
+
+**Indexes:** `weather_forecast_pkey`, `uq_weather_site_date_source` UNIQUE(site_id, date, source), `idx_weather_forecast_site_id`
+
+---
+
+## PostGIS Geometry Columns
+
+All use SRID 4326 (WGS84). Indexed with GIST for spatial queries.
+
+| Table | Column | Type | Indexes |
+|---|---|---|---|
+| employee | geom | Point,4326 | `idx_employee_geom`, `ix_employee_geom` |
+| site | geom | Point,4326 | `idx_site_geom`, `ix_site_geom` |
+| point_arret | geom | Point,4326 | `idx_point_arret_geom` |
+| cluster | centroid_geom | Point,4326 | `idx_cluster_centroid_geom` |
+| route | geom | generic | `idx_route_geom` |
+
+---
+
+## Foreign Key Graph
+
 ```
-
-### KPISnapshot
-```sql
-CREATE TABLE kpi_snapshot (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenant(id),
-    site_id         UUID REFERENCES site(id),
-    snapshot_date   DATE NOT NULL,
-    kpi_type        VARCHAR(50) NOT NULL,
-    value           JSONB NOT NULL,
-    created_at      TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX idx_kpi_date ON kpi_snapshot(snapshot_date);
-CREATE INDEX idx_kpi_type ON kpi_snapshot(kpi_type);
+tenant
+  ├── site (tenant_id)
+  ├── user (tenant_id) ──→ role
+  ├── role (tenant_id) ──→ role_permission ──→ permission
+  ├── employee (tenant_id) ──→ site, point_arret
+  │     ├── employee_modal (employee_id)
+  │     └── employee_leave (employee_id)
+  ├── vehicle (tenant_id) ──→ site
+  ├── point_arret (tenant_id) ──→ site
+  ├── configuration_plan (tenant_id)
+  │     └── configuration_transport (plan_id) ──→ site
+  ├── optimization (tenant_id) ──→ site
+  │     ├── cluster (optimization_id) ──→ site
+  │     └── route (optimization_id) ──→ vehicle, site
+  ├── optimization_settings (tenant_id) ──→ site
+  ├── horaire_travail (tenant_id) ──→ site
+  ├── constraint_param (tenant_id)
+  ├── kpi_snapshot (tenant_id) ──→ site
+  ├── km_consommation (tenant_id) ──→ site, vehicle
+  ├── financial_scenario (tenant_id) ──→ user
+  │     ├── tco_entry (financial_scenario_id)
+  │     └── roi_calculation (financial_scenario_id)
+  ├── scenario (tenant_id) ──→ site, optimization
+  ├── generated_report (tenant_id) ──→ user
+  └── weather_forecast ──→ site
 ```
 
 ---
 
-## Entity Relationship Summary
+## Alembic Migration State
 
-```
-Tenant 1──* User
-Tenant 1──* Site
-Tenant 1──* Employee
-Tenant 1──* Vehicle
-Tenant 1──1 OptimizationSettings (1:1)
-Tenant 1──* ConstraintParam
-Tenant 1──* Role
-
-Role  *──* Permission (via RolePermission)
-User  *──1 Role
-User  *──1 Employee (optional)
-
-Site  1──* Employee
-Site  1──* Vehicle
-Site  1──* StopRiskScore
-Site  1──* RTIConfig (1:1)
-Site  1──* WeatherForecast
-
-Employee 1──1 EmployeeModal
-Employee 1──* EmployeeLeave
-Employee 1──* SecurityQuestionnaire
-Employee 1──1 SecurityScore
-Employee 1──* TripBooking
-Employee 1──* ContentDelivery
-Employee 1──* EmergencyAlert
-
-Optimization 1──* Cluster
-Optimization 1──* Route
-Optimization 1──* Scenario (baseline)
-Route *──1 Vehicle
-
-FinancialScenario 1──* TCOEntry
-FinancialScenario 1──* ROICalculation
-
-Content 1──* ContentDelivery
-Content 1──1 TrainingModule
-Content 1──1 Survey
-Survey  1──* SurveyResponse
-
-SIRHConnection 1──* SyncLog
-SyncLog 1──* SyncConflict
-
-Operator 1──* SizingPlanExport
-Optimization 1──* SizingPlanExport
-```
-
----
-## Related Documentation
-- [[ARCHITECTURE]] — System architecture
-- [[API_ENDPOINTS]] — API endpoints consuming these tables
-- [[FRONTEND_PAGES]] — Web pages displaying this data
-- [[MOBILE_PAGES]] — Mobile screens
-- [[PROGRESS]] — Implementation status
-- [[ROADMAP]] — Development timeline
-- [[agents]] — Development workflow
+| Item | Value |
+|---|---|
+| Migration directory | `backend/alembic/versions/` |
+| Auto-applied on startup | Yes — `alembic upgrade head` in `start_production.sh` |
+| Current revision | Query: `SELECT version_num FROM alembic_version;` |
