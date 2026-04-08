@@ -6,6 +6,7 @@ import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/onboarding/onboarding_flow.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/trips/trip_booking_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -51,10 +52,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'book',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const PlaceholderScreen(
-                title: 'Réserver un trajet',
-                icon: Icons.add_circle_outline,
-              ),
+              builder: (context, state) => const TripBookingScreen(),
             ),
             GoRoute(
               path: ':id',

@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-49] — 2026-04-08
+### Added
+- Trip booking flow (`TripBookingScreen`) with date picker, shift selector, pickup point, summary, and confirm
+- `DatePickerStrip` — horizontal scroll (today + 7 days), French day/month abbreviations, selected highlight
+- `ShiftSelector` — radio-style shift cards with entry/exit times, loading/empty states
+- `PickupPointPicker` — current point display + bottom sheet picker with walking time
+- `BookingSummaryCard` — accent-colored summary with date, shift, pickup point
+- `TripBooking`, `Shift`, `PickupPoint`, `BookingConfirmation` models with JSON serialization
+- `TripService` for site shifts, nearby pickup points, and trip booking API
+- `TripBookingNotifier` (Riverpod) with canConfirm logic, submit flow, error handling
+- Cancellation policy banner ("30 minutes avant le départ")
+- 30 new tests (142 total passing)
+
 ## [Session-48] — 2026-04-08
 ### Added
 - Home screen (`HomeScreen`) with personalized greeting (Bonjour/Bon après-midi/Bonsoir + user name)
