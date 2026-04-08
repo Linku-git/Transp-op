@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-60] — 2026-04-08
+### Added
+- **RTI Monitoring Dashboard** at `/dashboard/rti` with 30-second auto-refresh
+- `ComplianceGauge`: circular SVG gauge (green >=95%, yellow 85-95%, red <85%)
+- `WaitTimeHeatmap`: per-stop risk bars with green→red gradient
+- `RiskStopMapOverlay`: critical/normal stop legend, map placeholder, critical stop list
+- `ViolationAlertList`: sortable violation table with severity badges (Élevé/Moyen/Faible)
+- `ComplianceTrendChart`: Recharts line chart with target reference line, day/week/month period selector
+- `GET /kpis/rti` backend endpoint: compliance_pct, avg_wait_seconds, active_violations, total_events, trend data
+- RTI API client (`frontend/src/api/rti.ts`) with TypeScript interfaces
+- KPI summary cards: avg wait time, active violations, total events
+- 9 frontend tests + 3 backend tests (12 new, 345 total)
+
 ## [Session-59] — 2026-04-08
 ### Added
 - `RTIConfig` model: per-site config (max_wait_seconds, compliance_target_pct, buffer_vehicle_count, night_mode hours) with unique (tenant, site) constraint

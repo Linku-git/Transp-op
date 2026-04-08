@@ -156,6 +156,12 @@ const RSEDashboardPage = lazy(() =>
   }))
 );
 
+const RTIMonitoringDashboard = lazy(() =>
+  import('@/pages/dashboard/RTIMonitoringDashboard').then((m) => ({
+    default: m.RTIMonitoringDashboard,
+  }))
+);
+
 const FinancialDashboardPage = lazy(() =>
   import('@/pages/financial/FinancialDashboardPage').then((m) => ({
     default: m.FinancialDashboardPage,
@@ -471,6 +477,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <RSEDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'dashboard/rti',
+        element: (
+          <SuspenseWrapper>
+            <RTIMonitoringDashboard />
           </SuspenseWrapper>
         ),
       },
