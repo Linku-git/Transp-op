@@ -162,6 +162,12 @@ const RTIMonitoringDashboard = lazy(() =>
   }))
 );
 
+const SecurityDashboard = lazy(() =>
+  import('@/pages/dashboard/SecurityDashboard').then((m) => ({
+    default: m.SecurityDashboard,
+  }))
+);
+
 const FinancialDashboardPage = lazy(() =>
   import('@/pages/financial/FinancialDashboardPage').then((m) => ({
     default: m.FinancialDashboardPage,
@@ -485,6 +491,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <RTIMonitoringDashboard />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'dashboard/security',
+        element: (
+          <SuspenseWrapper>
+            <SecurityDashboard />
           </SuspenseWrapper>
         ),
       },

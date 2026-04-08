@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-64] — 2026-04-08
+### Added
+- **Security Dashboard** at `/dashboard/security` with KPI cards (avg score, employees, critical stops, incidents)
+- `ScoreDistributionChart`: Recharts bar chart by risk level (green/orange/red/dark red)
+- `RiskStopMap`: stop list with color indicators, map placeholder, critical/normal counts
+- `NightShiftCoverage`: coverage % bar with optimal/partial/insufficient status
+- `IncidentTimeline`: chronological timeline with severity-colored dots
+- `EmergencyAlertLog`: filterable table (triggered/pending/resolved) with status badges
+- `GET /security/risk-map`: all stops with scores and coordinates
+- `GET /kpis/security`: avg score, risk distribution, night coverage, incidents
+- Security API client with TypeScript interfaces
+- 9 frontend tests
+
 ## [Session-63] — 2026-04-08
 ### Added
 - Three-dimension security-constrained pooling: geographic (45%) + shift (30%) + security (25%) with configurable weights
