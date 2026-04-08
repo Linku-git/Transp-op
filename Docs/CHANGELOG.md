@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-66] — 2026-04-08 (Phase 4 Complete!)
+### Added
+- **Emergency Alert System**: full backend for emergency alert lifecycle
+- `EmergencyAlert` model: PostGIS location (GIST index), alert_type (panic/medical/vehicle_incident/other), responders_notified JSONB, resolution tracking
+- `POST /security/emergency` — trigger alert, auto-route to responders, start GPS location sharing
+- `PUT /security/emergency/{id}/resolve` — close alert, stop location sharing, store resolution notes
+- `GET /security/emergency/history` — paginated + filterable alert history log
+- Emergency routing service: panic→emergency_services+site_security+admin, medical→medical_service+site_security+admin, other→site_security+admin
+- Location sharing service: start/update/stop with active session tracking
+- Emergency notification stubs (push + SMS) ready for Firebase/Twilio integration
+- Alembic migration `q2r3s4t5u6v7` with 4 indexes including GIST spatial
+- 18 backend tests (model, schemas, routing, location sharing)
+
+### Phase 4 — Security & RTI: COMPLETE (10/10 sessions)
+
 ## [Session-65] — 2026-04-08
 ### Added
 - **Mobile Night Mode**: `NightModeNotifier` (Riverpod) with auto/manual/off preferences, 1-minute re-evaluation timer, persisted via flutter_secure_storage

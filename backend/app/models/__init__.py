@@ -31,6 +31,7 @@ from app.models.rti_config import RTIConfig
 from app.models.security_questionnaire import SecurityQuestionnaire
 from app.models.security_score import SecurityScore
 from app.models.clustering_config import ClusteringConfig
+from app.models.emergency_alert import EmergencyAlert
 
 __all__ = [
     "BaseModel",
@@ -72,4 +73,5 @@ __all__ = [
     "SecurityQuestionnaire",
     "SecurityScore",
     "ClusteringConfig",
+    "EmergencyAlert",
 ]

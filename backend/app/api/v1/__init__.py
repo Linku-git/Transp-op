@@ -39,6 +39,7 @@ from app.api.v1.security_questionnaire import router as security_questionnaire_r
 from app.api.v1.security_scores import router as security_scores_router
 from app.api.v1.security_risk_map import router as security_risk_map_router
 from app.api.v1.kpis_security import router as kpis_security_router
+from app.api.v1.emergency import router as emergency_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -79,3 +80,4 @@ api_router.include_router(security_questionnaire_router, tags=["security"])
 api_router.include_router(security_scores_router, tags=["security"])
 api_router.include_router(security_risk_map_router, tags=["security"])
 api_router.include_router(kpis_security_router, tags=["kpis"])
+api_router.include_router(emergency_router, tags=["security"])
