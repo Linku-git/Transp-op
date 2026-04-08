@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-59] — 2026-04-08
+### Added
+- `RTIConfig` model: per-site config (max_wait_seconds, compliance_target_pct, buffer_vehicle_count, night_mode hours) with unique (tenant, site) constraint
+- Alembic migration `m8n9o0p1q2r3`
+- `GET/PUT /rti/config/{site_id}` — read/update RTI configuration per site
+- `GET /rti/adaptive-sizing/{site_id}` — sizing recommendation with compliance check
+- `AdaptiveSizing` service: buffer calculation from breakdown rate (3%) + traffic delay factor (15%)
+- `PoolRecomposition` service: triggers for employee_absence, shift_change, vehicle_breakdown, compliance_drop with vehicle reassignment estimate
+- `RTIFallback` service: decision tree (compliant → no action, buffers available → activate, buffers exhausted → TAD request) with event logging
+- 20 backend tests (model, schema, adaptive sizing, recomposition, fallback)
+
 ## [Session-58] — 2026-04-08
 ### Added
 - **RTI Backend System**: Real-time vehicle tracking infrastructure

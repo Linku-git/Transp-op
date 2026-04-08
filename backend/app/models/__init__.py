@@ -27,6 +27,7 @@ from app.models.push_notification import PushNotification
 from app.models.stop_risk_score import StopRiskScore
 from app.models.vehicle_position import VehiclePosition as VehiclePositionModel
 from app.models.rti_event import RTIEvent
+from app.models.rti_config import RTIConfig
 
 __all__ = [
     "BaseModel",
@@ -64,4 +65,5 @@ __all__ = [
     "StopRiskScore",
     "VehiclePositionModel",
     "RTIEvent",
+    "RTIConfig",
 ]
