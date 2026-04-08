@@ -36,6 +36,7 @@ from app.models.content import Content
 from app.models.content_delivery import ContentDelivery
 from app.models.survey import Survey
 from app.models.survey_response import SurveyResponse
+from app.models.training_module import TrainingModule
 
 __all__ = [
     "BaseModel",
@@ -82,4 +83,5 @@ __all__ = [
     "ContentDelivery",
     "Survey",
     "SurveyResponse",
+    "TrainingModule",
 ]
