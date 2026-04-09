@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-80] — 2026-04-09
+### Added
+- `TalentsoftConnector`: API Key auth, rate limiting (1000 req/h), employee + training sync
+- `talentsoft_field_mapping.py`: 11-field mapping, 6 dept codes, 4 schedule codes, French date parsing (dd/mm/yyyy)
+- Training records sync with nested `trainingRecords` field mapping
+- `SageConnector`: API Key auth, rate limiting (500 req/h), employee + payroll sync
+- `sage_field_mapping.py`: 11-field mapping (French field names), 6 dept codes, 4 shift codes
+- Payroll data mapping: gross/net salary, transport allowance, period
+- Both connectors: retry with exponential backoff, delta sync via modified-since
+- 34 backend tests (17 Talentsoft + 17 Sage): auth, mapping, sync, rate limiting
+
 ## [Session-79] — 2026-04-09
 ### Added
 - `WorkdayConnector`: OAuth 2.0 auth with token caching/refresh, offset-based pagination
