@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-78] — 2026-04-09
+### Added
+- `SAPConnector`: OAuth 2.0 client credentials auth with token caching & refresh
+- SAP OData API integration stubs: PerPerson (employees), FOLocation (sites), FODepartment (departments)
+- `sap_field_mapping.py`: SAP→Transpop field mapping (11 fields), department code map (8 codes), shift code map (4 codes)
+- `parse_sap_date()`: handles SAP /Date(timestamp)/ and ISO formats
+- `map_sap_employee()`: transforms SAP record to Transpop Employee format with nested address/employment parsing
+- `map_sap_site()`: transforms SAP location to Transpop site format
+- Delta sync: `$filter=lastModifiedDateTime ge datetime'{since}'` query parameter
+- Retry logic: 3 attempts with exponential backoff (1s, 2s, 4s), 401→token refresh, skip client errors
+- `SAPAuthError`, `SAPAPIError` custom exceptions with status code tracking
+- `run_full_sync()`: orchestrates full/delta cycle with field mapping
+- 30 backend tests (auth, field mapping, data sync, retry logic, error handling)
+
 ## [Session-77] — 2026-04-09 (Phase 6 Start)
 ### Added
 - `SIRHConnection` model: provider (sap/workday/talentsoft/sage), config (JSONB), sync_frequency, conflict_strategy, last_sync_at, status
