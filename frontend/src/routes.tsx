@@ -282,6 +282,24 @@ const SIRHSyncDashboardPage = lazy(() =>
   }))
 );
 
+const OperatorDashboardPage = lazy(() =>
+  import('@/pages/operator/OperatorDashboardPage').then((m) => ({
+    default: m.OperatorDashboardPage,
+  }))
+);
+
+const SizingPlanDetailPage = lazy(() =>
+  import('@/pages/operator/SizingPlanDetailPage').then((m) => ({
+    default: m.SizingPlanDetailPage,
+  }))
+);
+
+const ReportIssuePage = lazy(() =>
+  import('@/pages/operator/ReportIssuePage').then((m) => ({
+    default: m.ReportIssuePage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -677,6 +695,30 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ContentEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'operator',
+        element: (
+          <SuspenseWrapper>
+            <OperatorDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'operator/plans/:id',
+        element: (
+          <SuspenseWrapper>
+            <SizingPlanDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'operator/report-issue',
+        element: (
+          <SuspenseWrapper>
+            <ReportIssuePage />
           </SuspenseWrapper>
         ),
       },
