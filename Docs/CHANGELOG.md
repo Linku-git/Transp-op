@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-85] — 2026-04-09
+### Added
+- `SAPFIFormatter`: SAP FI-compliant CSV with BUKRS/BELNR/HKONT headers, debit/credit (S/H), cost centers
+- `SageFormatter`: Sage Comptabilite CSV with Journal/Compte/Debit/Credit, investment comparator
+- `CegidFormatter`: Cegid CSV with CodeJournal/NumCompte/MontantDebit/MontantCredit
+- `ERPExportService`: factory pattern, `build_financial_data()` helper, format selection
+- `POST /financial/export/daf` — generate downloadable ERP export (target_system: sap_fi/sage/cegid)
+- Export includes: TCO entries, ROI entries, cost-per-trip, investment comparator
+- 23 backend tests (SAP FI: 6, Sage: 5, Cegid: 3, service: 6, schema: 3)
+
 ## [Session-84] — 2026-04-09
 ### Added
 - Operator portal backend: `GET /operator/sizing-plans`, `GET /operator/sizing-plans/{id}`, `POST /operator/sizing-plans/{id}/acknowledge`, `POST /operator/service-issues`
