@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-87] — 2026-04-09 (Phase 7 Start)
+### Added
+- `cache.py` middleware: Redis caching with configurable TTL per entity (site 1h, vehicle 30m, settings 24h, optimization 10m, KPI 5m), key generation, get/set/delete/invalidate
+- `compression.py` middleware: GZip compression for responses > 500 bytes
+- `performance.py` middleware: request timing, X-Response-Time header, slow request logging (> 2s threshold)
+- `query_optimizer.py`: selectinload for relationships, pagination helper, 6 recommended indexes (CONCURRENTLY, IF NOT EXISTS), PRD performance target constants
+- Connection pooling already configured: pool_size=10, max_overflow=20, pool_recycle=3600, pool_pre_ping=True
+- 24 backend tests (cache keys, TTL, performance targets, indexes, connection pool, pagination)
+
 ## [Session-86] — 2026-04-09 (Phase 6 Complete!)
 ### Added
 - `StripeClient`: customer/subscription CRUD, webhook handling (4 event types), HMAC signature verification
