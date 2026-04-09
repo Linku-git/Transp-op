@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-82] — 2026-04-09
+### Added
+- `Operator` model: tenant_id, name, operator_type (via/swvl/local/internal), api_config (JSONB), contacts (JSONB)
+- `SizingPlanExport` model: optimization_id, operator_id, format (json/xml/pdf), file_url, version, content_summary, changes_from_previous
+- Alembic migration `w8x9y0z1a2b3` creating 2 tables with 5 indexes
+- `SizingPlanExporter` service: builds sizing plan data (vehicles, routes, schedules, passengers, PMR, RTI), generates JSON/XML/PDF, version tracking, change detection
+- `POST /export/sizing-plan` — generate sized plan export
+- Operator CRUD: `POST/GET/GET{id}/PUT/DELETE /operators`
+- XML export via `xml.etree.ElementTree`, JSON via `json.dumps`
+- 20 backend tests (models, schemas, exporter, JSON/XML output, version tracking)
+
 ## [Session-81] — 2026-04-09
 ### Added
 - `SIRHConnectionsPage` at `/admin/sirh`: connection list with status indicators, add connection wizard (3-step: provider → config → frequency), sync trigger and delete buttons
