@@ -37,6 +37,9 @@ from app.models.content_delivery import ContentDelivery
 from app.models.survey import Survey
 from app.models.survey_response import SurveyResponse
 from app.models.training_module import TrainingModule
+from app.models.sirh_connection import SIRHConnection
+from app.models.sync_log import SyncLog
+from app.models.sync_conflict import SyncConflict
 
 __all__ = [
     "BaseModel",
@@ -84,4 +87,7 @@ __all__ = [
     "Survey",
     "SurveyResponse",
     "TrainingModule",
+    "SIRHConnection",
+    "SyncLog",
+    "SyncConflict",
 ]
