@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-83] — 2026-04-09
+### Added
+- `BaseOperatorClient` ABC: authenticate, send_sizing_plan, get_schedules/capacity/routes, format validation, retry logic
+- `SizingPlanPayload` and `OperatorResponse` dataclasses for standardized data exchange
+- `ViaClient`: Via Transportation API client with service plan format, demand/accessibility/performance targets
+- `SWVLClient`: SWVL API client with corporate plan format, fleet requirements, SLA targets, real-time tracking
+- Both clients: format validation before transmission, auto-auth on first request
+- 22 backend tests (10 Via + 12 SWVL): auth, plan formatting, validation, data exchange
+
 ## [Session-82] — 2026-04-09
 ### Added
 - `Operator` model: tenant_id, name, operator_type (via/swvl/local/internal), api_config (JSONB), contacts (JSONB)
