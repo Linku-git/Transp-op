@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-89] — 2026-04-09
+### Added
+- `security_headers.py` middleware: 9 OWASP-recommended headers (X-Content-Type-Options, X-Frame-Options, HSTS, CSP, Referrer-Policy, Permissions-Policy, Cache-Control)
+- `audit_log.py` middleware: structured JSON audit logging for all POST/PUT/PATCH/DELETE with user, timestamp, IP, path, status
+- Full OWASP Top 10 checklist (all 10 categories MITIGATED/CHECKED) with documented measures
+- File upload security config: 10MB max, MIME whitelist, executable extension blacklist
+- Rate limiting config per role: admin 2000, drh/daf 1000, salarie 500, operateur 100 req/min
+- 27 backend tests (security headers: 8, OWASP checklist: 9, file upload: 4, rate limits: 4, audit: 2)
+
 ## [Session-88] — 2026-04-09
 ### Added
 - Locust load testing framework: `tests/load/locustfile.py` with 4 user classes (ReadUser 50%, MobileUser 30%, WriteUser 10%, OptimizationUser 10%)
