@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-88] — 2026-04-09
+### Added
+- Locust load testing framework: `tests/load/locustfile.py` with 4 user classes (ReadUser 50%, MobileUser 30%, WriteUser 10%, OptimizationUser 10%)
+- 5 load test scenarios: API reads (1K), optimization (100), mobile (5K), mixed (10K), sustained (1h @ 5K)
+- `data_generator.py`: Moroccan-localized employee (1000+) and vehicle (100+) data generation
+- Scenario configuration with per-scenario thresholds (p95 targets, max error rates)
+- Load test thresholds: p95 < 300ms @ 1K, < 500ms @ 5K, error rate < 0.1% normal, < 1% peak
+- 18 backend tests (data generator, scenarios, thresholds)
+
 ## [Session-87] — 2026-04-09 (Phase 7 Start)
 ### Added
 - `cache.py` middleware: Redis caching with configurable TTL per entity (site 1h, vehicle 30m, settings 24h, optimization 10m, KPI 5m), key generation, get/set/delete/invalidate
