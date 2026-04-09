@@ -15,9 +15,9 @@
 | Phase 3 — Mobile MVP | 45-56 | **COMPLETE** | **12/12** |
 | Phase 4 — Security & RTI | 57-66 | **COMPLETE** | **10/10** |
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
-| Phase 6 — Enterprise Integrations | 77-86 | IN PROGRESS | 9/10 |
+| Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total (core sessions)** | **92** | | **85/92** |
+| **Total (core sessions)** | **92** | | **86/92** |
 
 ---
 
@@ -159,7 +159,7 @@
 | 83 | [[sessions/session-83\|Via & SWVL API Integration]] | COMPLETE | 2026-04-09 | Via + SWVL clients, sizing plan format, data exchange, validation, 22 tests |
 | 84 | [[sessions/session-84\|Operator Portal (Web)]] | COMPLETE | 2026-04-09 | Operator portal, plan viewer, acknowledge, issue form, 7 frontend tests |
 | 85 | [[sessions/session-85\|ERP Finance Export]] | COMPLETE | 2026-04-09 | SAP FI/Sage/Cegid CSV formatters, DAF export API, 23 tests |
-| 86 | [[sessions/session-86\|Payment & Transport Pass]] | NOT STARTED | | |
+| 86 | [[sessions/session-86\|Payment & Transport Pass]] | COMPLETE | 2026-04-09 | Stripe, Navigo, Edenred, Swile clients, webhook handling, 21 tests |
 
 ## Phase 7 — Stabilization & Scale
 

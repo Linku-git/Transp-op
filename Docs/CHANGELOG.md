@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-86] — 2026-04-09 (Phase 6 Complete!)
+### Added
+- `StripeClient`: customer/subscription CRUD, webhook handling (4 event types), HMAC signature verification
+- `NavigoClient`: Ile-de-France transit pass verification, zone checking, pass type detection
+- `EdenredClient`: transport benefit management (get/credit/verify), 75 MAD monthly default
+- `SwileClient`: transport benefit management (get/credit/transactions)
+- `GET /payment/status` — subscription status
+- `POST /payment/webhook` — Stripe webhook handler (no auth, sig-verified)
+- `GET /transport-pass/verify/{card_number}` — Navigo pass verification
+- `GET /transport-benefit/{employee_id}` — Edenred/Swile benefit lookup
+- Payment schemas: PaymentStatusResponse, TransportPassStatus, TransportBenefitStatus
+- 21 backend tests (Stripe: 11, Navigo: 4, Edenred: 3, Swile: 3)
+
 ## [Session-85] — 2026-04-09
 ### Added
 - `SAPFIFormatter`: SAP FI-compliant CSV with BUKRS/BELNR/HKONT headers, debit/credit (S/H), cost centers
