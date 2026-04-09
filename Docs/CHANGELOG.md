@@ -6,6 +6,13 @@
 
 ---
 
+## [Session-91] — 2026-04-09
+### Added
+- `accessibility.ts` (web): WCAG 2.1 AA checklist (19 criteria across 4 principles), color contrast calculator, skip link, screen reader announcements, focus trap, i18n status
+- `accessibility_helper.dart` (mobile): touch target validation (48dp min), semantic labels for 12 common elements, contrast ratio constants, mobile a11y audit for 14 screens
+- Color contrast utilities: `getContrastRatio()`, `meetsContrastAA()` with large text support
+- 35 tests total: 16 frontend (contrast, WCAG checklist, i18n) + 19 mobile (touch targets, labels, contrast, audit)
+
 ## [Session-90] — 2026-04-09
 ### Added
 - `gdpr.py` service: data export (JSON/CSV), GDPR delete with anonymization, consent record/withdraw, retention policy
