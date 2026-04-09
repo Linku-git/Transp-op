@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-90] — 2026-04-09
+### Added
+- `gdpr.py` service: data export (JSON/CSV), GDPR delete with anonymization, consent record/withdraw, retention policy
+- `gdpr.py` API: GET /employees/{id}/export-data, DELETE /employees/{id}/gdpr-delete, POST/DELETE /consent, GET /rgpd/retention-policy, GET /rgpd/compliance-status
+- `cleanup_tasks.py`: 3 retention cleanup tasks (location 30d daily, content 180d weekly, trips 365d monthly)
+- RGPD compliance checklist covering 13 articles (all COMPLIANT/PREPARED)
+- Personal data field registry, retention policy configuration
+- 25 backend tests (retention, personal data, RGPD checklist, cleanup schedule, data export)
+
 ## [Session-89] — 2026-04-09
 ### Added
 - `security_headers.py` middleware: 9 OWASP-recommended headers (X-Content-Type-Options, X-Frame-Options, HSTS, CSP, Referrer-Policy, Permissions-Policy, Cache-Control)
