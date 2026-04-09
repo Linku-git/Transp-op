@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-79] — 2026-04-09
+### Added
+- `WorkdayConnector`: OAuth 2.0 auth with token caching/refresh, offset-based pagination
+- Workday HCM API stubs: workers (employees), positions, schedules
+- `workday_field_mapping.py`: 12-field mapping, 7 department codes, 5 schedule codes, status mapping
+- `resolve_wid_reference()`: extracts values from Workday WID reference objects (Descriptor/WID/ID)
+- `get_effective_record()`: handles Workday effective-dated records (picks most recent as of date)
+- `parse_workday_date()`: handles ISO 8601, date-only, and offset formats
+- Nested data mapping: Position_Data (job title, location), Contact_Data (email, phone)
+- Delta sync: `Updated_From` query parameter for modified-since filtering
+- Retry logic: 3 attempts with exponential backoff, 401→token refresh
+- 40 backend tests (auth, field mapping, WID refs, effective dating, sync, pagination)
+
 ## [Session-78] — 2026-04-09
 ### Added
 - `SAPConnector`: OAuth 2.0 client credentials auth with token caching & refresh
