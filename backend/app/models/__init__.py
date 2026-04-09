@@ -40,6 +40,8 @@ from app.models.training_module import TrainingModule
 from app.models.sirh_connection import SIRHConnection
 from app.models.sync_log import SyncLog
 from app.models.sync_conflict import SyncConflict
+from app.models.operator import Operator
+from app.models.sizing_plan_export import SizingPlanExport
 
 __all__ = [
     "BaseModel",
@@ -90,4 +92,6 @@ __all__ = [
     "SIRHConnection",
     "SyncLog",
     "SyncConflict",
+    "Operator",
+    "SizingPlanExport",
 ]

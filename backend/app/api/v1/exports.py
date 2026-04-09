@@ -400,3 +400,29 @@ async def export_hr_mobility(
         media_type="application/pdf",
         headers={"Content-Disposition": 'attachment; filename="hr_mobility.pdf"'},
     )
+
+
+# ---------------------------------------------------------------------------
+# Sizing Plan Export (Session 82)
+# ---------------------------------------------------------------------------
+
+from app.middleware.auth import get_current_user
+from app.schemas.sizing_plan_export import SizingPlanExportRequest, SizingPlanExportResponse
+from app.services.export.sizing_plan_exporter import SizingPlanExporter
+
+
+@router.post("/sizing-plan", response_model=SizingPlanExportResponse)
+async def export_sizing_plan(
+    body: SizingPlanExportRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> SizingPlanExportResponse:
+    """Generate a sizing plan export in JSON, XML, or PDF format."""
+    exporter = SizingPlanExporter(db)
+    export = await exporter.generate_export(
+        tenant_id=current_user.tenant_id,
+        optimization_id=body.optimization_id,
+        operator_id=body.operator_id,
+        export_format=body.format,
+    )
+    return SizingPlanExportResponse.model_validate(export)
