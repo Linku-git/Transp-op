@@ -270,6 +270,18 @@ const ContentAnalyticsPage = lazy(() =>
   }))
 );
 
+const SIRHConnectionsPage = lazy(() =>
+  import('@/pages/admin/SIRHConnectionsPage').then((m) => ({
+    default: m.SIRHConnectionsPage,
+  }))
+);
+
+const SIRHSyncDashboardPage = lazy(() =>
+  import('@/pages/admin/SIRHSyncDashboardPage').then((m) => ({
+    default: m.SIRHSyncDashboardPage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -665,6 +677,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ContentEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'admin/sirh',
+        element: (
+          <SuspenseWrapper>
+            <SIRHConnectionsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'admin/sirh/sync',
+        element: (
+          <SuspenseWrapper>
+            <SIRHSyncDashboardPage />
           </SuspenseWrapper>
         ),
       },

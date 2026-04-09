@@ -12,6 +12,7 @@ from app.middleware.auth import get_current_user
 from app.models.auth import User
 from app.models.sirh_connection import SIRHConnection
 from app.models.sync_conflict import SyncConflict
+from app.models.sync_log import SyncLog
 from app.schemas.sirh import (
     SIRHConnectionCreate,
     SIRHConnectionUpdate,
@@ -178,6 +179,52 @@ async def trigger_sync(
         status=sync_log.status,
         message=f"Sync completed: {sync_log.records_created} created, {sync_log.records_updated} updated",
     )
+
+
+@router.get("/sync/status", response_model=SyncLogListResponse)
+async def get_sync_status(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> SyncLogListResponse:
+    """Get recent sync history across all connections for this tenant."""
+    conditions = [SyncLog.tenant_id == current_user.tenant_id]
+    total_result = await db.execute(
+        select(func.count()).select_from(SyncLog).where(*conditions)
+    )
+    total = total_result.scalar() or 0
+    result = await db.execute(
+        select(SyncLog)
+        .where(*conditions)
+        .order_by(SyncLog.started_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    items = list(result.scalars().all())
+    pages = max(1, (total + page_size - 1) // page_size)
+    return SyncLogListResponse(
+        data=[SyncLogResponse.model_validate(l) for l in items],
+        total=total,
+        page=page,
+        pages=pages,
+    )
+
+
+@router.get("/sync/conflicts", response_model=list[SyncConflictResponse])
+async def get_unresolved_conflicts(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[SyncConflictResponse]:
+    """Get all unresolved conflicts for this tenant."""
+    result = await db.execute(
+        select(SyncConflict).where(
+            SyncConflict.tenant_id == current_user.tenant_id,
+            SyncConflict.resolution == "unresolved",
+        )
+    )
+    conflicts = list(result.scalars().all())
+    return [SyncConflictResponse.model_validate(c) for c in conflicts]
 
 
 @router.get(
