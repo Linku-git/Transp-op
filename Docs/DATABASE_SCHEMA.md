@@ -45,6 +45,9 @@
 | [survey](#survey) | — | 10 | Survey/poll definitions with JSONB questions |
 | [survey_response](#survey_response) | — | 8 | Survey response submissions |
 | [training_module](#training_module) | — | 13 | LMS training module mapping |
+| [sirh_connection](#sirh_connection) | — | 11 | SIRH provider connections |
+| [sync_log](#sync_log) | — | 11 | Sync execution logs |
+| [sync_conflict](#sync_conflict) | — | 9 | Field-level sync conflicts |
 
 ---
 

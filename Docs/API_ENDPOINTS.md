@@ -290,12 +290,13 @@
 |--------|----------|-------------|------|-------|---------|
 | POST | `/sirh/connections` | Configure connection | Yes | DRH, Admin | 77 |
 | GET | `/sirh/connections` | List connections | Yes | DRH, Admin | 77 |
+| GET | `/sirh/connections/{id}` | Get connection | Yes | DRH, Admin | 77 |
 | PUT | `/sirh/connections/{id}` | Update config | Yes | DRH, Admin | 77 |
-| DELETE | `/sirh/connections/{id}` | Remove connection | Yes | Admin | 77 |
+| DELETE | `/sirh/connections/{id}` | Soft delete connection | Yes | Admin | 77 |
 | POST | `/sirh/sync/{connection_id}` | Trigger sync | Yes | DRH, Admin | 77 |
-| GET | `/sirh/sync/status` | Sync status/history | Yes | DRH, Admin | 81 |
-| GET | `/sirh/sync/conflicts` | Unresolved conflicts | Yes | DRH, Admin | 81 |
-| PUT | `/sirh/sync/conflicts/{id}/resolve` | Resolve conflict | Yes | DRH, Admin | 81 |
+| GET | `/sirh/sync/{connection_id}/logs` | Sync history | Yes | DRH, Admin | 77 |
+| GET | `/sirh/conflicts/{sync_log_id}` | Conflicts for sync | Yes | DRH, Admin | 77 |
+| PUT | `/sirh/conflicts/{id}/resolve` | Resolve conflict | Yes | DRH, Admin | 77 |
 
 ---
 

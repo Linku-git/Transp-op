@@ -6,6 +6,26 @@
 
 ---
 
+## [Session-77] — 2026-04-09 (Phase 6 Start)
+### Added
+- `SIRHConnection` model: provider (sap/workday/talentsoft/sage), config (JSONB), sync_frequency, conflict_strategy, last_sync_at, status
+- `SyncLog` model: connection_id, started/completed_at, records_created/updated/failed, errors (JSONB), status
+- `SyncConflict` model: sync_log_id, employee_id, field_name, platform_value, sirh_value, resolution
+- Alembic migration `v7w8x9y0z1a2` creating 3 tables with 10 indexes
+- `SyncEngine`: delta update support (skip records not modified since last_sync_at), employee matching by matricule, field-level conflict detection
+- `ConflictResolver`: 3 strategies (sirh_wins, platform_wins, manual/unresolved), conflict recording and manual resolution
+- 7 SYNCABLE_FIELDS: first_name, last_name, email, department, shift_time, matricule, phone
+- `POST /sirh/connections` — create SIRH connection
+- `GET /sirh/connections` — list connections
+- `GET /sirh/connections/{id}` — get connection
+- `PUT /sirh/connections/{id}` — update connection
+- `DELETE /sirh/connections/{id}` — soft delete connection
+- `POST /sirh/sync/{id}` — trigger sync for connection
+- `GET /sirh/sync/{id}/logs` — sync history
+- `GET /sirh/conflicts/{sync_log_id}` — list conflicts
+- `PUT /sirh/conflicts/{id}/resolve` — resolve conflict manually
+- 20 backend tests (models, schemas, conflict resolver, sync engine, delta logic)
+
 ## [Session-76] — 2026-04-09 (Phase 5 Complete!)
 ### Added
 - `valorization_engine.py`: core value calculation — commute_hours * engagement_rate * training_hour_cost
