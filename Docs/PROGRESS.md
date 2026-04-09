@@ -15,9 +15,9 @@
 | Phase 3 — Mobile MVP | 45-56 | **COMPLETE** | **12/12** |
 | Phase 4 — Security & RTI | 57-66 | **COMPLETE** | **10/10** |
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
-| Phase 6 — Enterprise Integrations | 77-86 | IN PROGRESS | 7/10 |
+| Phase 6 — Enterprise Integrations | 77-86 | IN PROGRESS | 8/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total (core sessions)** | **92** | | **83/92** |
+| **Total (core sessions)** | **92** | | **84/92** |
 
 ---
 
@@ -157,7 +157,7 @@
 | 81 | [[sessions/session-81\|SIRH Sync Dashboard]] | COMPLETE | 2026-04-09 | Connections page, sync dashboard, conflict queue, wizard, 9 frontend tests |
 | 82 | [[sessions/session-82\|Operator Sizing Plan Export]] | COMPLETE | 2026-04-09 | Operator model, sizing export (JSON/XML/PDF), versioning, 20 tests |
 | 83 | [[sessions/session-83\|Via & SWVL API Integration]] | COMPLETE | 2026-04-09 | Via + SWVL clients, sizing plan format, data exchange, validation, 22 tests |
-| 84 | [[sessions/session-84\|Operator Portal (Web)]] | NOT STARTED | | |
+| 84 | [[sessions/session-84\|Operator Portal (Web)]] | COMPLETE | 2026-04-09 | Operator portal, plan viewer, acknowledge, issue form, 7 frontend tests |
 | 85 | [[sessions/session-85\|ERP Finance Export]] | NOT STARTED | | |
 | 86 | [[sessions/session-86\|Payment & Transport Pass]] | NOT STARTED | | |
 

@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-84] — 2026-04-09
+### Added
+- Operator portal backend: `GET /operator/sizing-plans`, `GET /operator/sizing-plans/{id}`, `POST /operator/sizing-plans/{id}/acknowledge`, `POST /operator/service-issues`
+- `OperatorDashboardPage` at `/operator`: assigned plans with confirm/details, report issue link
+- `SizingPlanDetailPage` at `/operator/plans/:id`: route details, vehicle specs, passenger counts, PMR, status
+- `ReportIssuePage` at `/operator/report-issue`: 6 issue types, description, affected route, date
+- Frontend operator API client with 4 typed functions
+- Routes: /operator, /operator/plans/:id, /operator/report-issue
+- 7 frontend tests (dashboard, plan card, summary, confirm button, issue form)
+
 ## [Session-83] — 2026-04-09
 ### Added
 - `BaseOperatorClient` ABC: authenticate, send_sizing_plan, get_schedules/capacity/routes, format validation, retry logic
