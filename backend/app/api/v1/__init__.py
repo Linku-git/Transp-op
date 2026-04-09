@@ -49,6 +49,7 @@ from app.api.v1.valorization import router as valorization_router
 from app.api.v1.sirh import router as sirh_router
 from app.api.v1.operators import router as operators_router
 from app.api.v1.operator_portal import router as operator_portal_router
+from app.api.v1.financial_export import router as financial_export_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -99,3 +100,4 @@ api_router.include_router(valorization_router, tags=["valorization"])
 api_router.include_router(sirh_router, tags=["sirh"])
 api_router.include_router(operators_router, tags=["operators"])
 api_router.include_router(operator_portal_router, tags=["operator-portal"])
+api_router.include_router(financial_export_router, tags=["financial"])
