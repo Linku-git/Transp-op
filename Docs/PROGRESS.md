@@ -15,9 +15,9 @@
 | Phase 3 — Mobile MVP | 45-56 | **COMPLETE** | **12/12** |
 | Phase 4 — Security & RTI | 57-66 | **COMPLETE** | **10/10** |
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
-| Phase 6 — Enterprise Integrations | 77-86 | IN PROGRESS | 4/10 |
+| Phase 6 — Enterprise Integrations | 77-86 | IN PROGRESS | 5/10 |
 | Phase 7 — Stabilization & Scale | 87-92 | NOT STARTED | 0/6 |
-| **Total (core sessions)** | **92** | | **80/92** |
+| **Total (core sessions)** | **92** | | **81/92** |
 
 ---
 
@@ -154,7 +154,7 @@
 | 78 | [[sessions/session-78\|SAP SuccessFactors Connector]] | COMPLETE | 2026-04-09 | OAuth 2.0, field mapping, delta sync, retry logic, 30 tests |
 | 79 | [[sessions/session-79\|Workday Connector]] | COMPLETE | 2026-04-09 | OAuth 2.0, WID refs, effective dating, pagination, 40 tests |
 | 80 | [[sessions/session-80\|Talentsoft & Sage Connectors]] | COMPLETE | 2026-04-09 | API Key auth, rate limiting (1000/500 req/h), training+payroll data, 34 tests |
-| 81 | [[sessions/session-81\|SIRH Sync Dashboard]] | NOT STARTED | | |
+| 81 | [[sessions/session-81\|SIRH Sync Dashboard]] | COMPLETE | 2026-04-09 | Connections page, sync dashboard, conflict queue, wizard, 9 frontend tests |
 | 82 | [[sessions/session-82\|Operator Sizing Plan Export]] | NOT STARTED | | |
 | 83 | [[sessions/session-83\|Via & SWVL API Integration]] | NOT STARTED | | |
 | 84 | [[sessions/session-84\|Operator Portal (Web)]] | NOT STARTED | | |

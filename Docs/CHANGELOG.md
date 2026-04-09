@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-81] — 2026-04-09
+### Added
+- `SIRHConnectionsPage` at `/admin/sirh`: connection list with status indicators, add connection wizard (3-step: provider → config → frequency), sync trigger and delete buttons
+- `SIRHSyncDashboardPage` at `/admin/sirh/sync`: sync history table (started/completed, records, status, expandable errors), conflict resolution queue (platform_wins/sirh_wins buttons), auto-refresh every 30s
+- `GET /sirh/sync/status` backend endpoint: recent sync logs across all connections
+- `GET /sirh/sync/conflicts` backend endpoint: all unresolved conflicts for tenant
+- Frontend SIRH API client (`frontend/src/api/sirh.ts`): 8 typed functions
+- Routes: `/admin/sirh`, `/admin/sirh/sync`
+- 9 frontend tests (connections page, sync dashboard, conflict queue, error details)
+
 ## [Session-80] — 2026-04-09
 ### Added
 - `TalentsoftConnector`: API Key auth, rate limiting (1000 req/h), employee + training sync
