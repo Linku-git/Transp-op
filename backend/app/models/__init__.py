@@ -52,6 +52,7 @@ from app.models.avl_metric import AVLMetric
 from app.models.departure_schedule import DepartureSchedule
 from app.models.telemetry_reading import TelemetryReading
 from app.models.maintenance_alert import MaintenanceAlert
+from app.models.transition_plan import TransitionPlan, TransitionPhase
 
 __all__ = [
     "BaseModel",
@@ -114,4 +115,6 @@ __all__ = [
     "DepartureSchedule",
     "TelemetryReading",
     "MaintenanceAlert",
+    "TransitionPlan",
+    "TransitionPhase",
 ]
