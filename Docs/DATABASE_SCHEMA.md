@@ -56,6 +56,8 @@
 | [depot_plan](#depot_plan) | — | 16 | Depot electrification plans with JSONB costs |
 | [avl_metric](#avl_metric) | — | 13 | AVL-based operational KPI metrics |
 | [departure_schedule](#departure_schedule) | — | 12 | LTO optimized departure schedules |
+| [telemetry_reading](#telemetry_reading) | — | 9 | IoT vehicle sensor telemetry |
+| [maintenance_alert](#maintenance_alert) | — | 10 | Predictive maintenance alerts |
 
 ---
 
@@ -1100,6 +1102,45 @@ LTO optimized departure schedule from anti-platooning optimization. Created in S
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_departure_schedule_tenant_id, ix_departure_schedule_ligne_id, ix_departure_schedule_date
+
+### telemetry_reading
+
+IoT telemetry reading from vehicle sensors. Created in Session 104.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| vehicle_id | uuid | NO | | Vehicle UUID |
+| reading_timestamp | timestamptz | NO | | Sensor reading time |
+| sensor_type | varchar(30) | NO | | vibration/temperature/pressure/can_bus/battery_voltage/engine_rpm/speed |
+| value | float | NO | | Sensor value |
+| unit | varchar(20) | YES | | Unit of measurement |
+| reading_metadata | jsonb | YES | | Additional sensor metadata |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_telemetry_reading_tenant_id, ix_telemetry_reading_vehicle_id, ix_telemetry_reading_sensor_type, ix_telemetry_reading_timestamp
+
+### maintenance_alert
+
+Predictive maintenance alert from IsolationForest anomaly detection. Created in Session 104.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| vehicle_id | uuid | NO | | Vehicle UUID |
+| alert_type | varchar(50) | NO | anomaly | Alert classification |
+| severity | varchar(20) | NO | medium | critical (>0.7), medium (>0.4), normal |
+| anomaly_score | float | NO | | IsolationForest score (0-1) |
+| features | jsonb | YES | | Feature values at detection time |
+| acknowledged | boolean | NO | false | Acknowledged by operator |
+| resolved_at | timestamptz | YES | | Resolution timestamp |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_maintenance_alert_tenant_id, ix_maintenance_alert_vehicle_id, ix_maintenance_alert_severity
 
 ---
 

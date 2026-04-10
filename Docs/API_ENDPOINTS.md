@@ -406,6 +406,10 @@
 | POST | `/sotreg/performance/lto/optimize` | Run LTO anti-platooning optimization | Yes | DRH, Admin | 103 |
 | GET | `/sotreg/performance/lto/schedule/{ligne_id}` | Get optimized departure schedule | Yes | DRH, DAF, Admin | 103 |
 | PUT | `/sotreg/performance/lto/apply` | Apply optimized schedule | Yes | DRH, Admin | 103 |
+| POST | `/sotreg/telemetry/ingest` | Batch telemetry ingestion webhook | Yes | DRH, Admin | 104 |
+| GET | `/sotreg/telemetry/alerts` | List maintenance alerts (filtered) | Yes | DRH, DAF, Admin | 104 |
+| GET | `/sotreg/telemetry/alerts/{vehicle_id}` | Vehicle-specific alerts | Yes | DRH, DAF, Admin | 104 |
+| PUT | `/sotreg/telemetry/alerts/{id}/acknowledge` | Acknowledge alert | Yes | DRH, Admin | 104 |
 
 ---
 

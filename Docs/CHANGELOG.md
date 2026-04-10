@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-104] — 2026-04-10
+### Added
+- TelemetryReading model: vehicle sensor data (vibration/temp/pressure/can_bus/battery/rpm/speed) with JSONB metadata
+- MaintenanceAlert model: anomaly alerts with severity, score, features JSONB, acknowledge workflow
+- Alembic migration for both telemetry_reading + maintenance_alert tables
+- TelemetryIngestionService: batch webhook ingestion with 7 sensor type validation and range checking
+- FeatureExtractionService: rolling mean/std/max/min/count over 1h/24h/7d windows per sensor per vehicle
+- PredictiveMaintenanceService: IsolationForest (n=200, contamination=0.05) with severity classification
+- Celery retrain_maintenance_model task placeholder for weekly schedule
+- Pydantic v2 schemas for ingestion, alerts, and maintenance run
+- 4 API endpoints: POST /ingest, GET /alerts, GET /alerts/{vehicle_id}, PUT /alerts/{id}/acknowledge
+- 21 backend tests (10 telemetry/features, 11 ML/alerts)
+
 ## [Session-103] — 2026-04-10
 ### Added
 - LTOService: scipy.optimize.minimize (L-BFGS-B) for anti-platooning departure offset optimization

@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 11/35 |
-| **Total (core sessions)** | **127** | | **102/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 12/35 |
+| **Total (core sessions)** | **127** | | **103/127** |
 
 ---
 
@@ -197,7 +197,7 @@
 |---------|-------|--------|------|-------|
 | 102 | [[sessions/session-102\|AVL-Based KPI Engine]] | COMPLETE | 2026-04-10 | M4: OTP/headway/load/speed KPIs, AVLMetric model, 3 API endpoints, 21 tests |
 | 103 | [[sessions/session-103\|Leave Time Optimization (LTO)]] | COMPLETE | 2026-04-10 | M4: scipy L-BFGS-B optimization, platooning detection, DepartureSchedule, 15 tests |
-| 104 | [[sessions/session-104\|IoT Telemetry Pipeline & Predictive Maintenance]] | NOT STARTED | | M4: Webhook ingestion, IsolationForest, maintenance alerts |
+| 104 | [[sessions/session-104\|IoT Telemetry Pipeline & Predictive Maintenance]] | COMPLETE | 2026-04-10 | M4: Webhook ingestion, IsolationForest, maintenance alerts |
 | 105 | [[sessions/session-105\|Performance Frontend Dashboard]] | NOT STARTED | | M4: OTP gauge, headway chart, telemetry, maintenance |
 | 106 | [[sessions/session-106\|NPV & CO2 Externalities Valorization]] | NOT STARTED | | M5: VAN, IRR, CO2 monetization, carbon price MAD |
 | 107 | [[sessions/session-107\|Markowitz Portfolio & Supernetwork Equilibrium]] | NOT STARTED | | M5: Mean-variance optimization, Frank-Wolfe algorithm |
