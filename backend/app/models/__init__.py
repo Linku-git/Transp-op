@@ -50,6 +50,8 @@ from app.models.generated_stop import GeneratedStop
 from app.models.depot_plan import DepotPlan
 from app.models.avl_metric import AVLMetric
 from app.models.departure_schedule import DepartureSchedule
+from app.models.telemetry_reading import TelemetryReading
+from app.models.maintenance_alert import MaintenanceAlert
 
 __all__ = [
     "BaseModel",
@@ -110,4 +112,6 @@ __all__ = [
     "DepotPlan",
     "AVLMetric",
     "DepartureSchedule",
+    "TelemetryReading",
+    "MaintenanceAlert",
 ]
