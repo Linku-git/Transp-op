@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-97] — 2026-04-10
+### Added
+- ChargingOptimizer: Qin 2016 SOC=62% departure target with ONEE TOU tariff windows
+- ONEE tariff structure: pointe 1.58, pleine 1.22, creuse 0.82 MAD/kWh + 200 MAD/kVA demand charge
+- IRVESizingService: AC (7/22kW) and DC (50/150kW) charger sizing based on fleet parameters
+- IRVE cost calculator: hardware + installation + transformer + grid connection + electricity
+- IRVEInfrastructure SQLAlchemy model with site FK + Alembic migration
+- Pydantic v2 schemas for charging optimization, IRVE sizing, and CRUD
+- 5 new API endpoints on /sotreg/technologies/: charging-optimization, irve-sizing, irve CRUD
+- 21 backend tests (charging schedule, IRVE sizing, cost calculations)
+
 ## [Session-96] — 2026-04-10
 ### Added
 - RangeCorrectionService: CDC k_pente (1.0-1.6), k_saison (1.0-1.3), k_vitesse (0.95-1.25) lookup tables

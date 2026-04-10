@@ -382,6 +382,12 @@
 | POST | `/sotreg/technologies/range-correction` | Compute corrected range with k_pente/k_saison/k_vitesse | Yes | DRH, DAF, Admin | 96 |
 | POST | `/sotreg/technologies/tco-15year` | 15-year TCO with financing, escalation, depreciation | Yes | DRH, DAF, Admin | 96 |
 | POST | `/sotreg/technologies/breakeven` | Electrification breakeven km/year threshold | Yes | DRH, DAF, Admin | 96 |
+| POST | `/sotreg/technologies/charging-optimization` | SOC=62% charging schedule with ONEE tariff | Yes | DRH, DAF, Admin | 97 |
+| POST | `/sotreg/technologies/irve-sizing` | IRVE infrastructure sizing (AC/DC chargers) | Yes | DRH, DAF, Admin | 97 |
+| POST | `/sotreg/technologies/irve` | Create IRVE infrastructure record | Yes | DRH, Admin | 97 |
+| GET | `/sotreg/technologies/irve` | List IRVE infrastructure records | Yes | DRH, DAF, Admin | 97 |
+| GET | `/sotreg/technologies/irve/{id}` | Get single IRVE record | Yes | DRH, DAF, Admin | 97 |
+| DELETE | `/sotreg/technologies/irve/{id}` | Delete IRVE record | Yes | DRH, Admin | 97 |
 
 ---
 
