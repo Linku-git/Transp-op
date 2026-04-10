@@ -182,3 +182,105 @@ class CO2SavingsNPVResponse(BaseModel):
     horizon_years: int
     discount_rate: float
     currency: str = "MAD"
+
+
+# ---------------------------------------------------------------------------
+# Portfolio Optimization schemas (Session 107)
+# ---------------------------------------------------------------------------
+
+
+class PortfolioOptimizeRequest(BaseModel):
+    """Request for Markowitz mean-variance optimization."""
+
+    expected_returns: list[float] = Field(..., min_length=1, description="Expected returns per technology")
+    covariance_matrix: list[list[float]] = Field(..., description="NxN covariance matrix")
+    risk_aversion: float = Field(default=1.0, gt=0, description="Risk aversion lambda")
+    technology_names: list[str] | None = None
+
+
+class PortfolioResult(BaseModel):
+    """Single portfolio on the efficient frontier."""
+
+    expected_return: float
+    risk: float
+    weights: list[float]
+
+
+class PortfolioOptimizeResponse(BaseModel):
+    """Portfolio optimization response."""
+
+    weights: list[float]
+    expected_return: float
+    portfolio_variance: float
+    portfolio_std: float
+    sharpe_ratio: float
+    technology_names: list[str]
+    risk_aversion: float
+
+
+class EfficientFrontierRequest(BaseModel):
+    """Request for efficient frontier computation."""
+
+    expected_returns: list[float] = Field(..., min_length=1)
+    covariance_matrix: list[list[float]] = Field(...)
+    n_points: int = Field(default=20, ge=5, le=100)
+    technology_names: list[str] | None = None
+
+
+class EfficientFrontierResponse(BaseModel):
+    """Efficient frontier response."""
+
+    frontier: list[PortfolioResult]
+    min_risk_portfolio: PortfolioResult
+    max_return_portfolio: PortfolioResult
+    technology_names: list[str]
+
+
+# ---------------------------------------------------------------------------
+# Supernetwork Equilibrium schemas (Session 107)
+# ---------------------------------------------------------------------------
+
+
+class NetworkLink(BaseModel):
+    """A single link in the transport network."""
+
+    from_node: int = Field(..., ge=0)
+    to_node: int = Field(..., ge=0)
+    free_flow_cost: float = Field(..., gt=0)
+    capacity: float = Field(..., gt=0)
+
+
+class ODDemand(BaseModel):
+    """Origin-destination demand pair."""
+
+    origin: int = Field(..., ge=0)
+    destination: int = Field(..., ge=0)
+    demand: float = Field(..., ge=0)
+
+
+class SupernetworkRequest(BaseModel):
+    """Request for supernetwork equilibrium."""
+
+    links: list[NetworkLink] = Field(..., min_length=1)
+    od_demands: list[ODDemand] = Field(..., min_length=1)
+    max_iterations: int = Field(default=1000, ge=1)
+    tolerance: float = Field(default=1e-6, gt=0)
+
+
+class LinkFlow(BaseModel):
+    """Flow result for a single link."""
+
+    from_node: int
+    to_node: int
+    flow: float
+    cost: float
+
+
+class SupernetworkResponse(BaseModel):
+    """Supernetwork equilibrium response."""
+
+    link_flows: list[LinkFlow]
+    total_system_cost: float
+    iterations: int
+    converged: bool
+    gap: float

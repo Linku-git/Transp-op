@@ -11,8 +11,16 @@ from app.schemas.finance_advanced import (
     CO2SavingsNPVResponse,
     CO2ValorizationRequest,
     CO2ValorizationResponse,
+    EfficientFrontierRequest,
+    EfficientFrontierResponse,
     IRRRequest,
     IRRResponse,
+    LinkFlow,
+    PortfolioOptimizeRequest,
+    PortfolioOptimizeResponse,
+    PortfolioResult,
+    SupernetworkRequest,
+    SupernetworkResponse,
     InvestmentAnalysisRequest,
     InvestmentAnalysisResponse,
     NPVRequest,
@@ -31,6 +39,13 @@ from app.services.sotreg.npv_calculator import (
     compute_irr,
     compute_npv,
     compute_payback_period,
+)
+from app.services.sotreg.portfolio_optimizer import (
+    compute_efficient_frontier,
+    compute_portfolio_optimization,
+)
+from app.services.sotreg.supernetwork_equilibrium import (
+    compute_supernetwork_equilibrium,
 )
 
 logger = logging.getLogger(__name__)
@@ -196,4 +211,102 @@ async def co2_savings_npv_endpoint(
         horizon_years=result["horizon_years"],
         discount_rate=result["discount_rate"],
         currency=result["currency"],
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/finance/portfolio-optimize (Session 107)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/portfolio-optimize", response_model=PortfolioOptimizeResponse)
+async def portfolio_optimize_endpoint(
+    body: PortfolioOptimizeRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> PortfolioOptimizeResponse:
+    """Run Markowitz mean-variance portfolio optimization."""
+    result = compute_portfolio_optimization(
+        expected_returns=body.expected_returns,
+        covariance_matrix=body.covariance_matrix,
+        risk_aversion=body.risk_aversion,
+        technology_names=body.technology_names,
+    )
+    logger.info(
+        "Portfolio optimization: E[r]=%.4f, std=%.4f, sharpe=%.4f by user %s",
+        result["expected_return"],
+        result["portfolio_std"],
+        result["sharpe_ratio"],
+        current_user.id,
+    )
+    return PortfolioOptimizeResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/finance/efficient-frontier (Session 107)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/efficient-frontier", response_model=EfficientFrontierResponse)
+async def efficient_frontier_endpoint(
+    body: EfficientFrontierRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> EfficientFrontierResponse:
+    """Compute efficient frontier (Pareto-optimal portfolios)."""
+    result = compute_efficient_frontier(
+        expected_returns=body.expected_returns,
+        covariance_matrix=body.covariance_matrix,
+        n_points=body.n_points,
+        technology_names=body.technology_names,
+    )
+    logger.info(
+        "Efficient frontier: %d points computed by user %s",
+        len(result["frontier"]),
+        current_user.id,
+    )
+    return EfficientFrontierResponse(
+        frontier=[PortfolioResult(**p) for p in result["frontier"]],
+        min_risk_portfolio=PortfolioResult(**result["min_risk_portfolio"]),
+        max_return_portfolio=PortfolioResult(**result["max_return_portfolio"]),
+        technology_names=result["technology_names"],
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/finance/supernetwork-equilibrium (Session 107)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/supernetwork-equilibrium", response_model=SupernetworkResponse)
+async def supernetwork_equilibrium_endpoint(
+    body: SupernetworkRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> SupernetworkResponse:
+    """Compute supernetwork equilibrium using Frank-Wolfe algorithm."""
+    links_data = [
+        {"from_node": l.from_node, "to_node": l.to_node, "free_flow_cost": l.free_flow_cost, "capacity": l.capacity}
+        for l in body.links
+    ]
+    od_data = [
+        {"origin": d.origin, "destination": d.destination, "demand": d.demand}
+        for d in body.od_demands
+    ]
+    result = compute_supernetwork_equilibrium(
+        links=links_data,
+        od_demands=od_data,
+        max_iterations=body.max_iterations,
+        tolerance=body.tolerance,
+    )
+    logger.info(
+        "Supernetwork equilibrium: cost=%.2f, iterations=%d, converged=%s by user %s",
+        result["total_system_cost"],
+        result["iterations"],
+        result["converged"],
+        current_user.id,
+    )
+    return SupernetworkResponse(
+        link_flows=[LinkFlow(**f) for f in result["link_flows"]],
+        total_system_cost=result["total_system_cost"],
+        iterations=result["iterations"],
+        converged=result["converged"],
+        gap=result["gap"],
     )
