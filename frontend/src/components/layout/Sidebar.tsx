@@ -42,6 +42,7 @@ const SOTREG_GROUP: NavGroup = {
     { key: 'sotreg-technologies', path: '/sotreg/technologies', label: 'Technologies',      icon: 'ev_station' },
     { key: 'sotreg-infra',         path: '/sotreg/infrastructure', label: 'Infrastructure',  icon: 'domain' },
     { key: 'sotreg-finance',       path: '/sotreg/finance',         label: 'Finance M5',      icon: 'account_balance' },
+    { key: 'sotreg-roadmap',       path: '/sotreg/roadmap',         label: 'Feuille Route',   icon: 'timeline' },
   ],
 };
 

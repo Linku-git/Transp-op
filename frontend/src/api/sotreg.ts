@@ -41,6 +41,8 @@ import type {
   SupernetworkDemand,
   SupernetworkResponse,
   PaybackResponse,
+  TransitionPlanRequest,
+  TransitionPlanResponse,
 } from '../types/sotreg';
 
 const LIGNES = '/api/v1/sotreg/lignes';
@@ -260,5 +262,16 @@ export const computeSupernetworkEquilibrium = async (
   data: { links: SupernetworkLink[]; od_demands: SupernetworkDemand[]; max_iterations?: number; tolerance?: number },
 ): Promise<SupernetworkResponse> => {
   const response = await api.post<SupernetworkResponse>(`${FINANCE}/supernetwork-equilibrium`, data);
+  return response.data;
+};
+
+/* ── Roadmap (M6) ────────────────────────────────────────────────────────── */
+
+const ROADMAP = '/api/v1/sotreg/roadmap';
+
+export const generateTransitionPlan = async (
+  data: TransitionPlanRequest,
+): Promise<TransitionPlanResponse> => {
+  const response = await api.post<TransitionPlanResponse>(`${ROADMAP}/plan`, data);
   return response.data;
 };

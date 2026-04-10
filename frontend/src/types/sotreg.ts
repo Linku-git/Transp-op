@@ -596,3 +596,62 @@ export interface SupernetworkResponse {
   converged: boolean;
   gap: number;
 }
+
+/* ── Transition Roadmap (M6) ─────────────────────────────────────────────── */
+
+export interface TransitionPlanRequest {
+  fleet_size: number;
+  total_budget_mad: number;
+  start_year?: number;
+  scenario_type?: string;
+  vehicle_unit_cost_mad?: number;
+  irve_cost_per_vehicle_mad?: number;
+  currency?: string;
+}
+
+export interface PhaseResult {
+  name: string;
+  technology_wave: string;
+  start_year: number;
+  end_year: number;
+  vehicles_to_convert: number;
+  target_pct_electric: number;
+  budget_allocated_mad: number;
+  vehicle_cost_mad: number;
+  infrastructure_cost_mad: number;
+  status: string;
+}
+
+export interface MilestoneResult {
+  year: number;
+  description: string;
+  target_pct: number;
+  vehicles_converted_cumulative: number;
+}
+
+export interface TransitionPlanResponse {
+  plan_name: string;
+  scenario_type: string;
+  fleet_size: number;
+  total_budget_mad: number;
+  phases: PhaseResult[];
+  total_phases: number;
+  total_vehicles_converted: number;
+  total_cost_mad: number;
+  budget_surplus_or_deficit_mad: number;
+  milestones: MilestoneResult[];
+  currency: string;
+}
+
+export const SCENARIO_TYPES = ['aggressive', 'moderate', 'conservative'] as const;
+export const SCENARIO_LABELS: Record<string, string> = {
+  aggressive: 'Agressif (5 ans)',
+  moderate: 'Modéré (8 ans)',
+  conservative: 'Conservateur (10 ans)',
+};
+
+export const WAVE_COLORS: Record<string, string> = {
+  pilot: '#0058be',
+  scale: '#22c55e',
+  full: '#f59e0b',
+};
