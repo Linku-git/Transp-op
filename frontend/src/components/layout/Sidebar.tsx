@@ -37,8 +37,9 @@ const OPTIM_GROUP: NavGroup = {
 const SOTREG_GROUP: NavGroup = {
   key: 'sotreg', label: 'SOTREG', icon: 'analytics',
   subs: [
-    { key: 'sotreg-diagnostic', path: '/sotreg',              label: 'Diagnostic Flotte', icon: 'monitoring', end: true },
-    { key: 'sotreg-lignes',     path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route' },
+    { key: 'sotreg-diagnostic',   path: '/sotreg',              label: 'Diagnostic Flotte', icon: 'monitoring', end: true },
+    { key: 'sotreg-lignes',       path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route' },
+    { key: 'sotreg-technologies', path: '/sotreg/technologies', label: 'Technologies',      icon: 'ev_station' },
   ],
 };
 

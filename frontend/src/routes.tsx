@@ -300,6 +300,12 @@ const LigneFormPage = lazy(() =>
   }))
 );
 
+const TechnologiesDashboardPage = lazy(() =>
+  import('@/pages/sotreg/TechnologiesDashboardPage').then((m) => ({
+    default: m.TechnologiesDashboardPage,
+  }))
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -745,6 +751,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <LigneFormPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/technologies',
+        element: (
+          <SuspenseWrapper>
+            <TechnologiesDashboardPage />
           </SuspenseWrapper>
         ),
       },

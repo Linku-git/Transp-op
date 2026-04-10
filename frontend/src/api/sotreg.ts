@@ -11,12 +11,23 @@ import type {
   ODMatrixListResponse,
   ZFEComplianceResponse,
   ZFEPointCheckResponse,
+  RangeCorrectionRequest,
+  RangeCorrectionResponse,
+  TCO15YearRequest,
+  TCO15YearResponse,
+  BreakevenRequest,
+  BreakevenResponse,
+  ChargingOptimizationRequest,
+  ChargingOptimizationResponse,
+  IRVESizingRequest,
+  IRVESizingResponse,
 } from '../types/sotreg';
 
 const LIGNES = '/api/v1/sotreg/lignes';
 const CONTEXT = '/api/v1/sotreg/context';
 const OD = '/api/v1/sotreg/od-matrix';
 const ZFE = '/api/v1/sotreg/zfe';
+const TECH = '/api/v1/sotreg/technologies';
 
 /* ── Lignes ──────────────────────────────────────────────────────────────── */
 
@@ -105,5 +116,42 @@ export const checkZFEPoint = async (
   lng: number,
 ): Promise<ZFEPointCheckResponse> => {
   const response = await api.post<ZFEPointCheckResponse>(`${ZFE}/check`, { lat, lng });
+  return response.data;
+};
+
+/* ── Technologies (M2) ───────────────────────────────────────────────────── */
+
+export const computeRangeCorrection = async (
+  data: RangeCorrectionRequest,
+): Promise<RangeCorrectionResponse> => {
+  const response = await api.post<RangeCorrectionResponse>(`${TECH}/range-correction`, data);
+  return response.data;
+};
+
+export const computeTCO15Year = async (
+  data: TCO15YearRequest,
+): Promise<TCO15YearResponse> => {
+  const response = await api.post<TCO15YearResponse>(`${TECH}/tco-15year`, data);
+  return response.data;
+};
+
+export const computeBreakeven = async (
+  data: BreakevenRequest,
+): Promise<BreakevenResponse> => {
+  const response = await api.post<BreakevenResponse>(`${TECH}/breakeven`, data);
+  return response.data;
+};
+
+export const computeChargingOptimization = async (
+  data: ChargingOptimizationRequest,
+): Promise<ChargingOptimizationResponse> => {
+  const response = await api.post<ChargingOptimizationResponse>(`${TECH}/charging-optimization`, data);
+  return response.data;
+};
+
+export const computeIRVESizing = async (
+  data: IRVESizingRequest,
+): Promise<IRVESizingResponse> => {
+  const response = await api.post<IRVESizingResponse>(`${TECH}/irve-sizing`, data);
   return response.data;
 };
