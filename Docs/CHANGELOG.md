@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-109] — 2026-04-10
+### Added
+- 3 Celery tasks: task_compute_avl_kpis (daily), task_retrain_maintenance_model (weekly), task_compute_fleet_diagnostics (daily)
+- Celery beat schedule config (SOTREG_BEAT_SCHEDULE) + Redis cache key patterns (SOTREG_CACHE_KEYS)
+- MADCalibrationService: EUR/USD/GBP exchange rates, inflation adjustment, Fisher equation, ONEE tariff schedule
+- SOTREG demo seed data: 20 lignes (Casablanca routes), 50 stops, telemetry readings, AVL metrics
+- Idempotent seed script with is_seed_loaded check
+- 25 backend tests (8 Celery tasks, 17 MAD calibration)
+
 ## [Session-108] — 2026-04-10
 ### Added
 - AdvancedFinanceDashboardPage with 4 tabs (VAN & Payback, Portefeuille, CO2, Supernetwork)
