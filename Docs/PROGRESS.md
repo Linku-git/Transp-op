@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 17/35 |
-| **Total (core sessions)** | **127** | | **108/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 18/35 |
+| **Total (core sessions)** | **127** | | **109/127** |
 
 ---
 
@@ -209,7 +209,7 @@
 | Session | Title | Status | Date | Notes |
 |---------|-------|--------|------|-------|
 | 110 | [[sessions/session-110\|Phased Electrification Transition Planner]] | COMPLETE | 2026-04-10 | M6: Phase sequencing, budget allocation, milestones |
-| 111 | [[sessions/session-111\|Gantt Chart & Roadmap Frontend]] | NOT STARTED | | M6: Interactive Gantt, budget chart, milestone tracker |
+| 111 | [[sessions/session-111\|Gantt Chart & Roadmap Frontend]] | COMPLETE | 2026-04-10 | M6: Interactive Gantt, budget chart, milestone tracker |
 | 112 | [[sessions/session-112\|MCDA Scoring Engine]] | NOT STARTED | | M7: 6-criteria weighted sum, normalization, McFadden logit |
 | 113 | [[sessions/session-113\|Comparison PDF Report Generator]] | NOT STARTED | | M7: Radar chart, scoring table, sensitivity, Excel export |
 | 114 | [[sessions/session-114\|Scoring Frontend Dashboard]] | NOT STARTED | | M7: MCDA interface, radar chart, sensitivity sliders |

@@ -68,6 +68,7 @@
 /sotreg/technologies        -> TechnologiesDashboardPage
 /sotreg/infrastructure      -> InfrastructureDashboardPage
 /sotreg/finance             -> AdvancedFinanceDashboardPage
+/sotreg/roadmap             -> RoadmapDashboardPage
 ```
 
 ---
@@ -529,6 +530,26 @@
 
 #### SupernetworkFlowDiagram (Component) ✅ Session 108
 - Network link/demand inputs, SVG flow diagram with cost labels, convergence summary
+
+### SOTREG — Roadmap (Session 111)
+
+#### RoadmapDashboardPage `/sotreg/roadmap` ✅ Session 111
+- **3 tabs:** Planification, Budget, Jalons
+- Tab 0: `<TransitionPlanWizard />` + `<GanttChart />`
+- Tab 1: `<BudgetAllocationChart />`
+- Tab 2: `<MilestoneTracker />`
+
+#### TransitionPlanWizard (Component) ✅ Session 111
+- 3-step wizard: fleet size/budget → scenario type → plan preview
+
+#### GanttChart (Component) ✅ Session 111
+- SVG Gantt with phase bars colored by wave (pilot/scale/full)
+
+#### BudgetAllocationChart (Component) ✅ Session 111
+- Recharts stacked bars: vehicle_cost + infrastructure_cost per phase
+
+#### MilestoneTracker (Component) ✅ Session 111
+- Vertical timeline with year, description, target %, cumulative vehicles
 
 ---
 

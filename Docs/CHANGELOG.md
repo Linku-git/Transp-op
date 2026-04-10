@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-111] — 2026-04-10
+### Added
+- RoadmapDashboardPage with 3 tabs (Planification, Budget, Jalons)
+- TransitionPlanWizard: 3-step wizard for plan generation
+- GanttChart: SVG-based phase timeline with wave-colored bars
+- BudgetAllocationChart: Recharts stacked bars for vehicle + infra costs
+- MilestoneTracker: vertical timeline with progress indicators
+- Extended sotreg.ts API with roadmap endpoint
+- TypeScript types for TransitionPlan, Phase, Milestone
+- SOTREG sidebar: added Feuille Route sub-item (/sotreg/roadmap)
+- 5 frontend tests
+
 ## [Session-110] — 2026-04-10
 ### Added
 - TransitionPlan + TransitionPhase SQLAlchemy models with Alembic migration
