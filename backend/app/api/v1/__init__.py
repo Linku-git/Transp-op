@@ -60,6 +60,7 @@ from app.api.v1.sotreg_stops import router as sotreg_stops_router
 from app.api.v1.sotreg_depot import router as sotreg_depot_router
 from app.api.v1.sotreg_performance import router as sotreg_performance_router
 from app.api.v1.sotreg_telemetry import router as sotreg_telemetry_router
+from app.api.v1.sotreg_finance import router as sotreg_finance_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -121,3 +122,4 @@ api_router.include_router(sotreg_stops_router, tags=["sotreg"])
 api_router.include_router(sotreg_depot_router, tags=["sotreg"])
 api_router.include_router(sotreg_performance_router, tags=["sotreg"])
 api_router.include_router(sotreg_telemetry_router, tags=["sotreg"])
+api_router.include_router(sotreg_finance_router, tags=["sotreg"])
