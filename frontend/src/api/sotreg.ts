@@ -21,6 +21,14 @@ import type {
   ChargingOptimizationResponse,
   IRVESizingRequest,
   IRVESizingResponse,
+  StopGenerateRequest,
+  StopGenerateResponse,
+  StopCapacityRequest,
+  StopCapacityResponse,
+  DepotCostEstimateRequest,
+  DepotCostEstimateResponse,
+  DepotLayoutRequest,
+  DepotLayoutResponse,
 } from '../types/sotreg';
 
 const LIGNES = '/api/v1/sotreg/lignes';
@@ -28,6 +36,8 @@ const CONTEXT = '/api/v1/sotreg/context';
 const OD = '/api/v1/sotreg/od-matrix';
 const ZFE = '/api/v1/sotreg/zfe';
 const TECH = '/api/v1/sotreg/technologies';
+const STOPS = '/api/v1/sotreg/stops';
+const DEPOT = '/api/v1/sotreg/depot';
 
 /* ── Lignes ──────────────────────────────────────────────────────────────── */
 
@@ -153,5 +163,37 @@ export const computeIRVESizing = async (
   data: IRVESizingRequest,
 ): Promise<IRVESizingResponse> => {
   const response = await api.post<IRVESizingResponse>(`${TECH}/irve-sizing`, data);
+  return response.data;
+};
+
+/* ── Stops (M3) ──────────────────────────────────────────────────────────── */
+
+export const generateStops = async (
+  data: StopGenerateRequest = {},
+): Promise<StopGenerateResponse> => {
+  const response = await api.post<StopGenerateResponse>(`${STOPS}/generate`, data);
+  return response.data;
+};
+
+export const computeStopCapacity = async (
+  data: StopCapacityRequest = {},
+): Promise<StopCapacityResponse> => {
+  const response = await api.post<StopCapacityResponse>(`${STOPS}/capacity`, data);
+  return response.data;
+};
+
+/* ── Depot (M3) ──────────────────────────────────────────────────────────── */
+
+export const computeDepotCostEstimate = async (
+  data: DepotCostEstimateRequest,
+): Promise<DepotCostEstimateResponse> => {
+  const response = await api.post<DepotCostEstimateResponse>(`${DEPOT}/cost-estimate`, data);
+  return response.data;
+};
+
+export const computeDepotLayout = async (
+  data: DepotLayoutRequest,
+): Promise<DepotLayoutResponse> => {
+  const response = await api.post<DepotLayoutResponse>(`${DEPOT}/layout-plan`, data);
   return response.data;
 };

@@ -306,6 +306,12 @@ const TechnologiesDashboardPage = lazy(() =>
   }))
 );
 
+const InfrastructureDashboardPage = lazy(() =>
+  import('@/pages/sotreg/InfrastructureDashboardPage').then((m) => ({
+    default: m.InfrastructureDashboardPage,
+  }))
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -759,6 +765,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <TechnologiesDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/infrastructure',
+        element: (
+          <SuspenseWrapper>
+            <InfrastructureDashboardPage />
           </SuspenseWrapper>
         ),
       },

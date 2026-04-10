@@ -360,6 +360,120 @@ export const SERVICE_TYPE_LABELS: Record<string, string> = {
   mixte: 'Mixte',
 };
 
+/* ── Stop Generation (M3) ────────────────────────────────────────────────── */
+
+export interface StopGenerateRequest {
+  site_id?: string | null;
+  eps_m?: number;
+  min_pts?: number;
+}
+
+export interface GeneratedStopResult {
+  cluster_id: number;
+  centroid_lat: number;
+  centroid_lng: number;
+  employee_count: number;
+  employee_ids: string[];
+  catchment_radius_m: number;
+  source: string;
+}
+
+export interface StopGenerateResponse {
+  stops_generated: number;
+  eps_m: number;
+  min_pts: number;
+  noise_count: number;
+  stops: GeneratedStopResult[];
+}
+
+export interface StopCapacityRequest {
+  n_berths?: number;
+  green_ratio?: number;
+  dwell_time_s?: number;
+  clearance_time_s?: number;
+  cv_dwell?: number;
+  z_factor?: number;
+  demand_buses_per_hour?: number;
+}
+
+export interface StopCapacityResponse {
+  capacity_buses_per_hour: number;
+  effective_dwell_s: number;
+  n_berths: number;
+  green_ratio: number;
+  z_factor: number;
+  cv_dwell: number;
+  utilization: number;
+  los_grade: string;
+  los_description: string;
+  avg_wait_seconds: number;
+}
+
+/* ── Depot (M3) ──────────────────────────────────────────────────────────── */
+
+export interface DepotCostEstimateRequest {
+  charger_count: number;
+  charger_type?: string;
+  contingency_pct?: number;
+  currency?: string;
+}
+
+export interface DepotCostEstimateResponse {
+  charger_hardware_mad: number;
+  installation_mad: number;
+  electrical_upgrade_mad: number;
+  transformer_mad: number;
+  grid_connection_mad: number;
+  civil_works_mad: number;
+  contingency_mad: number;
+  subtotal_mad: number;
+  total_cost_mad: number;
+  cost_per_charger_mad: number;
+  charger_type: string;
+  charger_count: number;
+  total_power_kw: number;
+  contingency_pct: number;
+  currency: string;
+}
+
+export interface ChargerPosition {
+  bay_id: number;
+  x: number;
+  y: number;
+  bay_width: number;
+  bay_depth: number;
+}
+
+export interface DepotLayoutRequest {
+  charger_count: number;
+  fleet_size: number;
+  charger_type?: string;
+  include_maintenance?: boolean;
+  currency?: string;
+}
+
+export interface DepotLayoutResponse {
+  total_area_m2: number;
+  charging_area_m2: number;
+  parking_area_m2: number;
+  maintenance_area_m2: number;
+  circulation_area_m2: number;
+  charger_positions: ChargerPosition[];
+  parking_bays: number;
+  charger_count: number;
+  charger_type: string;
+  dimensions: { width_m: number; depth_m: number };
+  currency: string;
+}
+
+export const LOS_COLORS: Record<string, string> = {
+  A: '#22c55e', B: '#84cc16', C: '#eab308', D: '#f97316', E: '#ef4444', F: '#991b1b',
+};
+
+export const LOS_LABELS: Record<string, string> = {
+  A: 'Libre', B: 'Stable', C: 'Acceptable', D: 'Instable', E: 'Capacité', F: 'Saturé',
+};
+
 export const MOTORIZATION_OPTIONS = ['diesel', 'essence', 'electrique', 'hybride', 'gnv'] as const;
 
 export const MOTORIZATION_LABELS: Record<string, string> = {
