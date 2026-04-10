@@ -65,6 +65,8 @@
 /sotreg/lignes              -> LigneListPage
 /sotreg/lignes/new          -> LigneFormPage
 /sotreg/lignes/:id/edit     -> LigneFormPage (edit mode)
+/sotreg/technologies        -> TechnologiesDashboardPage
+/sotreg/infrastructure      -> InfrastructureDashboardPage
 ```
 
 ---
@@ -442,6 +444,66 @@
 - Top 15 OD flows by flow_estimate
 - Summary: total flux, OD pair count, average distance
 - Empty state when no OD matrix computed
+
+### SOTREG — Technologies & Electrification (Session 98)
+
+#### TechnologiesDashboardPage `/sotreg/technologies` ✅ Session 98
+- **4 tabs:** Autonomie, TCO 15 ans, Seuil de Rentabilite, IRVE
+- Tab 0: `<RangeCorrectionPanel />` — profile selectors (pente/saison/vitesse), corrected range display
+- Tab 1: `<TCO15YearChart />` — Recharts stacked area chart (depreciation/maintenance/energy/financing)
+- Tab 2: `<BreakevenChart />` — diesel vs electric line chart with km_seuil intersection
+- Tab 3: `<IRVESizingWizard />` + `<ChargingScheduleTimeline />`
+- API: POST `/api/v1/sotreg/technologies/range-correction`, `/tco-15year`, `/breakeven`, `/charging-optimization`, `/irve-sizing`
+
+#### RangeCorrectionPanel (Component) ✅ Session 98
+- 3 profile dropdowns (pente, saison, vitesse) + nominal range input
+- Real-time corrected range display with factor cards and reduction bar
+
+#### TCO15YearChart (Component) ✅ Session 98
+- Form: purchase price, maintenance, energy/km, annual km, loan rate, duration
+- Recharts stacked AreaChart with 4 cost layers over 15 years
+
+#### BreakevenChart (Component) ✅ Session 98
+- Form: diesel/electric CAPEX and OPEX/km
+- Recharts LineChart with diesel (red) vs electric (blue) + km_seuil ReferenceLine
+
+#### IRVESizingWizard (Component) ✅ Session 98
+- 3-step wizard: Fleet params → Charger selection → Cost results
+- Charger count, power, cost breakdown cards
+
+#### ChargingScheduleTimeline (Component) ✅ Session 98
+- SOC optimization form (battery, current/target SOC, charger power)
+- 24h timeline bar with ONEE TOU windows (creuse/pleine/pointe)
+- Cost summary: energy cost, peak demand, demand charge
+
+---
+
+### SOTREG — Infrastructure & Stops (Session 101)
+
+#### InfrastructureDashboardPage `/sotreg/infrastructure` ✅ Session 101
+- **3 tabs:** Arrets, Depot, Couts IRVE
+- Tab 0: `<StopGeneratorPanel />` + `<StopCapacityTable />` stacked
+- Tab 1: `<DepotLayoutViewer />`
+- Tab 2: `<IRVECostBreakdown />`
+- API: POST `/api/v1/sotreg/stops/generate`, `/stops/capacity`, `/depot/cost-estimate`, `/depot/layout-plan`
+
+#### StopGeneratorPanel (Component) ✅ Session 101
+- DBSCAN params (eps_m, min_pts) + generate button
+- Google Maps display of generated stops with markers and employee counts
+
+#### StopCapacityTable (Component) ✅ Session 101
+- HCM 2000 capacity inputs (berths, dwell time, demand)
+- Capacity result with color-coded LOS badge (A-F), utilization bar
+
+#### DepotLayoutViewer (Component) ✅ Session 101
+- Form: charger count, fleet size, charger type, maintenance toggle
+- SVG depot plan with color-coded zones (charging, parking, maintenance)
+- Area summary cards
+
+#### IRVECostBreakdown (Component) ✅ Session 101
+- Form: charger count, type, contingency slider
+- Recharts stacked bar chart with 7 cost components
+- Cost component cards grid
 
 ---
 

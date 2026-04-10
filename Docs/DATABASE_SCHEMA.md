@@ -48,6 +48,12 @@
 | [sirh_connection](#sirh_connection) | — | 11 | SIRH provider connections |
 | [sync_log](#sync_log) | — | 11 | Sync execution logs |
 | [sync_conflict](#sync_conflict) | — | 9 | Field-level sync conflicts |
+| [ligne](#ligne) | — | 22 | SOTREG transport lines (CDC formula) |
+| [fleet_context](#fleet_context) | — | 12 | Fleet diagnostics snapshots |
+| [od_matrix](#od_matrix) | — | 12 | OD matrix entries (Wilson gravity model) |
+| [irve_infrastructure](#irve_infrastructure) | — | 20 | IRVE charging infrastructure records |
+| [generated_stop](#generated_stop) | — | 18 | Candidate stops from DBSCAN/manual |
+| [depot_plan](#depot_plan) | — | 16 | Depot electrification plans with JSONB costs |
 
 ---
 
@@ -880,6 +886,175 @@ Maps content to external LMS training modules. Created in Session 74.
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** tenant_id, content_id, lms_provider, UNIQUE(tenant_id, lms_provider, lms_external_id)
+
+---
+
+## Group 16 — SOTREG
+
+> Source: CDC Technique SOTREG v5.0 Final — OCP Transport Personnel. See [[sessions/session-93]], [[sessions/session-94]].
+
+### ligne
+
+Transport line definition with CDC formula km_annual = D x R x J. Created in Session 93.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| code | varchar(20) | NO | | UNIQUE — line identifier |
+| name | varchar(255) | NO | | Line display name |
+| site_id | uuid | YES | | FK → site.id |
+| origin_lat | float | NO | | Origin latitude |
+| origin_lng | float | NO | | Origin longitude |
+| dest_lat | float | NO | | Destination latitude |
+| dest_lng | float | NO | | Destination longitude |
+| origin_geom | geometry(POINT,4326) | YES | | PostGIS origin point |
+| dest_geom | geometry(POINT,4326) | YES | | PostGIS destination point |
+| distance_km | float | NO | | One-way distance D (km) |
+| rotations_per_day | int | NO | | Daily rotations R |
+| operating_days_per_year | int | NO | | Operating days J |
+| km_annual | float | YES | | Computed: D x R x J |
+| vehicle_type | varchar(50) | YES | | Bus/minibus/van/etc. |
+| motorization | varchar(30) | YES | | diesel/electric/hybrid/gnc |
+| passenger_count_avg | int | YES | | Average passenger count |
+| shift_type | varchar(50) | YES | | Associated shift |
+| service_type | varchar(20) | YES | | navette/liaison/vip/mixte |
+| pente_moyenne_pct | float | YES | | Average slope percentage |
+| is_active | bool | NO | true | Active line flag |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** tenant_id, site_id, UNIQUE(tenant_id, code), GIST(origin_geom), GIST(dest_geom)
+
+---
+
+### fleet_context
+
+Fleet diagnostics snapshot aggregated from all lignes. Created in Session 93.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| total_vehicles | int | NO | | Total fleet size |
+| total_km_annual | float | NO | | Sum of all ligne km_annual |
+| total_tco2_annual | float | NO | | Estimated annual tCO2 |
+| average_age_years | float | YES | | Fleet average age |
+| pct_diesel | float | YES | | % diesel motorization |
+| pct_electric | float | YES | | % electric motorization |
+| pct_hybrid | float | YES | | % hybrid motorization |
+| currency | varchar(10) | NO | MAD | Financial currency |
+| snapshot_date | date | NO | | Snapshot capture date |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** tenant_id, snapshot_date
+
+---
+
+### od_matrix
+
+OD (Origin-Destination) matrix entries computed using Wilson 1967 gravity model: T_ij = k * P_i * P_j * exp(-beta * d_ij). Created in Session 94.
+
+| Column | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| ligne_id | uuid | NO | | FK → ligne.id (CASCADE) |
+| origin_zone | varchar(255) | NO | | Origin zone name |
+| destination_zone | varchar(255) | NO | | Destination zone name |
+| flow_estimate | float | NO | | Estimated flow T_ij |
+| distance_km | float | NO | | Distance between zones |
+| gravity_score | float | NO | | Gravity model score |
+| beta_used | float | NO | 0.08 | Beta decay parameter |
+| computed_at | timestamptz | NO | now() | Computation timestamp |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_od_matrix_tenant_id, ix_od_matrix_ligne_id
+
+### irve_infrastructure
+
+IRVE (Infrastructure de Recharge pour Vehicules Electriques) record. Created in Session 97.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| site_id | uuid | YES | | FK → site.id |
+| charger_type | varchar(30) | NO | dc_50kw | ac_7kw, ac_22kw, dc_50kw, dc_150kw |
+| charger_count | int | NO | 1 | Number of chargers |
+| power_per_charger_kw | float | NO | | Power per charger |
+| total_installed_power_kw | float | NO | | Total installed power |
+| hardware_cost_mad | float | NO | 0 | Hardware cost MAD |
+| installation_cost_mad | float | NO | 0 | Installation cost MAD |
+| transformer_cost_mad | float | NO | 0 | Transformer cost MAD |
+| grid_connection_cost_mad | float | NO | 0 | Grid connection cost MAD |
+| total_capex_mad | float | NO | 0 | Total CAPEX MAD |
+| annual_electricity_cost_mad | float | NO | 0 | Annual electricity cost MAD |
+| fleet_size | int | YES | | Associated fleet size |
+| daily_km_per_vehicle | float | YES | | Daily km per vehicle |
+| battery_capacity_kwh | float | YES | | Battery capacity kWh |
+| is_active | boolean | NO | true | Active flag |
+| currency | varchar(10) | NO | MAD | Currency code |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_irve_infrastructure_tenant_id, ix_irve_infrastructure_site_id
+
+### generated_stop
+
+Candidate stop location generated by DBSCAN clustering or manual entry. Created in Session 99.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| site_id | uuid | YES | | FK → site.id |
+| ligne_id | uuid | YES | | FK → ligne.id |
+| lat | float | NO | | Latitude |
+| lng | float | NO | | Longitude |
+| geom | geometry(POINT,4326) | YES | | PostGIS point |
+| catchment_radius_m | float | NO | 500 | Catchment radius meters |
+| demand_passengers | int | NO | 0 | Passenger demand |
+| berth_count | int | NO | 1 | Loading berths |
+| capacity_buses_per_hour | float | YES | | HCM 2000 capacity |
+| capacity_los | varchar(1) | YES | | LOS grade A-F |
+| avg_wait_seconds | float | YES | | Average wait time |
+| source | varchar(20) | NO | dbscan | dbscan, manual, imported |
+| name | varchar(255) | YES | | Stop name |
+| is_active | boolean | NO | true | Active flag |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_generated_stop_tenant_id, ix_generated_stop_site_id, ix_generated_stop_geom (GIST)
+
+### depot_plan
+
+Depot electrification plan with layout areas and JSONB cost breakdown. Created in Session 100.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| site_id | uuid | YES | | FK → site.id |
+| name | varchar(255) | YES | | Plan name |
+| total_area_m2 | float | NO | | Total depot area |
+| charging_area_m2 | float | NO | 0 | Charging zone area |
+| parking_area_m2 | float | NO | 0 | Parking zone area |
+| maintenance_area_m2 | float | NO | 0 | Maintenance zone area |
+| charger_count | int | NO | 0 | Number of chargers |
+| charger_type | varchar(30) | NO | dc_50kw | Charger type |
+| parking_bays | int | NO | 0 | Number of parking bays |
+| fleet_size | int | NO | 0 | Fleet size |
+| total_cost_mad | float | NO | 0 | Total cost MAD |
+| cost_breakdown | jsonb | YES | | 7-component cost breakdown |
+| is_active | boolean | NO | true | Active flag |
+| currency | varchar(10) | NO | MAD | Currency code |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_depot_plan_tenant_id, ix_depot_plan_site_id
 
 ---
 
