@@ -48,6 +48,7 @@ from app.models.od_matrix import ODMatrix
 from app.models.irve_infrastructure import IRVEInfrastructure
 from app.models.generated_stop import GeneratedStop
 from app.models.depot_plan import DepotPlan
+from app.models.avl_metric import AVLMetric
 
 __all__ = [
     "BaseModel",
@@ -106,4 +107,5 @@ __all__ = [
     "IRVEInfrastructure",
     "GeneratedStop",
     "DepotPlan",
+    "AVLMetric",
 ]
