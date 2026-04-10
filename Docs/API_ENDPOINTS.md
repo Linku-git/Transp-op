@@ -400,6 +400,9 @@
 | GET | `/sotreg/depot/plans` | List depot plans | Yes | DRH, DAF, Admin | 100 |
 | GET | `/sotreg/depot/plans/{id}` | Get single depot plan | Yes | DRH, DAF, Admin | 100 |
 | DELETE | `/sotreg/depot/plans/{id}` | Delete depot plan | Yes | DRH, Admin | 100 |
+| POST | `/sotreg/performance/compute` | Compute and store AVL KPIs | Yes | DRH, Admin | 102 |
+| GET | `/sotreg/performance/kpis` | List KPIs (filtered, paginated) | Yes | DRH, DAF, Admin | 102 |
+| GET | `/sotreg/performance/kpis/{ligne_id}` | KPIs for specific ligne | Yes | DRH, DAF, Admin | 102 |
 
 ---
 

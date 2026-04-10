@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 9/35 |
-| **Total (core sessions)** | **127** | | **100/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 10/35 |
+| **Total (core sessions)** | **127** | | **101/127** |
 
 ---
 
@@ -195,7 +195,7 @@
 
 | Session | Title | Status | Date | Notes |
 |---------|-------|--------|------|-------|
-| 102 | [[sessions/session-102\|AVL-Based KPI Engine]] | NOT STARTED | | M4: OTP >95%, headway COV <0.3, load factor, speed |
+| 102 | [[sessions/session-102\|AVL-Based KPI Engine]] | COMPLETE | 2026-04-10 | M4: OTP/headway/load/speed KPIs, AVLMetric model, 3 API endpoints, 21 tests |
 | 103 | [[sessions/session-103\|Leave Time Optimization (LTO)]] | NOT STARTED | | M4: Anti-platooning, scipy optimization, departure offsets |
 | 104 | [[sessions/session-104\|IoT Telemetry Pipeline & Predictive Maintenance]] | NOT STARTED | | M4: Webhook ingestion, IsolationForest, maintenance alerts |
 | 105 | [[sessions/session-105\|Performance Frontend Dashboard]] | NOT STARTED | | M4: OTP gauge, headway chart, telemetry, maintenance |

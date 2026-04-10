@@ -54,6 +54,7 @@
 | [irve_infrastructure](#irve_infrastructure) | — | 20 | IRVE charging infrastructure records |
 | [generated_stop](#generated_stop) | — | 18 | Candidate stops from DBSCAN/manual |
 | [depot_plan](#depot_plan) | — | 16 | Depot electrification plans with JSONB costs |
+| [avl_metric](#avl_metric) | — | 13 | AVL-based operational KPI metrics |
 
 ---
 
@@ -1055,6 +1056,28 @@ Depot electrification plan with layout areas and JSONB cost breakdown. Created i
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_depot_plan_tenant_id, ix_depot_plan_site_id
+
+### avl_metric
+
+AVL-based operational KPI metric record. Created in Session 102.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| ligne_id | uuid | YES | | FK → ligne.id |
+| vehicle_id | uuid | YES | | Vehicle UUID (no FK) |
+| metric_type | varchar(30) | NO | | otp, headway_cov, load_factor, commercial_speed |
+| value | float | NO | | Metric value |
+| metric_date | date | NO | | Date of measurement |
+| period | varchar(20) | NO | daily | daily, weekly, monthly |
+| sample_size | int | YES | | Number of observations |
+| meets_target | boolean | YES | | Whether target met |
+| details | varchar(500) | YES | | JSON details string |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_avl_metric_tenant_id, ix_avl_metric_ligne_id, ix_avl_metric_vehicle_id, ix_avl_metric_metric_type, ix_avl_metric_date
 
 ---
 

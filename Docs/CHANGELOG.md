@@ -6,6 +6,15 @@
 
 ---
 
+## [Session-102] — 2026-04-10
+### Added
+- AVLKPIService: 4 operational KPI computations (OTP with 90s threshold, headway COV with 0.3 target, load factor, commercial speed)
+- AVLMetric SQLAlchemy model with metric_type, value, period, meets_target + Alembic migration
+- Pydantic v2 schemas for KPI compute request (arrivals, departures, loads, trips) and query
+- 3 API endpoints: POST /sotreg/performance/compute, GET /kpis (filtered/paginated), GET /kpis/{ligne_id}
+- Batch compute_all_kpis function for combined KPI calculation
+- 21 backend tests (6 OTP, 5 headway COV, 4 load factor, 3 commercial speed, 3 batch)
+
 ## [Session-101] — 2026-04-10
 ### Added
 - InfrastructureDashboardPage with 3 tabs (Arrêts, Dépôt, Coûts IRVE)
