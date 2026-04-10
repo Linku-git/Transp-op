@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-103] — 2026-04-10
+### Added
+- LTOService: scipy.optimize.minimize (L-BFGS-B) for anti-platooning departure offset optimization
+- Platooning detection: triggered when COV_headway > 0.30 AND |real-planned| > 180s
+- Full LTO pipeline: detect → optimize → produce schedule with offsets
+- DepartureSchedule SQLAlchemy model (scheduled/optimized departure, offset_seconds, is_applied) + Alembic migration
+- Pydantic v2 schemas for LTO optimize request/response, schedule query, and apply
+- 3 API endpoints: POST /lto/optimize, GET /lto/schedule/{ligne_id}, PUT /lto/apply
+- 15 backend tests (5 platooning detection, 6 optimization, 4 pipeline)
+
 ## [Session-102] — 2026-04-10
 ### Added
 - AVLKPIService: 4 operational KPI computations (OTP with 90s threshold, headway COV with 0.3 target, load factor, commercial speed)

@@ -403,6 +403,9 @@
 | POST | `/sotreg/performance/compute` | Compute and store AVL KPIs | Yes | DRH, Admin | 102 |
 | GET | `/sotreg/performance/kpis` | List KPIs (filtered, paginated) | Yes | DRH, DAF, Admin | 102 |
 | GET | `/sotreg/performance/kpis/{ligne_id}` | KPIs for specific ligne | Yes | DRH, DAF, Admin | 102 |
+| POST | `/sotreg/performance/lto/optimize` | Run LTO anti-platooning optimization | Yes | DRH, Admin | 103 |
+| GET | `/sotreg/performance/lto/schedule/{ligne_id}` | Get optimized departure schedule | Yes | DRH, DAF, Admin | 103 |
+| PUT | `/sotreg/performance/lto/apply` | Apply optimized schedule | Yes | DRH, Admin | 103 |
 
 ---
 

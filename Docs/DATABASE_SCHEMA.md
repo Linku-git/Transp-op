@@ -55,6 +55,7 @@
 | [generated_stop](#generated_stop) | — | 18 | Candidate stops from DBSCAN/manual |
 | [depot_plan](#depot_plan) | — | 16 | Depot electrification plans with JSONB costs |
 | [avl_metric](#avl_metric) | — | 13 | AVL-based operational KPI metrics |
+| [departure_schedule](#departure_schedule) | — | 12 | LTO optimized departure schedules |
 
 ---
 
@@ -1078,6 +1079,27 @@ AVL-based operational KPI metric record. Created in Session 102.
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_avl_metric_tenant_id, ix_avl_metric_ligne_id, ix_avl_metric_vehicle_id, ix_avl_metric_metric_type, ix_avl_metric_date
+
+### departure_schedule
+
+LTO optimized departure schedule from anti-platooning optimization. Created in Session 103.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | gen_random_uuid() | PK |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| ligne_id | uuid | NO | | FK → ligne.id |
+| vehicle_id | uuid | YES | | Vehicle UUID |
+| scheduled_departure | timestamptz | NO | | Original departure time |
+| optimized_departure | timestamptz | NO | | LTO-adjusted departure time |
+| offset_seconds | float | NO | 0 | Adjustment offset |
+| schedule_date | date | NO | | Schedule date |
+| is_applied | boolean | NO | false | Whether applied to operations |
+| optimization_run_id | varchar(50) | YES | | Run identifier |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_departure_schedule_tenant_id, ix_departure_schedule_ligne_id, ix_departure_schedule_date
 
 ---
 
