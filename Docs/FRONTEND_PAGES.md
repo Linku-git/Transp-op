@@ -61,6 +61,10 @@
 /admin/sirh/sync            -> SIRHSyncDashboardPage
 /admin/operators            -> OperatorManagementPage
 /admin/api-keys             -> APIKeyManagementPage
+/sotreg                     -> DiagnosticDashboardPage
+/sotreg/lignes              -> LigneListPage
+/sotreg/lignes/new          -> LigneFormPage
+/sotreg/lignes/:id/edit     -> LigneFormPage (edit mode)
 ```
 
 ---
@@ -397,6 +401,47 @@
 - **Engagement Rates Card:** view rate + completion rate progress bars, delivery/completion totals
 - **Content Ranking Table:** sorted by completions, columns: title, type, views, completions, avg score, avg time
 - API: `GET /api/v1/content/analytics` → overview + content_ranking + by_type
+
+---
+
+### SOTREG — Diagnostic & Context (Session 95)
+
+#### DiagnosticDashboardPage `/sotreg` ✅ Session 95
+- **Fleet KPI Cards (6):** total vehicles, km annuels, tCO₂/an, age moyen, motorisation split (donut), lignes actives
+- **ZFE Compliance Card:** lignes in ZFE count, compliance percentage, link to ligne list
+- **OD Flow Summary:** total flows, top 5 OD pairs, compute OD button
+- **Quick Actions:** link to ligne list, create new ligne
+- API: `GET /api/v1/sotreg/context/snapshot`, `GET /api/v1/sotreg/lignes`, `GET /api/v1/sotreg/zfe/lignes`, `GET /api/v1/sotreg/od-matrix`
+
+#### LigneListPage `/sotreg/lignes` ✅ Session 95
+- Data table: code, name, service type badge, distance km, rotations/day, km annuels, motorisation, active status
+- Filters: service_type dropdown, is_active toggle, text search
+- Pagination controls
+- Row actions: edit (link), delete (confirm dialog)
+- "Nouvelle Ligne" primary CTA
+- API: `GET /api/v1/sotreg/lignes`, `DELETE /api/v1/sotreg/lignes/{id}`
+
+#### LigneFormPage `/sotreg/lignes/new` & `/sotreg/lignes/:id/edit` ✅ Session 95
+- Create/edit form with 4 sections: Identification, Géographie, Paramètres opérationnels, Véhicule
+- Google Maps coordinate picker (click to set origin/destination)
+- Computed km_annual display (D × R × J formula)
+- Service type and motorisation dropdowns
+- Pydantic v2 error handling via extractApiError
+- API: `POST /api/v1/sotreg/lignes`, `PUT /api/v1/sotreg/lignes/{id}`, `GET /api/v1/sotreg/lignes/{id}`
+
+#### ZFEMapOverlay (Component) ✅ Session 95
+- Google Maps overlay at `components/sotreg/ZFEMapOverlay.tsx`
+- Markers: blue (hors ZFE) / red (en ZFE) for each ligne endpoint
+- Polylines connecting origin to destination per ligne
+- InfoWindow on click: ligne code, ZFE status, zone name, restriction level
+- Legend: compliance count, color coding
+- Empty state when no ZFE data
+
+#### ODFlowChart (Component) ✅ Session 95
+- Recharts horizontal bar chart at `components/sotreg/ODFlowChart.tsx`
+- Top 15 OD flows by flow_estimate
+- Summary: total flux, OD pair count, average distance
+- Empty state when no OD matrix computed
 
 ---
 

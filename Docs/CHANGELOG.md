@@ -6,6 +6,42 @@
 
 ---
 
+## [Session-95] — 2026-04-10
+### Added
+- DiagnosticDashboardPage: fleet KPIs, ZFE compliance summary, OD flow overview
+- LigneListPage: CRUD table with service_type/active filters, pagination, delete
+- LigneFormPage: create/edit form with Google Maps coordinate picker
+- ZFEMapOverlay: Google Maps component with ZFE compliance markers and polylines
+- ODFlowChart: Recharts horizontal bar chart for top OD flows
+- SOTREG API client (frontend/src/api/sotreg.ts) with all 12 SOTREG endpoints
+- TypeScript types for Ligne, FleetContext, ODMatrix, ZFE (frontend/src/types/sotreg.ts)
+- SOTREG navigation group in sidebar (Diagnostic Flotte, Lignes Transport)
+- 4 SOTREG routes: /sotreg, /sotreg/lignes, /sotreg/lignes/new, /sotreg/lignes/:id/edit
+- 15 frontend tests across 6 test files
+
+## [Session-94] — 2026-04-09
+### Added
+- ZFE (Zone a Faibles Emissions) detection service with ADEME API + local Moroccan registry fallback (3 zones: Casablanca, Rabat, Tanger)
+- Wilson 1967 gravity model for OD matrix computation (T_ij = k * P_i * P_j * exp(-beta * d_ij))
+- ODMatrix SQLAlchemy model with ligne FK and gravity scores
+- Alembic migration for od_matrix table (chained from session 93)
+- 6 new SOTREG endpoints: OD matrix compute/query, ZFE compliance check, geocoding enrichment
+- Beta calibration via least-squares regression
+- Batch ZFE compliance check for all active transport lines
+- Pydantic v2 schemas for OD matrix, ZFE, and geocoding enrichment
+- 35 tests (13 ZFE + 22 gravity model)
+
+## [Session-93] — 2026-04-09 (Phase 8 Start)
+### Added
+- Ligne (transport line) SQLAlchemy model with CDC formula km_annual = D x R x J
+- FleetContext model for fleet diagnostics snapshots
+- ContextService with compute_line_km_annual and compute_fleet_diagnostics
+- CRUD API endpoints for Ligne (POST/GET/PUT/DELETE /api/v1/sotreg/lignes)
+- Fleet context snapshot endpoint (GET /api/v1/sotreg/context/snapshot)
+- Pydantic v2 schemas with service_type validation (navette/liaison/vip/mixte)
+- Alembic migration for ligne and fleet_context tables with PostGIS GIST indexes
+- 20 tests (9 unit + 11 integration)
+
 ## [Session-91] — 2026-04-09
 ### Added
 - `accessibility.ts` (web): WCAG 2.1 AA checklist (19 criteria across 4 principles), color contrast calculator, skip link, screen reader announcements, focus trap, i18n status

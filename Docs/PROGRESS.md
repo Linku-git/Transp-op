@@ -2,7 +2,7 @@
 
 > See also: [[README]] | [[ROADMAP]] | [[agents]]
 
-> Last updated: 2026-04-08
+> Last updated: 2026-04-10
 
 ## Summary
 
@@ -17,7 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| **Total (core sessions)** | **92** | | **91/92** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 3/35 |
+| **Total (core sessions)** | **127** | | **94/127** |
 
 ---
 
@@ -172,6 +173,70 @@
 | 91 | [[sessions/session-91\|Accessibility Audit]] | COMPLETE | 2026-04-09 | WCAG 2.1 AA checklist, contrast validation, a11y utils, 35 tests |
 | 92 | [[sessions/session-92\|App Store Prep & Final Docs]] | NOT STARTED | | |
 
+## Phase 8 — SOTREG Modules (M1-M8)
+
+> Source: CDC Technique SOTREG v5.0 Final — OCP Transport Personnel
+
+### Phase 8a — Diagnostic & Technologies (M1-M3)
+
+| Session | Title | Status | Date | Notes |
+|---------|-------|--------|------|-------|
+| 93 | [[sessions/session-93\|Transport Line Model & Context Service]] | COMPLETE | 2026-04-09 | M1: Ligne model (CDC km_annual=D*R*J), FleetContext model, ContextService, 6 CRUD endpoints, 20 tests |
+| 94 | [[sessions/session-94\|ZFE Detection & Gravity Model OD Matrix]] | COMPLETE | 2026-04-09 | M1: ADEME ZFE API + local registry, Wilson 1967 gravity model, OD matrix, geocoding enrichment, 6 endpoints, 35 tests |
+| 95 | [[sessions/session-95\|Diagnostic Frontend Dashboard]] | COMPLETE | 2026-04-10 | M1: DiagnosticDashboard, LigneList/Form, ZFEMapOverlay, ODFlowChart, 15 tests |
+| 96 | [[sessions/session-96\|Range Correction & 15-Year TCO Model]] | NOT STARTED | | M2: k_pente/k_saison/k_vitesse, 15y TCO with financing |
+| 97 | [[sessions/session-97\|Demand Charge Optimization & IRVE Sizing]] | NOT STARTED | | M2: SOC=62% charging (Qin 2016), IRVE infrastructure |
+| 98 | [[sessions/session-98\|Technologies Frontend Dashboard]] | NOT STARTED | | M2: Range sliders, TCO 15y chart, breakeven, IRVE wizard |
+| 99 | [[sessions/session-99\|Stop Generation & Capacity Model]] | NOT STARTED | | M3: DBSCAN eps=500m MinPts=5, HCM 2000 M/G/S queuing |
+| 100 | [[sessions/session-100\|IRVE Cost Calculator & Depot Layout]] | NOT STARTED | | M3: Depot electrification cost, layout planner |
+| 101 | [[sessions/session-101\|Infrastructure Frontend Dashboard]] | NOT STARTED | | M3: Stop map, capacity table, depot viewer, cost chart |
+
+### Phase 8b — Performance & Finance (M4-M5)
+
+| Session | Title | Status | Date | Notes |
+|---------|-------|--------|------|-------|
+| 102 | [[sessions/session-102\|AVL-Based KPI Engine]] | NOT STARTED | | M4: OTP >95%, headway COV <0.3, load factor, speed |
+| 103 | [[sessions/session-103\|Leave Time Optimization (LTO)]] | NOT STARTED | | M4: Anti-platooning, scipy optimization, departure offsets |
+| 104 | [[sessions/session-104\|IoT Telemetry Pipeline & Predictive Maintenance]] | NOT STARTED | | M4: Webhook ingestion, IsolationForest, maintenance alerts |
+| 105 | [[sessions/session-105\|Performance Frontend Dashboard]] | NOT STARTED | | M4: OTP gauge, headway chart, telemetry, maintenance |
+| 106 | [[sessions/session-106\|NPV & CO2 Externalities Valorization]] | NOT STARTED | | M5: VAN, IRR, CO2 monetization, carbon price MAD |
+| 107 | [[sessions/session-107\|Markowitz Portfolio & Supernetwork Equilibrium]] | NOT STARTED | | M5: Mean-variance optimization, Frank-Wolfe algorithm |
+| 108 | [[sessions/session-108\|Advanced Finance Frontend Dashboard]] | NOT STARTED | | M5: NPV waterfall, efficient frontier, CO2 panel |
+| 109 | [[sessions/session-109\|Celery Tasks & MAD Currency Calibration]] | NOT STARTED | | Cross: Celery beat, MAD calibration, SOTREG seed data |
+
+### Phase 8c — Roadmap, Scoring & MCDA (M6-M7)
+
+| Session | Title | Status | Date | Notes |
+|---------|-------|--------|------|-------|
+| 110 | [[sessions/session-110\|Phased Electrification Transition Planner]] | NOT STARTED | | M6: Phase sequencing, budget allocation, milestones |
+| 111 | [[sessions/session-111\|Gantt Chart & Roadmap Frontend]] | NOT STARTED | | M6: Interactive Gantt, budget chart, milestone tracker |
+| 112 | [[sessions/session-112\|MCDA Scoring Engine]] | NOT STARTED | | M7: 6-criteria weighted sum, normalization, McFadden logit |
+| 113 | [[sessions/session-113\|Comparison PDF Report Generator]] | NOT STARTED | | M7: Radar chart, scoring table, sensitivity, Excel export |
+| 114 | [[sessions/session-114\|Scoring Frontend Dashboard]] | NOT STARTED | | M7: MCDA interface, radar chart, sensitivity sliders |
+| 115 | [[sessions/session-115\|Keycloak Roles & RBAC Extension]] | NOT STARTED | | Cross: 5 to 9 roles, permissions matrix, route guards |
+
+### Phase 8d — ML Infrastructure & Real-Time (M8)
+
+| Session | Title | Status | Date | Notes |
+|---------|-------|--------|------|-------|
+| 116 | [[sessions/session-116\|ML Infrastructure: Model Registry & Feature Store]] | NOT STARTED | | ML: joblib/h5 versioning, feature store, Celery retrain |
+| 117 | [[sessions/session-117\|Clarke & Wright Savings Algorithm]] | NOT STARTED | | M8: S_ij savings, greedy merge, strategy="cw" |
+| 118 | [[sessions/session-118\|Genetic Algorithm Optimizer]] | NOT STARTED | | M8: OX crossover 0.85, mutation 0.05, 500 gen, strategy="ga" |
+| 119 | [[sessions/session-119\|LSTM Demand Forecasting]] | NOT STARTED | | M8/ML: 336 timesteps, is_ramadan, TensorFlow/Keras |
+| 120 | [[sessions/session-120\|RandomForest Driver Risk Scoring]] | NOT STARTED | | M8/ML: 8 telematics features, penalty scoring, daily Celery |
+| 121 | [[sessions/session-121\|SocketIO Real-Time GPS Streaming]] | NOT STARTED | | M8: <1s latency, 1500+ connections, Redis pub/sub, geofence |
+| 122 | [[sessions/session-122\|Real-Time Operations Frontend]] | NOT STARTED | | M8: Live fleet map, demand forecast, driver risk, alerts |
+| 123 | [[sessions/session-123\|ML Dashboard & Retraining UI]] | NOT STARTED | | ML: Model registry, metrics, feature importance, retrain |
+
+### Phase 8e — Portals, Chatbot & Integration
+
+| Session | Title | Status | Date | Notes |
+|---------|-------|--------|------|-------|
+| 124 | [[sessions/session-124\|Driver Portal (React)]] | NOT STARTED | | M8: Trip assignments, risk score, schedule, conducteur role |
+| 125 | [[sessions/session-125\|Contractor Dashboard (Dash+Plotly)]] | NOT STARTED | | M8: SLA compliance, financial reconciliation, fleet status |
+| 126 | [[sessions/session-126\|Observability Stack]] | NOT STARTED | | Infra: Prometheus, Grafana, Loki, OpenTelemetry |
+| 127 | [[sessions/session-127\|Rasa Chatbot & Final Integration]] | NOT STARTED | | Cross: Chatbot, E2E integration test, 9-role verification |
+
 ---
 
 ## Related Documentation
@@ -181,6 +246,7 @@
 - [[FRONTEND_PAGES]] — Web pages
 - [[MOBILE_PAGES]] — Mobile screens
 - [[ROADMAP]] — Timeline & milestones
+- [[PRD]] — Product Requirements Document v5.0
 - [[sessions/session-replit]] — Replit deployment & refinement notes
 
 ---
