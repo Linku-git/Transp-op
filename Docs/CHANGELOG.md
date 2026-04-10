@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-98] — 2026-04-10
+### Added
+- TechnologiesDashboardPage with 4 tabs (Autonomie, TCO 15 ans, Seuil de Rentabilite, IRVE)
+- RangeCorrectionPanel: profile selectors with real-time corrected range display
+- TCO15YearChart: Recharts stacked area chart showing depreciation/maintenance/energy/financing over 15 years
+- BreakevenChart: diesel vs electric line chart with km_seuil intersection point
+- IRVESizingWizard: 3-step wizard (fleet config, charger selection, cost results)
+- ChargingScheduleTimeline: SOC optimization with ONEE TOU windows visualization
+- Extended sotreg.ts API client with 5 technology endpoint functions
+- TypeScript types for Range, TCO, Breakeven, Charging, IRVE request/response
+- SOTREG sidebar: added Technologies sub-item (/sotreg/technologies)
+- 6 frontend tests (dashboard tabs + 5 component render tests)
+
 ## [Session-97] — 2026-04-10
 ### Added
 - ChargingOptimizer: Qin 2016 SOC=62% departure target with ONEE TOU tariff windows
