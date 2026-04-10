@@ -34,6 +34,14 @@ const OPTIM_GROUP: NavGroup = {
   ],
 };
 
+const SOTREG_GROUP: NavGroup = {
+  key: 'sotreg', label: 'SOTREG', icon: 'analytics',
+  subs: [
+    { key: 'sotreg-diagnostic', path: '/sotreg',              label: 'Diagnostic Flotte', icon: 'monitoring', end: true },
+    { key: 'sotreg-lignes',     path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route' },
+  ],
+};
+
 const OUTILS_GROUP: NavGroup = {
   key: 'outils', label: 'Outils', icon: 'build',
   subs: [
@@ -229,6 +237,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
           <CollapsedGroup group={MASTER_GROUP} pathname={pathname} />
           <CollapsedGroup group={OPTIM_GROUP} pathname={pathname} />
+          <CollapsedGroup group={SOTREG_GROUP} pathname={pathname} />
           <CollapsedGroup group={OUTILS_GROUP} pathname={pathname} />
 
           {(() => {
@@ -310,6 +319,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         <ExpandedGroup group={MASTER_GROUP} pathname={pathname} />
         <ExpandedGroup group={OPTIM_GROUP} pathname={pathname} />
+        <ExpandedGroup group={SOTREG_GROUP} pathname={pathname} />
         <ExpandedGroup group={OUTILS_GROUP} pathname={pathname} />
 
         <NavLink to={SETTINGS_ITEM.path} className={({ isActive }) => itemCls(isActive)}>

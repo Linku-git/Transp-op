@@ -282,6 +282,24 @@ const SIRHSyncDashboardPage = lazy(() =>
   }))
 );
 
+const DiagnosticDashboardPage = lazy(() =>
+  import('@/pages/sotreg/DiagnosticDashboardPage').then((m) => ({
+    default: m.DiagnosticDashboardPage,
+  }))
+);
+
+const LigneListPage = lazy(() =>
+  import('@/pages/sotreg/LigneListPage').then((m) => ({
+    default: m.LigneListPage,
+  }))
+);
+
+const LigneFormPage = lazy(() =>
+  import('@/pages/sotreg/LigneFormPage').then((m) => ({
+    default: m.LigneFormPage,
+  }))
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -695,6 +713,38 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ContentEditPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg',
+        element: (
+          <SuspenseWrapper>
+            <DiagnosticDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/lignes',
+        element: (
+          <SuspenseWrapper>
+            <LigneListPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/lignes/new',
+        element: (
+          <SuspenseWrapper>
+            <LigneFormPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/lignes/:id/edit',
+        element: (
+          <SuspenseWrapper>
+            <LigneFormPage />
           </SuspenseWrapper>
         ),
       },
