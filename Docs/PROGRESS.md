@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 3/35 |
-| **Total (core sessions)** | **127** | | **94/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 4/35 |
+| **Total (core sessions)** | **127** | | **95/127** |
 
 ---
 
@@ -184,7 +184,7 @@
 | 93 | [[sessions/session-93\|Transport Line Model & Context Service]] | COMPLETE | 2026-04-09 | M1: Ligne model (CDC km_annual=D*R*J), FleetContext model, ContextService, 6 CRUD endpoints, 20 tests |
 | 94 | [[sessions/session-94\|ZFE Detection & Gravity Model OD Matrix]] | COMPLETE | 2026-04-09 | M1: ADEME ZFE API + local registry, Wilson 1967 gravity model, OD matrix, geocoding enrichment, 6 endpoints, 35 tests |
 | 95 | [[sessions/session-95\|Diagnostic Frontend Dashboard]] | COMPLETE | 2026-04-10 | M1: DiagnosticDashboard, LigneList/Form, ZFEMapOverlay, ODFlowChart, 15 tests |
-| 96 | [[sessions/session-96\|Range Correction & 15-Year TCO Model]] | NOT STARTED | | M2: k_pente/k_saison/k_vitesse, 15y TCO with financing |
+| 96 | [[sessions/session-96\|Range Correction & 15-Year TCO Model]] | COMPLETE | 2026-04-10 | M2: 3 correction factors, 15y TCO with financing/escalation, breakeven, 35 tests |
 | 97 | [[sessions/session-97\|Demand Charge Optimization & IRVE Sizing]] | NOT STARTED | | M2: SOC=62% charging (Qin 2016), IRVE infrastructure |
 | 98 | [[sessions/session-98\|Technologies Frontend Dashboard]] | NOT STARTED | | M2: Range sliders, TCO 15y chart, breakeven, IRVE wizard |
 | 99 | [[sessions/session-99\|Stop Generation & Capacity Model]] | NOT STARTED | | M3: DBSCAN eps=500m MinPts=5, HCM 2000 M/G/S queuing |

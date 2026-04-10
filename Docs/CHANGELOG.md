@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-96] — 2026-04-10
+### Added
+- RangeCorrectionService: CDC k_pente (1.0-1.6), k_saison (1.0-1.3), k_vitesse (0.95-1.25) lookup tables
+- 15-year TCO calculator with financing costs (simple interest), energy/maintenance escalation, linear depreciation
+- Electrification breakeven formula: km_seuil = delta_CAPEX / delta_OPEX_per_km (~48,500 km CDC reference)
+- Pydantic v2 schemas for range correction, TCO 15-year, and breakeven
+- 3 API endpoints: POST /sotreg/technologies/range-correction, /tco-15year, /breakeven
+- All financial outputs denominated in MAD (Moroccan Dirham)
+- 35 backend tests (factor lookups, range correction, TCO, breakeven)
+
 ## [Session-95] — 2026-04-10
 ### Added
 - DiagnosticDashboardPage: fleet KPIs, ZFE compliance summary, OD flow overview

@@ -363,6 +363,28 @@
 
 ---
 
+## 25. SOTREG — Transport Lines & Diagnostics (27.24)
+
+| Method | Endpoint | Description | Auth | Roles | Session |
+|--------|----------|-------------|------|-------|---------|
+| POST | `/sotreg/lignes/` | Create transport line | Yes | DRH, Admin | 93 |
+| GET | `/sotreg/lignes/` | List lines (filters: service_type, site_id, is_active; pagination) | Yes | DRH, DAF, Admin | 93 |
+| GET | `/sotreg/lignes/{id}` | Get single line | Yes | DRH, DAF, Admin | 93 |
+| PUT | `/sotreg/lignes/{id}` | Update line | Yes | DRH, Admin | 93 |
+| DELETE | `/sotreg/lignes/{id}` | Delete line | Yes | DRH, Admin | 93 |
+| GET | `/sotreg/context/snapshot` | Compute and persist fleet diagnostics | Yes | DRH, DAF, Admin | 93 |
+| POST | `/sotreg/od-matrix/compute` | Compute OD matrix from active lignes using gravity model | Yes | DRH, Admin | 94 |
+| GET | `/sotreg/od-matrix/{ligne_id}` | Get OD matrix entries for a specific ligne | Yes | DRH, DAF, Admin | 94 |
+| GET | `/sotreg/od-matrix` | List all OD matrix entries for the tenant | Yes | DRH, DAF, Admin | 94 |
+| GET | `/sotreg/zfe/lignes` | Batch ZFE compliance check for all active lignes | Yes | DRH, DAF, Admin | 94 |
+| POST | `/sotreg/zfe/check` | Check a single point for ZFE compliance | Yes | DRH, Admin | 94 |
+| POST | `/sotreg/lignes/{ligne_id}/geocode` | Geocode enrichment for a ligne | Yes | DRH, Admin | 94 |
+| POST | `/sotreg/technologies/range-correction` | Compute corrected range with k_pente/k_saison/k_vitesse | Yes | DRH, DAF, Admin | 96 |
+| POST | `/sotreg/technologies/tco-15year` | 15-year TCO with financing, escalation, depreciation | Yes | DRH, DAF, Admin | 96 |
+| POST | `/sotreg/technologies/breakeven` | Electrification breakeven km/year threshold | Yes | DRH, DAF, Admin | 96 |
+
+---
+
 ## WebSocket Endpoints
 
 | Endpoint | Description | Auth | Session |
@@ -372,4 +394,4 @@
 
 ---
 
-## Total Endpoint Count: ~125 endpoints across 24 groups
+## Total Endpoint Count: ~137 endpoints across 25 groups
