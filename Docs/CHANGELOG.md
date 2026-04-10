@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-101] — 2026-04-10
+### Added
+- InfrastructureDashboardPage with 3 tabs (Arrêts, Dépôt, Coûts IRVE)
+- StopGeneratorPanel: DBSCAN parameter form with Google Maps result display
+- StopCapacityTable: HCM capacity analysis with color-coded LOS badges (A-F)
+- DepotLayoutViewer: SVG depot plan with charger positions, parking, maintenance zones
+- IRVECostBreakdown: 7-component cost stacked bar chart with Recharts
+- Extended sotreg.ts API client with stop generation, capacity, depot cost, and layout endpoints
+- TypeScript types for Stop, Depot, and infrastructure response shapes
+- SOTREG sidebar: added Infrastructure sub-item (/sotreg/infrastructure)
+- 5 frontend tests
+
 ## [Session-100] — 2026-04-10
 ### Added
 - IRVECostCalculator: 7-component cost breakdown (hardware, installation, electrical upgrade, transformer, grid connection, civil works, contingency)

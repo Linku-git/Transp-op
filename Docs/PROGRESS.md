@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 8/35 |
-| **Total (core sessions)** | **127** | | **99/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 9/35 |
+| **Total (core sessions)** | **127** | | **100/127** |
 
 ---
 
@@ -189,7 +189,7 @@
 | 98 | [[sessions/session-98\|Technologies Frontend Dashboard]] | COMPLETE | 2026-04-10 | M2: 4-tab dashboard, range/TCO/breakeven/IRVE/charging components, 6 tests |
 | 99 | [[sessions/session-99\|Stop Generation & Capacity Model]] | COMPLETE | 2026-04-10 | M3: DBSCAN stop gen, HCM 2000 capacity, LOS A-F, PostGIS model, 27 tests |
 | 100 | [[sessions/session-100\|IRVE Cost Calculator & Depot Layout]] | COMPLETE | 2026-04-10 | M3: 7-component cost, layout planner, DepotPlan+JSONB, 22 tests |
-| 101 | [[sessions/session-101\|Infrastructure Frontend Dashboard]] | NOT STARTED | | M3: Stop map, capacity table, depot viewer, cost chart |
+| 101 | [[sessions/session-101\|Infrastructure Frontend Dashboard]] | COMPLETE | 2026-04-10 | M3: 3-tab dashboard, stop gen/capacity, depot SVG, cost chart, 5 tests |
 
 ### Phase 8b — Performance & Finance (M4-M5)
 
