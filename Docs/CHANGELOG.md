@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-108] — 2026-04-10
+### Added
+- AdvancedFinanceDashboardPage with 4 tabs (VAN & Payback, Portefeuille, CO2, Supernetwork)
+- NPVWaterfallChart: Recharts waterfall bar chart of year-by-year present values
+- PaybackTimelineChart: cumulative cash flow line with zero-crossing ReferenceLine
+- CO2ValorizationPanel: carbon pricing slider, tCO2 avoided, annual/15-year MAD values
+- EfficientFrontierChart: Recharts scatter with Pareto curve + min-risk/max-return highlights
+- SupernetworkFlowDiagram: SVG network with flow/cost labels and summary cards
+- Extended sotreg.ts API with 7 finance endpoints (NPV, payback, investment-analysis, CO2, portfolio, frontier, supernetwork)
+- TypeScript types for NPV, CO2, Portfolio, Supernetwork request/response
+- SOTREG sidebar: added Finance M5 sub-item (/sotreg/finance)
+- 6 frontend tests
+
 ## [Session-107] — 2026-04-10
 ### Added
 - PortfolioOptimizer: Markowitz mean-variance optimization via scipy SLSQP with non-negativity constraints

@@ -67,6 +67,7 @@
 /sotreg/lignes/:id/edit     -> LigneFormPage (edit mode)
 /sotreg/technologies        -> TechnologiesDashboardPage
 /sotreg/infrastructure      -> InfrastructureDashboardPage
+/sotreg/finance             -> AdvancedFinanceDashboardPage
 ```
 
 ---
@@ -504,6 +505,30 @@
 - Form: charger count, type, contingency slider
 - Recharts stacked bar chart with 7 cost components
 - Cost component cards grid
+
+### SOTREG — Advanced Finance (Session 108)
+
+#### AdvancedFinanceDashboardPage `/sotreg/finance` ✅ Session 108
+- **4 tabs:** VAN & Payback, Portefeuille, CO2, Supernetwork
+- Tab 0: `<NPVWaterfallChart />` + `<PaybackTimelineChart />` stacked
+- Tab 1: `<EfficientFrontierChart />`
+- Tab 2: `<CO2ValorizationPanel />`
+- Tab 3: `<SupernetworkFlowDiagram />`
+
+#### NPVWaterfallChart (Component) ✅ Session 108
+- Cash flows input + discount rate slider, Recharts waterfall bar chart of present values
+
+#### PaybackTimelineChart (Component) ✅ Session 108
+- Cumulative cash flow line chart with zero-crossing ReferenceLine, payback years display
+
+#### CO2ValorizationPanel (Component) ✅ Session 108
+- Carbon pricing slider (50-500 MAD/tCO2), motorization selectors, tCO2/MAD output
+
+#### EfficientFrontierChart (Component) ✅ Session 108
+- Technology inputs, Recharts scatter with Pareto curve, min-risk/max-return highlights
+
+#### SupernetworkFlowDiagram (Component) ✅ Session 108
+- Network link/demand inputs, SVG flow diagram with cost labels, convergence summary
 
 ---
 
