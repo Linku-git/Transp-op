@@ -46,6 +46,7 @@ from app.models.ligne import Ligne
 from app.models.fleet_context import FleetContext
 from app.models.od_matrix import ODMatrix
 from app.models.irve_infrastructure import IRVEInfrastructure
+from app.models.generated_stop import GeneratedStop
 
 __all__ = [
     "BaseModel",
@@ -102,4 +103,5 @@ __all__ = [
     "FleetContext",
     "ODMatrix",
     "IRVEInfrastructure",
+    "GeneratedStop",
 ]

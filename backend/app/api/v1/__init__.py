@@ -56,6 +56,7 @@ from app.api.v1.sotreg_lignes import router as sotreg_lignes_router
 from app.api.v1.sotreg_context import router as sotreg_context_router
 from app.api.v1.sotreg_od import router as sotreg_od_router
 from app.api.v1.sotreg_technologies import router as sotreg_technologies_router
+from app.api.v1.sotreg_stops import router as sotreg_stops_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -113,3 +114,4 @@ api_router.include_router(sotreg_lignes_router, tags=["sotreg"])
 api_router.include_router(sotreg_context_router, tags=["sotreg"])
 api_router.include_router(sotreg_od_router, tags=["sotreg"])
 api_router.include_router(sotreg_technologies_router, tags=["sotreg"])
+api_router.include_router(sotreg_stops_router, tags=["sotreg"])
