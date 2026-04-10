@@ -52,6 +52,10 @@ from app.api.v1.operator_portal import router as operator_portal_router
 from app.api.v1.financial_export import router as financial_export_router
 from app.api.v1.payment import router as payment_router
 from app.api.v1.gdpr import router as gdpr_router
+from app.api.v1.sotreg_lignes import router as sotreg_lignes_router
+from app.api.v1.sotreg_context import router as sotreg_context_router
+from app.api.v1.sotreg_od import router as sotreg_od_router
+from app.api.v1.sotreg_technologies import router as sotreg_technologies_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -105,3 +109,7 @@ api_router.include_router(operator_portal_router, tags=["operator-portal"])
 api_router.include_router(financial_export_router, tags=["financial"])
 api_router.include_router(payment_router, tags=["payment"])
 api_router.include_router(gdpr_router, tags=["rgpd"])
+api_router.include_router(sotreg_lignes_router, tags=["sotreg"])
+api_router.include_router(sotreg_context_router, tags=["sotreg"])
+api_router.include_router(sotreg_od_router, tags=["sotreg"])
+api_router.include_router(sotreg_technologies_router, tags=["sotreg"])
