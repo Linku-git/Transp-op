@@ -53,6 +53,7 @@ from app.models.departure_schedule import DepartureSchedule
 from app.models.telemetry_reading import TelemetryReading
 from app.models.maintenance_alert import MaintenanceAlert
 from app.models.transition_plan import TransitionPlan, TransitionPhase
+from app.models.mcda_scenario import MCDAScenario
 
 __all__ = [
     "BaseModel",
@@ -117,4 +118,5 @@ __all__ = [
     "MaintenanceAlert",
     "TransitionPlan",
     "TransitionPhase",
+    "MCDAScenario",
 ]
