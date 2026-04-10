@@ -424,6 +424,9 @@
 | GET | `/sotreg/roadmap/plan/{id}` | Get single plan | Yes | DRH, DAF, Admin | 110 |
 | GET | `/sotreg/roadmap/plan/{id}/phases` | Get plan phases | Yes | DRH, DAF, Admin | 110 |
 | DELETE | `/sotreg/roadmap/plan/{id}` | Delete plan + phases | Yes | DRH, Admin | 110 |
+| POST | `/sotreg/scoring/mcda` | MCDA 6-criteria weighted sum scoring | Yes | DRH, DAF, Admin | 112 |
+| POST | `/sotreg/scoring/sensitivity` | Sensitivity analysis on MCDA weights | Yes | DRH, DAF, Admin | 112 |
+| POST | `/sotreg/scoring/modal-choice` | McFadden logit modal choice | Yes | DRH, DAF, Admin | 112 |
 
 ---
 

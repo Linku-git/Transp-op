@@ -60,6 +60,7 @@
 | [transition_plan](#transition_plan) | — | 8 | Electrification transition plans |
 | [transition_phase](#transition_phase) | — | 14 | Individual phases within plans |
 | [maintenance_alert](#maintenance_alert) | — | 10 | Predictive maintenance alerts |
+| [mcda_scenario](#mcda_scenario) | — | 6 | MCDA scoring scenarios with JSONB |
 
 ---
 
@@ -1182,6 +1183,23 @@ Individual phase within a transition plan. Created in Session 110.
 | status | varchar(20) | NO | planned | planned/in_progress/completed |
 
 **Indexes:** ix_transition_phase_plan_id, ix_transition_phase_tenant_id
+
+### mcda_scenario
+
+MCDA scoring scenario with JSONB storage. Created in Session 112.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | PK | |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| name | varchar(255) | NO | | Scenario name |
+| alternatives | jsonb | YES | | List of alternative objects |
+| weights | jsonb | YES | | Criteria weights dict |
+| results | jsonb | YES | | Ranked scores and analysis |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_mcda_scenario_tenant_id
 
 ---
 

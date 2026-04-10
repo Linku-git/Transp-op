@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-112] — 2026-04-10
+### Added
+- MCDAService: 6-criteria weighted sum with CDC default weights (CAPEX 0.20, OPEX 0.20, CO2 0.25, risk 0.15, comfort 0.10, maturity 0.10)
+- Normalization: inverse (cost) and direct (benefit) to 1-5 scale
+- Sensitivity analysis: +/-20% weight perturbation, ranking stability scoring
+- McFadden binary/multinomial logit modal choice model
+- MCDAScenario model with JSONB alternatives/weights/results + Alembic migration
+- Pydantic v2 schemas for MCDA, sensitivity, and modal choice
+- 3 API endpoints: POST /scoring/mcda, /sensitivity, /modal-choice
+- 54 backend tests (normalization, scoring, sensitivity, logit)
+
 ## [Session-111] — 2026-04-10
 ### Added
 - RoadmapDashboardPage with 3 tabs (Planification, Budget, Jalons)
