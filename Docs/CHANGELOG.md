@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-110] — 2026-04-10
+### Added
+- TransitionPlan + TransitionPhase SQLAlchemy models with Alembic migration
+- TransitionPlannerService: 3 scenario types (aggressive 5y, moderate 8y, conservative 10y)
+- Phase sequencing: pilot (10%) → scale (40%) → full (50%) with budget constraints
+- Budget allocation: CAPEX_phase = vehicles × (unit_cost + IRVE_cost) per phase
+- Milestone tracking and plan progress computation
+- 5 API endpoints on /sotreg/roadmap/
+- 15 backend tests (9 planning, 4 validation, 2 progress)
+
 ## [Session-109] — 2026-04-10
 ### Added
 - 3 Celery tasks: task_compute_avl_kpis (daily), task_retrain_maintenance_model (weekly), task_compute_fleet_diagnostics (daily)

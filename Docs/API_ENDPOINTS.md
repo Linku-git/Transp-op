@@ -419,6 +419,11 @@
 | POST | `/sotreg/finance/portfolio-optimize` | Markowitz portfolio optimization | Yes | DRH, DAF, Admin | 107 |
 | POST | `/sotreg/finance/efficient-frontier` | Efficient frontier computation | Yes | DRH, DAF, Admin | 107 |
 | POST | `/sotreg/finance/supernetwork-equilibrium` | Frank-Wolfe network equilibrium | Yes | DRH, DAF, Admin | 107 |
+| POST | `/sotreg/roadmap/plan` | Generate electrification transition plan | Yes | DRH, Admin | 110 |
+| GET | `/sotreg/roadmap/plans` | List transition plans | Yes | DRH, DAF, Admin | 110 |
+| GET | `/sotreg/roadmap/plan/{id}` | Get single plan | Yes | DRH, DAF, Admin | 110 |
+| GET | `/sotreg/roadmap/plan/{id}/phases` | Get plan phases | Yes | DRH, DAF, Admin | 110 |
+| DELETE | `/sotreg/roadmap/plan/{id}` | Delete plan + phases | Yes | DRH, Admin | 110 |
 
 ---
 

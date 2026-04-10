@@ -57,6 +57,8 @@
 | [avl_metric](#avl_metric) | — | 13 | AVL-based operational KPI metrics |
 | [departure_schedule](#departure_schedule) | — | 12 | LTO optimized departure schedules |
 | [telemetry_reading](#telemetry_reading) | — | 9 | IoT vehicle sensor telemetry |
+| [transition_plan](#transition_plan) | — | 8 | Electrification transition plans |
+| [transition_phase](#transition_phase) | — | 14 | Individual phases within plans |
 | [maintenance_alert](#maintenance_alert) | — | 10 | Predictive maintenance alerts |
 
 ---
@@ -1141,6 +1143,45 @@ Predictive maintenance alert from IsolationForest anomaly detection. Created in 
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_maintenance_alert_tenant_id, ix_maintenance_alert_vehicle_id, ix_maintenance_alert_severity
+
+### transition_plan
+
+Electrification transition plan with scenario type and budget. Created in Session 110.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | PK | |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| name | varchar(255) | NO | | Plan name |
+| total_budget_mad | float | NO | | Total budget MAD |
+| total_phases | int | NO | 3 | Number of phases |
+| fleet_size | int | NO | | Fleet size |
+| scenario_type | varchar(20) | NO | moderate | aggressive/moderate/conservative |
+| currency | varchar(10) | NO | MAD | |
+
+**Indexes:** ix_transition_plan_tenant_id
+
+### transition_phase
+
+Individual phase within a transition plan. Created in Session 110.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | PK | |
+| tenant_id | uuid | NO | | FK → tenant.id |
+| plan_id | uuid | NO | | FK → transition_plan.id |
+| name | varchar(255) | NO | | Phase name |
+| technology_wave | varchar(20) | NO | | pilot/scale/full |
+| start_year | int | NO | | Start year |
+| end_year | int | NO | | End year |
+| vehicles_to_convert | int | NO | | Vehicles in phase |
+| target_pct_electric | float | NO | | Cumulative % electric |
+| budget_allocated_mad | float | NO | | Phase budget MAD |
+| vehicle_cost_mad | float | NO | 0 | Vehicle CAPEX |
+| infrastructure_cost_mad | float | NO | 0 | IRVE cost |
+| status | varchar(20) | NO | planned | planned/in_progress/completed |
+
+**Indexes:** ix_transition_phase_plan_id, ix_transition_phase_tenant_id
 
 ---
 
