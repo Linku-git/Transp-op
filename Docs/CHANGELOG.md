@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-107] — 2026-04-10
+### Added
+- PortfolioOptimizer: Markowitz mean-variance optimization via scipy SLSQP with non-negativity constraints
+- Efficient frontier computation (Pareto-optimal portfolios from min-risk to max-return)
+- Minimum variance portfolio, Sharpe ratio (rf=BAM 3%), technology weights
+- SupernetworkEquilibrium: Frank-Wolfe algorithm with BPR link cost function
+- Multimodal equilibrium extension with logit mode split
+- Extended finance_advanced.py schemas with portfolio and network types
+- 3 new API endpoints: POST /portfolio-optimize, /efficient-frontier, /supernetwork-equilibrium
+- 17 backend tests (12 portfolio optimizer, 6 supernetwork)
+
 ## [Session-106] — 2026-04-10
 ### Added
 - NPVCalculator: VAN = sum(CF_t/(1+r)^t) with Decimal precision, IRR via scipy.optimize.brentq, payback period with interpolation

@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 13/35 |
-| **Total (core sessions)** | **127** | | **104/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 14/35 |
+| **Total (core sessions)** | **127** | | **105/127** |
 
 ---
 
@@ -200,7 +200,7 @@
 | 104 | [[sessions/session-104\|IoT Telemetry Pipeline & Predictive Maintenance]] | COMPLETE | 2026-04-10 | M4: Webhook ingestion, IsolationForest, maintenance alerts |
 | 105 | [[sessions/session-105\|Performance Frontend Dashboard]] | NOT STARTED | | M4: OTP gauge, headway chart, telemetry, maintenance |
 | 106 | [[sessions/session-106\|NPV & CO2 Externalities Valorization]] | COMPLETE | 2026-04-10 | M5: VAN, IRR, CO2 monetization, carbon price MAD |
-| 107 | [[sessions/session-107\|Markowitz Portfolio & Supernetwork Equilibrium]] | NOT STARTED | | M5: Mean-variance optimization, Frank-Wolfe algorithm |
+| 107 | [[sessions/session-107\|Markowitz Portfolio & Supernetwork Equilibrium]] | COMPLETE | 2026-04-10 | M5: Mean-variance optimization, Frank-Wolfe algorithm |
 | 108 | [[sessions/session-108\|Advanced Finance Frontend Dashboard]] | NOT STARTED | | M5: NPV waterfall, efficient frontier, CO2 panel |
 | 109 | [[sessions/session-109\|Celery Tasks & MAD Currency Calibration]] | NOT STARTED | | Cross: Celery beat, MAD calibration, SOTREG seed data |
 

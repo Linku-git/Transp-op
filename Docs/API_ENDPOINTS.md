@@ -416,6 +416,9 @@
 | POST | `/sotreg/finance/investment-analysis` | Full NPV + IRR + payback | Yes | DRH, DAF, Admin | 106 |
 | POST | `/sotreg/finance/co2-valorization` | Monetize avoided CO2 | Yes | DRH, DAF, Admin | 106 |
 | POST | `/sotreg/finance/co2-savings-npv` | NPV of CO2 savings over time | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/portfolio-optimize` | Markowitz portfolio optimization | Yes | DRH, DAF, Admin | 107 |
+| POST | `/sotreg/finance/efficient-frontier` | Efficient frontier computation | Yes | DRH, DAF, Admin | 107 |
+| POST | `/sotreg/finance/supernetwork-equilibrium` | Frank-Wolfe network equilibrium | Yes | DRH, DAF, Admin | 107 |
 
 ---
 
