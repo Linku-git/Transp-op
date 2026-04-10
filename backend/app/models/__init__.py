@@ -42,6 +42,10 @@ from app.models.sync_log import SyncLog
 from app.models.sync_conflict import SyncConflict
 from app.models.operator import Operator
 from app.models.sizing_plan_export import SizingPlanExport
+from app.models.ligne import Ligne
+from app.models.fleet_context import FleetContext
+from app.models.od_matrix import ODMatrix
+from app.models.irve_infrastructure import IRVEInfrastructure
 
 __all__ = [
     "BaseModel",
@@ -94,4 +98,8 @@ __all__ = [
     "SyncConflict",
     "Operator",
     "SizingPlanExport",
+    "Ligne",
+    "FleetContext",
+    "ODMatrix",
+    "IRVEInfrastructure",
 ]

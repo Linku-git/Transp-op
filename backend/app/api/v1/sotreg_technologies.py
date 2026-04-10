@@ -1,11 +1,24 @@
 from __future__ import annotations
 
 import logging
+import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.database import get_db
 from app.middleware.rbac import require_role
 from app.models.auth import User
+from app.models.irve_infrastructure import IRVEInfrastructure
+from app.schemas.irve import (
+    ChargingOptimizationRequest,
+    ChargingOptimizationResponse,
+    IRVEInfrastructureCreate,
+    IRVEInfrastructureResponse,
+    IRVESizingRequest,
+    IRVESizingResponse,
+)
 from app.schemas.technology import (
     BreakevenRequest,
     BreakevenResponse,
@@ -13,6 +26,10 @@ from app.schemas.technology import (
     RangeCorrectionResponse,
     TCO15YearRequest,
     TCO15YearResponse,
+)
+from app.services.sotreg.charging_optimizer import (
+    compute_charging_schedule,
+    compute_irve_sizing,
 )
 from app.services.sotreg.range_correction import (
     compute_corrected_range,
@@ -43,7 +60,7 @@ async def range_correction(
         vitesse_profile=body.vitesse_profile,
     )
     logger.info(
-        "Range correction computed: %.1f km → %.1f km (factor=%.3f) by user %s",
+        "Range correction computed: %.1f km -> %.1f km (factor=%.3f) by user %s",
         body.nominal_range_km,
         result["corrected_range_km"],
         result["correction_factor"],
@@ -112,3 +129,163 @@ async def breakeven(
         current_user.id,
     )
     return BreakevenResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/technologies/charging-optimization
+# ---------------------------------------------------------------------------
+
+
+@router.post("/charging-optimization", response_model=ChargingOptimizationResponse)
+async def charging_optimization(
+    body: ChargingOptimizationRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> ChargingOptimizationResponse:
+    """Compute optimal charging schedule with Qin 2016 SOC=62% target."""
+    result = compute_charging_schedule(
+        battery_capacity_kwh=body.battery_capacity_kwh,
+        current_soc_pct=body.current_soc_pct,
+        target_soc_pct=body.target_soc_pct,
+        charger_power_kw=body.charger_power_kw,
+        departure_hour=body.departure_hour,
+        arrival_hour=body.arrival_hour,
+        currency=body.currency,
+    )
+    logger.info(
+        "Charging optimization: SOC %.0f%% -> %.0f%%, %.1f kWh, cost %.2f MAD by user %s",
+        body.current_soc_pct,
+        body.target_soc_pct,
+        result["energy_needed_kwh"],
+        result["total_energy_cost_mad"],
+        current_user.id,
+    )
+    return ChargingOptimizationResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/technologies/irve-sizing
+# ---------------------------------------------------------------------------
+
+
+@router.post("/irve-sizing", response_model=IRVESizingResponse)
+async def irve_sizing(
+    body: IRVESizingRequest,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+) -> IRVESizingResponse:
+    """Compute IRVE infrastructure sizing for a given fleet."""
+    result = compute_irve_sizing(
+        fleet_size=body.fleet_size,
+        daily_km_per_vehicle=body.daily_km_per_vehicle,
+        battery_capacity_kwh=body.battery_capacity_kwh,
+        energy_consumption_kwh_per_km=body.energy_consumption_kwh_per_km,
+        charging_window_hours=body.charging_window_hours,
+        charger_utilization_target=body.charger_utilization_target,
+        preferred_charger_type=body.preferred_charger_type,
+        currency=body.currency,
+    )
+    logger.info(
+        "IRVE sizing: %d chargers (%s), %.0f kW total, CAPEX %.0f MAD by user %s",
+        result["charger_count"],
+        result["charger_type"],
+        result["total_installed_power_kw"],
+        result["total_capex_mad"],
+        current_user.id,
+    )
+    return IRVESizingResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# IRVE Infrastructure CRUD
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/irve",
+    response_model=IRVEInfrastructureResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_irve(
+    body: IRVEInfrastructureCreate,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> IRVEInfrastructure:
+    """Create a new IRVE infrastructure record."""
+    irve = IRVEInfrastructure(
+        tenant_id=current_user.tenant_id,
+        site_id=body.site_id,
+        charger_type=body.charger_type,
+        charger_count=body.charger_count,
+        power_per_charger_kw=body.power_per_charger_kw,
+        total_installed_power_kw=body.total_installed_power_kw,
+        hardware_cost_mad=body.hardware_cost_mad,
+        installation_cost_mad=body.installation_cost_mad,
+        transformer_cost_mad=body.transformer_cost_mad,
+        grid_connection_cost_mad=body.grid_connection_cost_mad,
+        total_capex_mad=body.total_capex_mad,
+        annual_electricity_cost_mad=body.annual_electricity_cost_mad,
+        fleet_size=body.fleet_size,
+        daily_km_per_vehicle=body.daily_km_per_vehicle,
+        battery_capacity_kwh=body.battery_capacity_kwh,
+    )
+    db.add(irve)
+    await db.flush()
+    await db.refresh(irve)
+    logger.info("IRVE %s created by user %s", irve.id, current_user.id)
+    return irve
+
+
+@router.get("/irve", response_model=list[IRVEInfrastructureResponse])
+async def list_irve(
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> list[IRVEInfrastructure]:
+    """List all IRVE infrastructure records for the tenant."""
+    stmt = (
+        select(IRVEInfrastructure)
+        .where(IRVEInfrastructure.tenant_id == current_user.tenant_id)
+        .order_by(IRVEInfrastructure.created_at.desc())
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+
+@router.get("/irve/{irve_id}", response_model=IRVEInfrastructureResponse)
+async def get_irve(
+    irve_id: uuid.UUID,
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> IRVEInfrastructure:
+    """Get a single IRVE infrastructure record."""
+    stmt = select(IRVEInfrastructure).where(
+        IRVEInfrastructure.id == irve_id,
+        IRVEInfrastructure.tenant_id == current_user.tenant_id,
+    )
+    irve = (await db.execute(stmt)).scalar_one_or_none()
+    if irve is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="IRVE infrastructure not found",
+        )
+    return irve
+
+
+@router.delete("/irve/{irve_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_irve(
+    irve_id: uuid.UUID,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    """Delete an IRVE infrastructure record."""
+    stmt = select(IRVEInfrastructure).where(
+        IRVEInfrastructure.id == irve_id,
+        IRVEInfrastructure.tenant_id == current_user.tenant_id,
+    )
+    irve = (await db.execute(stmt)).scalar_one_or_none()
+    if irve is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="IRVE infrastructure not found",
+        )
+    await db.delete(irve)
+    await db.flush()
+    logger.info("IRVE %s deleted by user %s", irve_id, current_user.id)
