@@ -49,6 +49,7 @@ from app.models.irve_infrastructure import IRVEInfrastructure
 from app.models.generated_stop import GeneratedStop
 from app.models.depot_plan import DepotPlan
 from app.models.avl_metric import AVLMetric
+from app.models.departure_schedule import DepartureSchedule
 
 __all__ = [
     "BaseModel",
@@ -108,4 +109,5 @@ __all__ = [
     "GeneratedStop",
     "DepotPlan",
     "AVLMetric",
+    "DepartureSchedule",
 ]

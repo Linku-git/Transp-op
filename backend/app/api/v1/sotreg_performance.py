@@ -14,6 +14,16 @@ from app.database import get_db
 from app.middleware.rbac import require_role
 from app.models.auth import User
 from app.models.avl_metric import AVLMetric
+from app.models.departure_schedule import DepartureSchedule
+from app.schemas.departure_schedule import (
+    DepartureScheduleResponse,
+    LTOApplyRequest,
+    LTOOptimizeRequest,
+    LTOOptimizeResponse,
+    OptimizedDeparture,
+    OptimizationResult,
+    PlatooningCheck,
+)
 from app.schemas.avl_metric import (
     AVLMetricListMeta,
     AVLMetricListResponse,
@@ -29,6 +39,7 @@ from app.services.sotreg.avl_kpi_service import (
     compute_load_factor,
     compute_otp,
 )
+from app.services.sotreg.lto_service import compute_lto_schedule
 
 logger = logging.getLogger(__name__)
 
@@ -268,3 +279,139 @@ async def get_ligne_kpis(
         data=[AVLMetricResponse.model_validate(m) for m in metrics],
         meta=AVLMetricListMeta(page=page, pages=pages, total=total, page_size=page_size),
     )
+
+
+# ---------------------------------------------------------------------------
+# POST /sotreg/performance/lto/optimize — run LTO optimization
+# ---------------------------------------------------------------------------
+
+
+@router.post("/lto/optimize", response_model=LTOOptimizeResponse)
+async def lto_optimize(
+    body: LTOOptimizeRequest,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> LTOOptimizeResponse:
+    """Run Leave Time Optimization for a ligne."""
+    departures_data = [
+        {
+            "vehicle_id": d.vehicle_id,
+            "scheduled_departure": d.scheduled_departure,
+            "actual_departure": d.actual_departure,
+        }
+        for d in body.departures
+    ]
+
+    result = compute_lto_schedule(
+        ligne_departures=departures_data,
+        target_headway_seconds=body.target_headway_seconds,
+        min_headway_seconds=body.min_headway_seconds,
+        max_offset_seconds=body.max_offset_seconds,
+    )
+
+    run_id = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    for entry in result.get("schedule", []):
+        ds = DepartureSchedule(
+            tenant_id=current_user.tenant_id,
+            ligne_id=body.ligne_id,
+            vehicle_id=uuid.UUID(entry["vehicle_id"]) if entry.get("vehicle_id") else None,
+            scheduled_departure=datetime.fromisoformat(entry["scheduled_departure"]),
+            optimized_departure=datetime.fromisoformat(entry["optimized_departure"]),
+            offset_seconds=entry["offset_seconds"],
+            schedule_date=body.departures[0].scheduled_departure.date() if body.departures else date.today(),
+            optimization_run_id=run_id,
+        )
+        db.add(ds)
+
+    await db.flush()
+
+    pc = result["platooning_check"]
+    opt = result.get("optimization_result")
+
+    logger.info(
+        "LTO optimize: ligne=%s, needs=%s, cov=%.3f by user %s",
+        body.ligne_id,
+        result["needs_optimization"],
+        pc["cov_headway"],
+        current_user.id,
+    )
+
+    return LTOOptimizeResponse(
+        needs_optimization=result["needs_optimization"],
+        platooning_check=PlatooningCheck(**pc),
+        schedule=[OptimizedDeparture(**s) for s in result.get("schedule", [])],
+        optimization_result=OptimizationResult(**opt) if opt else None,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /sotreg/performance/lto/schedule/{ligne_id}
+# ---------------------------------------------------------------------------
+
+
+@router.get("/lto/schedule/{ligne_id}", response_model=list[DepartureScheduleResponse])
+async def get_lto_schedule(
+    ligne_id: uuid.UUID,
+    schedule_date: date | None = Query(default=None),
+    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    db: AsyncSession = Depends(get_db),
+) -> list[DepartureSchedule]:
+    """Get optimized departure schedule for a ligne."""
+    conditions = [
+        DepartureSchedule.tenant_id == current_user.tenant_id,
+        DepartureSchedule.ligne_id == ligne_id,
+    ]
+    if schedule_date is not None:
+        conditions.append(DepartureSchedule.schedule_date == schedule_date)
+
+    stmt = (
+        select(DepartureSchedule)
+        .where(*conditions)
+        .order_by(DepartureSchedule.scheduled_departure.asc())
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+
+# ---------------------------------------------------------------------------
+# PUT /sotreg/performance/lto/apply
+# ---------------------------------------------------------------------------
+
+
+@router.put("/lto/apply", status_code=status.HTTP_200_OK)
+async def apply_lto_schedule(
+    body: LTOApplyRequest,
+    current_user: User = Depends(require_role("admin", "drh")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Mark the latest optimized schedule as applied."""
+    conditions = [
+        DepartureSchedule.tenant_id == current_user.tenant_id,
+        DepartureSchedule.ligne_id == body.ligne_id,
+        DepartureSchedule.schedule_date == body.schedule_date,
+        DepartureSchedule.is_applied == False,  # noqa: E712
+    ]
+    stmt = select(DepartureSchedule).where(*conditions)
+    result = await db.execute(stmt)
+    schedules = list(result.scalars().all())
+
+    if not schedules:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No unapplied schedule found for this ligne and date",
+        )
+
+    for s in schedules:
+        s.is_applied = True
+
+    await db.flush()
+
+    logger.info(
+        "LTO schedule applied: %d entries for ligne=%s date=%s by user %s",
+        len(schedules),
+        body.ligne_id,
+        body.schedule_date,
+        current_user.id,
+    )
+
+    return {"applied_count": len(schedules), "ligne_id": str(body.ligne_id), "date": str(body.schedule_date)}
