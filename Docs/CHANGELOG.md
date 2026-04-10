@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-99] — 2026-04-10
+### Added
+- StopGenerator: DBSCAN clustering (eps=500m, min_pts=5) from employee GPS for candidate stop locations
+- StopCapacity: HCM 2000 capacity formula Bs = N×3600×(g/C)/[tc+td×(g/C)+Z×cv×td]
+- LOS grading A-F (free flow → over capacity) with M/G/1 queuing wait estimation
+- Full stop analysis combining capacity, LOS, and recommendations
+- GeneratedStop SQLAlchemy model with PostGIS geom, berth_count, LOS fields + Alembic migration
+- Pydantic v2 schemas for stop generation, capacity analysis, and CRUD
+- 6 API endpoints: POST generate, POST capacity, CRUD on /sotreg/stops/
+- 27 backend tests (9 DBSCAN, 7 HCM capacity, 9 LOS, 2 analysis)
+
 ## [Session-98] — 2026-04-10
 ### Added
 - TechnologiesDashboardPage with 4 tabs (Autonomie, TCO 15 ans, Seuil de Rentabilite, IRVE)

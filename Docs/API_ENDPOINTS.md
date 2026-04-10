@@ -388,6 +388,12 @@
 | GET | `/sotreg/technologies/irve` | List IRVE infrastructure records | Yes | DRH, DAF, Admin | 97 |
 | GET | `/sotreg/technologies/irve/{id}` | Get single IRVE record | Yes | DRH, DAF, Admin | 97 |
 | DELETE | `/sotreg/technologies/irve/{id}` | Delete IRVE record | Yes | DRH, Admin | 97 |
+| POST | `/sotreg/stops/generate` | Generate stops from employees via DBSCAN | Yes | DRH, Admin | 99 |
+| POST | `/sotreg/stops/capacity` | HCM 2000 stop capacity analysis | Yes | DRH, DAF, Admin | 99 |
+| POST | `/sotreg/stops/` | Create manual stop | Yes | DRH, Admin | 99 |
+| GET | `/sotreg/stops/` | List generated stops | Yes | DRH, DAF, Admin | 99 |
+| GET | `/sotreg/stops/{id}` | Get single stop | Yes | DRH, DAF, Admin | 99 |
+| DELETE | `/sotreg/stops/{id}` | Delete stop | Yes | DRH, Admin | 99 |
 
 ---
 
