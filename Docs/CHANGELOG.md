@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-100] — 2026-04-10
+### Added
+- IRVECostCalculator: 7-component cost breakdown (hardware, installation, electrical upgrade, transformer, grid connection, civil works, contingency)
+- DepotLayoutPlanner: area allocation (charging, parking, maintenance, circulation) with charger bay positions
+- DepotPlan SQLAlchemy model with JSONB cost_breakdown + Alembic migration
+- Pydantic v2 schemas for cost estimate, layout plan, and CRUD
+- 6 API endpoints on /sotreg/depot/: cost-estimate, layout-plan, plans CRUD
+- Moroccan market pricing for AC/DC chargers
+- 22 backend tests (10 cost breakdown, 12 layout calculations)
+
 ## [Session-99] — 2026-04-10
 ### Added
 - StopGenerator: DBSCAN clustering (eps=500m, min_pts=5) from employee GPS for candidate stop locations

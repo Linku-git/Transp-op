@@ -394,6 +394,12 @@
 | GET | `/sotreg/stops/` | List generated stops | Yes | DRH, DAF, Admin | 99 |
 | GET | `/sotreg/stops/{id}` | Get single stop | Yes | DRH, DAF, Admin | 99 |
 | DELETE | `/sotreg/stops/{id}` | Delete stop | Yes | DRH, Admin | 99 |
+| POST | `/sotreg/depot/cost-estimate` | Depot electrification 7-component cost | Yes | DRH, DAF, Admin | 100 |
+| POST | `/sotreg/depot/layout-plan` | Depot layout with charger positions | Yes | DRH, DAF, Admin | 100 |
+| POST | `/sotreg/depot/plans` | Create depot plan | Yes | DRH, Admin | 100 |
+| GET | `/sotreg/depot/plans` | List depot plans | Yes | DRH, DAF, Admin | 100 |
+| GET | `/sotreg/depot/plans/{id}` | Get single depot plan | Yes | DRH, DAF, Admin | 100 |
+| DELETE | `/sotreg/depot/plans/{id}` | Delete depot plan | Yes | DRH, Admin | 100 |
 
 ---
 
