@@ -410,6 +410,12 @@
 | GET | `/sotreg/telemetry/alerts` | List maintenance alerts (filtered) | Yes | DRH, DAF, Admin | 104 |
 | GET | `/sotreg/telemetry/alerts/{vehicle_id}` | Vehicle-specific alerts | Yes | DRH, DAF, Admin | 104 |
 | PUT | `/sotreg/telemetry/alerts/{id}/acknowledge` | Acknowledge alert | Yes | DRH, Admin | 104 |
+| POST | `/sotreg/finance/npv` | Compute NPV from cash flows | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/irr` | Compute IRR for investment | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/payback` | Compute payback period | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/investment-analysis` | Full NPV + IRR + payback | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/co2-valorization` | Monetize avoided CO2 | Yes | DRH, DAF, Admin | 106 |
+| POST | `/sotreg/finance/co2-savings-npv` | NPV of CO2 savings over time | Yes | DRH, DAF, Admin | 106 |
 
 ---
 

@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-106] — 2026-04-10
+### Added
+- NPVCalculator: VAN = sum(CF_t/(1+r)^t) with Decimal precision, IRR via scipy.optimize.brentq, payback period with interpolation
+- CO2ExternalitiesService: emission factors by motorization, grid factor for electric (ONEE 0.72 kgCO2/kWh)
+- Carbon pricing at 200 MAD/tCO2 (configurable) with annual escalation model
+- CO2 savings NPV over configurable horizon with discounting
+- Full investment analysis combining NPV + IRR + payback
+- BAM base rate (3%) as default discount rate reference
+- Pydantic v2 schemas for NPV, IRR, payback, CO2, and investment analysis
+- 6 API endpoints on /sotreg/finance/: npv, irr, payback, investment-analysis, co2-valorization, co2-savings-npv
+- 25 backend tests (16 NPV/IRR/payback, 9 CO2 valorization)
+
 ## [Session-104] — 2026-04-10
 ### Added
 - TelemetryReading model: vehicle sensor data (vibration/temp/pressure/can_bus/battery/rpm/speed) with JSONB metadata
