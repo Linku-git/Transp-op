@@ -29,6 +29,18 @@ import type {
   DepotCostEstimateResponse,
   DepotLayoutRequest,
   DepotLayoutResponse,
+  NPVRequest,
+  NPVResponse,
+  InvestmentAnalysisResponse,
+  CO2ValorizationRequest,
+  CO2ValorizationResponse,
+  PortfolioOptimizeRequest,
+  PortfolioOptimizeResponse,
+  EfficientFrontierResponse,
+  SupernetworkLink,
+  SupernetworkDemand,
+  SupernetworkResponse,
+  PaybackResponse,
 } from '../types/sotreg';
 
 const LIGNES = '/api/v1/sotreg/lignes';
@@ -195,5 +207,58 @@ export const computeDepotLayout = async (
   data: DepotLayoutRequest,
 ): Promise<DepotLayoutResponse> => {
   const response = await api.post<DepotLayoutResponse>(`${DEPOT}/layout-plan`, data);
+  return response.data;
+};
+
+/* ── Finance (M5) ────────────────────────────────────────────────────────── */
+
+const FINANCE = '/api/v1/sotreg/finance';
+
+export const computeNPV = async (
+  data: NPVRequest,
+): Promise<NPVResponse> => {
+  const response = await api.post<NPVResponse>(`${FINANCE}/npv`, data);
+  return response.data;
+};
+
+export const computeInvestmentAnalysis = async (
+  data: { cash_flows: number[]; discount_rate?: number; currency?: string },
+): Promise<InvestmentAnalysisResponse> => {
+  const response = await api.post<InvestmentAnalysisResponse>(`${FINANCE}/investment-analysis`, data);
+  return response.data;
+};
+
+export const computePayback = async (
+  data: { cash_flows: number[]; currency?: string },
+): Promise<PaybackResponse> => {
+  const response = await api.post<PaybackResponse>(`${FINANCE}/payback`, data);
+  return response.data;
+};
+
+export const computeCO2Valorization = async (
+  data: CO2ValorizationRequest,
+): Promise<CO2ValorizationResponse> => {
+  const response = await api.post<CO2ValorizationResponse>(`${FINANCE}/co2-valorization`, data);
+  return response.data;
+};
+
+export const computePortfolioOptimize = async (
+  data: PortfolioOptimizeRequest,
+): Promise<PortfolioOptimizeResponse> => {
+  const response = await api.post<PortfolioOptimizeResponse>(`${FINANCE}/portfolio-optimize`, data);
+  return response.data;
+};
+
+export const computeEfficientFrontier = async (
+  data: { expected_returns: number[]; covariance_matrix: number[][]; n_points?: number; technology_names?: string[] },
+): Promise<EfficientFrontierResponse> => {
+  const response = await api.post<EfficientFrontierResponse>(`${FINANCE}/efficient-frontier`, data);
+  return response.data;
+};
+
+export const computeSupernetworkEquilibrium = async (
+  data: { links: SupernetworkLink[]; od_demands: SupernetworkDemand[]; max_iterations?: number; tolerance?: number },
+): Promise<SupernetworkResponse> => {
+  const response = await api.post<SupernetworkResponse>(`${FINANCE}/supernetwork-equilibrium`, data);
   return response.data;
 };

@@ -483,3 +483,116 @@ export const MOTORIZATION_LABELS: Record<string, string> = {
   hybride: 'Hybride',
   gnv: 'GNV',
 };
+
+/* ── NPV & Finance (M5) ─────────────────────────────────────────────────── */
+
+export interface NPVRequest {
+  cash_flows: number[];
+  discount_rate?: number;
+  currency?: string;
+}
+
+export interface NPVResponse {
+  npv: number;
+  discount_rate: number;
+  cash_flow_count: number;
+  present_values: number[];
+  is_viable: boolean;
+  currency: string;
+}
+
+export interface PaybackResponse {
+  payback_years: number | null;
+  cumulative_flows: number[];
+  total_investment: number;
+  total_return: number;
+  currency: string;
+}
+
+export interface InvestmentAnalysisResponse {
+  npv: Record<string, unknown>;
+  irr: Record<string, unknown>;
+  payback: Record<string, unknown>;
+}
+
+export interface CO2ValorizationRequest {
+  fleet_annual_km: number;
+  current_motorization?: string;
+  target_motorization?: string;
+  carbon_price_mad_tco2?: number;
+  vehicle_count?: number;
+  energy_consumption_kwh_per_km?: number;
+  currency?: string;
+}
+
+export interface CO2ValorizationResponse {
+  current_emissions_tco2: number;
+  target_emissions_tco2: number;
+  avoided_emissions_tco2: number;
+  carbon_price_mad_tco2: number;
+  valorization_mad: number;
+  valorization_15year_mad: number;
+  fleet_annual_km: number;
+  vehicle_count: number;
+  current_motorization: string;
+  target_motorization: string;
+  currency: string;
+}
+
+export interface PortfolioOptimizeRequest {
+  expected_returns: number[];
+  covariance_matrix: number[][];
+  risk_aversion?: number;
+  technology_names?: string[];
+}
+
+export interface PortfolioResult {
+  expected_return: number;
+  risk: number;
+  weights: number[];
+}
+
+export interface PortfolioOptimizeResponse {
+  weights: number[];
+  expected_return: number;
+  portfolio_variance: number;
+  portfolio_std: number;
+  sharpe_ratio: number;
+  technology_names: string[];
+  risk_aversion: number;
+}
+
+export interface EfficientFrontierResponse {
+  frontier: PortfolioResult[];
+  min_risk_portfolio: PortfolioResult;
+  max_return_portfolio: PortfolioResult;
+  technology_names: string[];
+}
+
+export interface SupernetworkLink {
+  from_node: number;
+  to_node: number;
+  free_flow_cost: number;
+  capacity: number;
+}
+
+export interface SupernetworkDemand {
+  origin: number;
+  destination: number;
+  demand: number;
+}
+
+export interface LinkFlow {
+  from_node: number;
+  to_node: number;
+  flow: number;
+  cost: number;
+}
+
+export interface SupernetworkResponse {
+  link_flows: LinkFlow[];
+  total_system_cost: number;
+  iterations: number;
+  converged: boolean;
+  gap: number;
+}

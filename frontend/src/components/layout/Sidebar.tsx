@@ -41,6 +41,7 @@ const SOTREG_GROUP: NavGroup = {
     { key: 'sotreg-lignes',       path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route' },
     { key: 'sotreg-technologies', path: '/sotreg/technologies', label: 'Technologies',      icon: 'ev_station' },
     { key: 'sotreg-infra',         path: '/sotreg/infrastructure', label: 'Infrastructure',  icon: 'domain' },
+    { key: 'sotreg-finance',       path: '/sotreg/finance',         label: 'Finance M5',      icon: 'account_balance' },
   ],
 };
 

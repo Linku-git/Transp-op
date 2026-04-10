@@ -312,6 +312,12 @@ const InfrastructureDashboardPage = lazy(() =>
   }))
 );
 
+const AdvancedFinanceDashboardPage = lazy(() =>
+  import('@/pages/sotreg/AdvancedFinanceDashboardPage').then((m) => ({
+    default: m.AdvancedFinanceDashboardPage,
+  }))
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -773,6 +779,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <InfrastructureDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/finance',
+        element: (
+          <SuspenseWrapper>
+            <AdvancedFinanceDashboardPage />
           </SuspenseWrapper>
         ),
       },
