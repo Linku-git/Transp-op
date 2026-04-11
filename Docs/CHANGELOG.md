@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-117] — 2026-04-11
+### Added
+- Clarke & Wright (1964) savings algorithm for CVRP
+- Sequential merge variant (one merge per savings iteration)
+- Parallel merge variant (multiple non-conflicting merges per iteration)
+- Unified solve_cvrp_cw() interface with variant selection
+- Benchmark utility comparing CW vs OR-Tools (distance, time, vehicles)
+- CWSolution dataclass with routes, total_distance, num_vehicles, computation_time
+- 28 tests covering savings computation, capacity enforcement, edge cases
+
 ## [Session-116] — 2026-04-11
 ### Added
 - MLModel table for versioned ML model registry (joblib serialization)

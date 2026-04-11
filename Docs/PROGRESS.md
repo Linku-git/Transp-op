@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 23/35 |
-| **Total (core sessions)** | **127** | | **114/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 24/35 |
+| **Total (core sessions)** | **127** | | **115/127** |
 
 ---
 
@@ -220,7 +220,7 @@
 | Session | Title | Status | Date | Notes |
 |---------|-------|--------|------|-------|
 | 116 | [[sessions/session-116\|ML Infrastructure: Model Registry & Feature Store]] | COMPLETE | 2026-04-11 | ML: joblib/h5 versioning, feature store, Celery retrain, 35 tests |
-| 117 | [[sessions/session-117\|Clarke & Wright Savings Algorithm]] | NOT STARTED | | M8: S_ij savings, greedy merge, strategy="cw" |
+| 117 | [[sessions/session-117\|Clarke & Wright Savings Algorithm]] | COMPLETE | 2026-04-11 | M8: S_ij savings, greedy merge, strategy="cw", 28 tests |
 | 118 | [[sessions/session-118\|Genetic Algorithm Optimizer]] | NOT STARTED | | M8: OX crossover 0.85, mutation 0.05, 500 gen, strategy="ga" |
 | 119 | [[sessions/session-119\|LSTM Demand Forecasting]] | NOT STARTED | | M8/ML: 336 timesteps, is_ramadan, TensorFlow/Keras |
 | 120 | [[sessions/session-120\|RandomForest Driver Risk Scoring]] | NOT STARTED | | M8/ML: 8 telematics features, penalty scoring, daily Celery |
