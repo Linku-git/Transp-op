@@ -365,6 +365,19 @@
 
 ## 25. SOTREG — Transport Lines & Diagnostics (27.24)
 
+> **RBAC Note (Session 115):** All `/sotreg/*` endpoints enforce module-level role guards via `require_module()` middleware. The access matrix is:
+>
+> | Module | Endpoints | Allowed Roles |
+> |--------|-----------|---------------|
+> | M1 (Diagnostic, Lignes, OD) | `/sotreg/lignes/*`, `/sotreg/context/*`, `/sotreg/od-matrix/*`, `/sotreg/zfe/*` | admin, drh, responsable_exploitation |
+> | M2 (Technologies) | `/sotreg/technologies/*` | admin, drh, daf, responsable_parc |
+> | M3 (Infrastructure, Stops, Depot) | `/sotreg/stops/*`, `/sotreg/depot/*` | admin, drh, responsable_parc |
+> | M4 (Performance, Telemetry) | `/sotreg/performance/*`, `/sotreg/telemetry/*` | admin, drh, responsable_parc, responsable_exploitation |
+> | M5 (Finance) | `/sotreg/finance/*` | admin, drh, daf |
+> | M6 (Roadmap) | `/sotreg/roadmap/*` | admin, drh, daf |
+> | M7 (Scoring) | `/sotreg/scoring/*` | admin, drh, daf |
+> | M8 (Real-time) | _(future sessions)_ | admin, responsable_exploitation, conducteur |
+
 | Method | Endpoint | Description | Auth | Roles | Session |
 |--------|----------|-------------|------|-------|---------|
 | POST | `/sotreg/lignes/` | Create transport line | Yes | DRH, Admin | 93 |

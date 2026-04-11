@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-115] — 2026-04-11
+### Added
+- 4 new roles: responsable_parc, responsable_exploitation, prestataire, conducteur
+- SOTREG module-level role guards (M1-M8 access matrix)
+- require_module() RBAC middleware function
+- Role permissions configuration (rbac_config.py)
+- Alembic migration to seed new roles
+- Role-based Sidebar navigation filtering
+- RoleManagementPage admin panel with 9-role display
+- 27 tests (16 backend RBAC + 11 frontend)
+### Changed
+- Updated 8 SOTREG endpoint files with new role guards
+- Sidebar now filters navigation by user role
+- UserRole TypeScript type extended to 9 roles
+
 ## [Session-114] — 2026-04-11
 ### Added
 - ScoringDashboardPage with 3 tabs (MCDA, Modal Choice, Reports)

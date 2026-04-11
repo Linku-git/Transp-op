@@ -173,6 +173,14 @@ RBAC roles per tenant.
 
 **Indexes:** `role_pkey`
 
+> **Migration (Session 115):** 4 new system roles seeded via `r1s2t3u4v5w6_add_sotreg_roles.py`:
+> - `responsable_parc` — Fleet manager (M2, M3, M4 access)
+> - `responsable_exploitation` — Operations manager (M1, M4, M8 access)
+> - `prestataire` — Contractor (operator portal read-only)
+> - `conducteur` — Driver (mobile app, assigned routes read-only)
+>
+> Total system roles: 9 (admin, drh, daf, salarie, operateur + 4 new)
+
 ---
 
 ## permission

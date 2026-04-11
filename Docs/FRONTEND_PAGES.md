@@ -70,6 +70,7 @@
 /sotreg/finance             -> AdvancedFinanceDashboardPage
 /sotreg/roadmap             -> RoadmapDashboardPage
 /sotreg/scoring             -> ScoringDashboardPage
+/admin/roles                -> RoleManagementPage
 ```
 
 ---
@@ -644,6 +645,12 @@
 - Sync history log
 - Conflict resolution queue
 - Error details
+
+#### RoleManagementPage `/admin/roles` ✅ Session 115
+- 9-role display table (admin, drh, daf, salarie, operateur, responsable_parc, responsable_exploitation, prestataire, conducteur)
+- Per-role permissions list and module access matrix
+- Role description and system/custom badge
+- Note: Sidebar navigation items are now filtered based on the current user's role permissions
 
 #### OperatorManagementPage `/admin/operators`
 - Operator list (name, type, status)
