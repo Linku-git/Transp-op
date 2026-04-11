@@ -427,6 +427,8 @@
 | POST | `/sotreg/scoring/mcda` | MCDA 6-criteria weighted sum scoring | Yes | DRH, DAF, Admin | 112 |
 | POST | `/sotreg/scoring/sensitivity` | Sensitivity analysis on MCDA weights | Yes | DRH, DAF, Admin | 112 |
 | POST | `/sotreg/scoring/modal-choice` | McFadden logit modal choice | Yes | DRH, DAF, Admin | 112 |
+| POST | `/sotreg/scoring/report/pdf/{scenario_id}` | Generate MCDA comparison PDF report | Yes | DRH, DAF, Admin | 113 |
+| POST | `/sotreg/scoring/report/excel/{scenario_id}` | Generate MCDA comparison Excel report | Yes | DRH, DAF, Admin | 113 |
 
 ---
 

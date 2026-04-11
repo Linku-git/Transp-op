@@ -6,6 +6,16 @@
 
 ---
 
+## [Session-113] — 2026-04-11
+### Added
+- MCDAReportService: PDF report with 6 sections (executive summary, comparison table, scoring bars, radar chart, sensitivity table, recommendation)
+- Radar chart: reportlab canvas with overlapping polygons per alternative, 10-color palette, 6 axes
+- Excel export: 4 sheets (Summary, Scores, Sensitivity, Raw Data) with green-yellow-red conditional formatting
+- Celery task for async report generation with Redis status tracking and graceful fallback
+- Reports persist to GeneratedReport table
+- 2 API endpoints: POST /scoring/report/pdf/{scenario_id}, /scoring/report/excel/{scenario_id}
+- 30 backend tests (PDF validation, Excel content, Celery task, error handling)
+
 ## [Session-112] — 2026-04-10
 ### Added
 - MCDAService: 6-criteria weighted sum with CDC default weights (CAPEX 0.20, OPEX 0.20, CO2 0.25, risk 0.15, comfort 0.10, maturity 0.10)
