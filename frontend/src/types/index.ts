@@ -1,9 +1,20 @@
+export type UserRole =
+  | 'admin'
+  | 'drh'
+  | 'daf'
+  | 'responsable_parc'
+  | 'responsable_exploitation'
+  | 'prestataire'
+  | 'conducteur'
+  | 'salarie'
+  | 'operateur';
+
 export interface User {
   id: string;
   email: string;
   first_name: string;
   last_name: string;
-  role: 'admin' | 'drh' | 'daf' | 'salarie' | 'operateur';
+  role: UserRole;
   tenant_id: string;
   mfa_enabled: boolean;
 }

@@ -1,66 +1,86 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 
 /* ── Types ──────────────────────────────────────────────────────────────────── */
-interface SubItem { key: string; path: string; label: string; icon: string; end?: boolean; }
-interface NavGroup { key: string; label: string; icon: string; subs: SubItem[]; }
-interface NavItem  { key: string; path: string; label: string; icon: string; end?: boolean; }
+interface SubItem { key: string; path: string; label: string; icon: string; end?: boolean; roles?: string[]; }
+interface NavGroup { key: string; label: string; icon: string; subs: SubItem[]; roles?: string[]; }
+interface NavItem  { key: string; path: string; label: string; icon: string; end?: boolean; roles?: string[]; }
+
+/* ── Role constants ─────────────────────────────────────────────────────────── */
+const ALL_MANAGEMENT = ['admin', 'drh', 'daf', 'responsable_parc', 'responsable_exploitation'];
+const ADMIN_ONLY = ['admin'];
 
 /* ── Navigation data ─────────────────────────────────────────────────────────── */
 const TOP_ITEMS: NavItem[] = [
   { key: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: 'dashboard', end: true },
-  { key: 'map',       path: '/map',       label: 'Carte',     icon: 'map' },
+  { key: 'map',       path: '/map',       label: 'Carte',     icon: 'map', roles: [...ALL_MANAGEMENT] },
 ];
 
 const MASTER_GROUP: NavGroup = {
   key: 'master', label: 'Master data', icon: 'dataset',
+  roles: [...ALL_MANAGEMENT],
   subs: [
     { key: 'master-sites',       path: '/sites',             label: 'Sites',                       icon: 'location_on' },
-    { key: 'master-stops',       path: '/fleet/stops',       label: "Points d'Arrêt",              icon: 'directions_bus' },
-    { key: 'master-employees',   path: '/employees',         label: 'Employés',                    icon: 'group' },
-    { key: 'master-consumption', path: '/fleet/consumption', label: 'Véhicules & Conso.',          icon: 'local_gas_station' },
-    { key: 'master-vehicles',    path: '/vehicles',          label: 'Parc Véhicule',               icon: 'directions_car', end: true },
-    { key: 'master-config',      path: '/fleet/config',      label: 'Config. Transport',           icon: 'settings_applications' },
+    { key: 'master-stops',       path: '/fleet/stops',       label: "Points d'Arret",              icon: 'directions_bus' },
+    { key: 'master-employees',   path: '/employees',         label: 'Employes',                    icon: 'group', roles: ['admin', 'drh'] },
+    { key: 'master-consumption', path: '/fleet/consumption', label: 'Vehicules & Conso.',          icon: 'local_gas_station', roles: ['admin', 'drh', 'daf', 'responsable_parc'] },
+    { key: 'master-vehicles',    path: '/vehicles',          label: 'Parc Vehicule',               icon: 'directions_car', end: true, roles: ['admin', 'drh', 'responsable_parc'] },
+    { key: 'master-config',      path: '/fleet/config',      label: 'Config. Transport',           icon: 'settings_applications', roles: ['admin', 'drh', 'responsable_exploitation'] },
   ],
 };
 
 const OPTIM_GROUP: NavGroup = {
   key: 'optimisation', label: 'Optimisation', icon: 'bolt',
+  roles: ['admin', 'drh', 'responsable_exploitation'],
   subs: [
-    { key: 'opt-stops',  path: '/optimization/stops',  label: 'Arrêts & Clusters',   icon: 'location_on' },
-    { key: 'opt-fleet',  path: '/optimization/fleet',  label: 'Optimisation Flotte', icon: 'directions_bus' },
+    { key: 'opt-stops',  path: '/optimization/stops',  label: 'Arrets & Clusters',   icon: 'location_on' },
+    { key: 'opt-fleet',  path: '/optimization/fleet',  label: 'Optimisation Flotte', icon: 'directions_bus', roles: ['admin', 'drh', 'responsable_exploitation', 'responsable_parc'] },
     { key: 'opt-routes', path: '/optimization/routes', label: 'Visualisation Routes',icon: 'route' },
   ],
 };
 
 const SOTREG_GROUP: NavGroup = {
   key: 'sotreg', label: 'SOTREG', icon: 'analytics',
+  roles: ['admin', 'drh', 'daf', 'responsable_parc', 'responsable_exploitation'],
   subs: [
-    { key: 'sotreg-diagnostic',   path: '/sotreg',              label: 'Diagnostic Flotte', icon: 'monitoring', end: true },
-    { key: 'sotreg-lignes',       path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route' },
-    { key: 'sotreg-technologies', path: '/sotreg/technologies', label: 'Technologies',      icon: 'ev_station' },
-    { key: 'sotreg-infra',         path: '/sotreg/infrastructure', label: 'Infrastructure',  icon: 'domain' },
-    { key: 'sotreg-finance',       path: '/sotreg/finance',         label: 'Finance M5',      icon: 'account_balance' },
-    { key: 'sotreg-roadmap',       path: '/sotreg/roadmap',         label: 'Feuille Route',   icon: 'timeline' },
+    { key: 'sotreg-diagnostic',   path: '/sotreg',              label: 'Diagnostic Flotte', icon: 'monitoring', end: true, roles: ['admin', 'drh', 'responsable_exploitation'] },
+    { key: 'sotreg-lignes',       path: '/sotreg/lignes',       label: 'Lignes Transport',  icon: 'route', roles: ['admin', 'drh', 'responsable_exploitation'] },
+    { key: 'sotreg-technologies', path: '/sotreg/technologies', label: 'Technologies',      icon: 'ev_station', roles: ['admin', 'drh', 'daf', 'responsable_parc'] },
+    { key: 'sotreg-infra',         path: '/sotreg/infrastructure', label: 'Infrastructure',  icon: 'domain', roles: ['admin', 'drh', 'responsable_parc'] },
+    { key: 'sotreg-finance',       path: '/sotreg/finance',         label: 'Finance M5',      icon: 'account_balance', roles: ['admin', 'daf', 'drh'] },
+    { key: 'sotreg-roadmap',       path: '/sotreg/roadmap',         label: 'Feuille Route',   icon: 'timeline', roles: ['admin', 'drh', 'daf'] },
+    { key: 'sotreg-scoring',       path: '/sotreg/scoring',         label: 'Scoring MCDA',    icon: 'score', roles: ['admin', 'drh', 'daf'] },
   ],
 };
 
 const OUTILS_GROUP: NavGroup = {
   key: 'outils', label: 'Outils', icon: 'build',
+  roles: [...ALL_MANAGEMENT],
   subs: [
-    { key: 'outils-modal',     path: '/modal-analysis', label: 'Analyse Modale', icon: 'bar_chart' },
-    { key: 'outils-financial', path: '/financial',      label: 'Finance',        icon: 'payments' },
-    { key: 'outils-scenarios', path: '/scenarios',      label: 'Scénarios',      icon: 'cloud' },
-    { key: 'outils-content',  path: '/content',        label: 'Contenu',        icon: 'feed' },
-    { key: 'outils-reports',   path: '/reports',        label: 'Rapports',       icon: 'article' },
-    { key: 'outils-import',    path: '/import',         label: 'Import',         icon: 'upload_file' },
+    { key: 'outils-modal',     path: '/modal-analysis', label: 'Analyse Modale', icon: 'bar_chart', roles: ['admin', 'drh'] },
+    { key: 'outils-financial', path: '/financial',      label: 'Finance',        icon: 'payments', roles: ['admin', 'drh', 'daf'] },
+    { key: 'outils-scenarios', path: '/scenarios',      label: 'Scenarios',      icon: 'cloud', roles: ['admin', 'drh', 'responsable_exploitation'] },
+    { key: 'outils-content',  path: '/content',        label: 'Contenu',        icon: 'feed', roles: ['admin', 'drh'] },
+    { key: 'outils-reports',   path: '/reports',        label: 'Rapports',       icon: 'article', roles: ['admin', 'drh', 'daf'] },
+    { key: 'outils-import',    path: '/import',         label: 'Import',         icon: 'upload_file', roles: ['admin', 'drh'] },
   ],
 };
 
-const SETTINGS_ITEM: NavItem = { key: 'settings', path: '/settings', label: 'Paramètres', icon: 'settings' };
+const SETTINGS_ITEM: NavItem = { key: 'settings', path: '/settings', label: 'Parametres', icon: 'settings', roles: ADMIN_ONLY };
 
 /* ── Helpers ─────────────────────────────────────────────────────────────────── */
+function filterByRole<T extends { roles?: string[] }>(items: T[], role: string): T[] {
+  return items.filter((item) => !item.roles || item.roles.includes(role));
+}
+
+function filterGroup(group: NavGroup, role: string): NavGroup | null {
+  if (group.roles && !group.roles.includes(role)) return null;
+  const filteredSubs = filterByRole(group.subs, role);
+  if (filteredSubs.length === 0) return null;
+  return { ...group, subs: filteredSubs };
+}
+
 function isGroupActive(group: NavGroup, pathname: string) {
   return group.subs.some((s) =>
     s.end ? pathname === s.path : pathname === s.path || pathname.startsWith(s.path + '/')
@@ -70,9 +90,9 @@ function isGroupActive(group: NavGroup, pathname: string) {
 const FILL   = { fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24" };
 const FILL_S = { fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20" };
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   EXPANDED — sub-list
-══════════════════════════════════════════════════════════════════════════════ */
+/* ======================================================================
+   EXPANDED -- sub-list
+====================================================================== */
 function ExpandedSubList({ subs }: { subs: SubItem[] }) {
   return (
     <div className="ml-8 flex flex-col gap-0.5">
@@ -97,9 +117,9 @@ function ExpandedSubList({ subs }: { subs: SubItem[] }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   COLLAPSED — sub-item panel (left-accent bar + icon grid)
-══════════════════════════════════════════════════════════════════════════════ */
+/* ======================================================================
+   COLLAPSED -- sub-item panel (left-accent bar + icon grid)
+====================================================================== */
 function CollapsedSubPanel({ subs }: { subs: SubItem[] }) {
   return (
     <div className="relative w-full flex flex-col items-center gap-0.5 py-0.5">
@@ -130,9 +150,9 @@ function CollapsedSubPanel({ subs }: { subs: SubItem[] }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   COLLAPSED — group
-══════════════════════════════════════════════════════════════════════════════ */
+/* ======================================================================
+   COLLAPSED -- group
+====================================================================== */
 function CollapsedGroup({ group, pathname }: { group: NavGroup; pathname: string }) {
   const active = isGroupActive(group, pathname);
   const [open, setOpen] = useState(active);
@@ -156,9 +176,9 @@ function CollapsedGroup({ group, pathname }: { group: NavGroup; pathname: string
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   EXPANDED — group
-══════════════════════════════════════════════════════════════════════════════ */
+/* ======================================================================
+   EXPANDED -- group
+====================================================================== */
 function ExpandedGroup({ group, pathname }: { group: NavGroup; pathname: string }) {
   const active = isGroupActive(group, pathname);
   const [open, setOpen] = useState(active);
@@ -188,9 +208,9 @@ function ExpandedGroup({ group, pathname }: { group: NavGroup; pathname: string 
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
+/* ======================================================================
    SIDEBAR
-══════════════════════════════════════════════════════════════════════════════ */
+====================================================================== */
 interface SidebarProps { collapsed: boolean; onToggle: () => void; }
 
 const COLLAPSED_W = 68;
@@ -201,6 +221,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const user = useAuthStore((s) => s.user);
   const displayName = user ? `${user.first_name} ${user.last_name}` : '---';
   const displayRole = user?.role ?? '---';
+  const role = user?.role ?? 'salarie';
+
+  /* Filter navigation by role */
+  const topItems = useMemo(() => filterByRole(TOP_ITEMS, role), [role]);
+  const groups = useMemo(() => {
+    const raw = [MASTER_GROUP, OPTIM_GROUP, SOTREG_GROUP, OUTILS_GROUP];
+    return raw.map((g) => filterGroup(g, role)).filter((g): g is NavGroup => g !== null);
+  }, [role]);
+  const showSettings = !SETTINGS_ITEM.roles || SETTINGS_ITEM.roles.includes(role);
 
   /* ── COLLAPSED ──────────────────────────────────────────────────────────── */
   if (collapsed) {
@@ -219,7 +248,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div className="mx-2 h-px bg-surface-container-high" />
 
         <nav className="flex-1 flex flex-col items-center gap-0.5 py-3 px-2 overflow-y-auto">
-          {TOP_ITEMS.map((item) => {
+          {topItems.map((item) => {
             const active = item.end ? pathname === item.path : pathname.startsWith(item.path);
             return (
               <NavLink
@@ -239,12 +268,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             );
           })}
 
-          <CollapsedGroup group={MASTER_GROUP} pathname={pathname} />
-          <CollapsedGroup group={OPTIM_GROUP} pathname={pathname} />
-          <CollapsedGroup group={SOTREG_GROUP} pathname={pathname} />
-          <CollapsedGroup group={OUTILS_GROUP} pathname={pathname} />
+          {groups.map((group) => (
+            <CollapsedGroup key={group.key} group={group} pathname={pathname} />
+          ))}
 
-          {(() => {
+          {showSettings && (() => {
             const active = pathname.startsWith(SETTINGS_ITEM.path);
             return (
               <NavLink
@@ -269,7 +297,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div className="flex flex-col items-center py-3 gap-2">
           <button
             onClick={onToggle}
-            title="Étendre le menu"
+            title="Etendre le menu"
             className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-400 transition-colors"
           >
             <span className="material-symbols-outlined text-xl">chevron_right</span>
@@ -294,7 +322,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       className="fixed left-0 top-0 h-screen bg-slate-50 flex flex-col z-50 transition-[width] duration-300"
       style={{ width: EXPANDED_W }}
     >
-      {/* Logo — no collapse button here any more */}
+      {/* Logo */}
       <div className="px-4 pt-5 pb-4 flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shrink-0">
           <span className="material-symbols-outlined text-on-primary text-xl">route</span>
@@ -308,7 +336,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="mx-5 h-px bg-surface-container-high" />
 
       <nav className="flex-1 flex flex-col gap-0.5 px-3 py-3 overflow-y-auto">
-        {TOP_ITEMS.map((item) => (
+        {topItems.map((item) => (
           <NavLink key={item.key} to={item.path} end={item.end} className={({ isActive }) => itemCls(isActive)}>
             {({ isActive }) => (
               <>
@@ -321,21 +349,22 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </NavLink>
         ))}
 
-        <ExpandedGroup group={MASTER_GROUP} pathname={pathname} />
-        <ExpandedGroup group={OPTIM_GROUP} pathname={pathname} />
-        <ExpandedGroup group={SOTREG_GROUP} pathname={pathname} />
-        <ExpandedGroup group={OUTILS_GROUP} pathname={pathname} />
+        {groups.map((group) => (
+          <ExpandedGroup key={group.key} group={group} pathname={pathname} />
+        ))}
 
-        <NavLink to={SETTINGS_ITEM.path} className={({ isActive }) => itemCls(isActive)}>
-          {({ isActive }) => (
-            <>
-              <span className={['material-symbols-outlined text-xl leading-none shrink-0', isActive ? 'text-blue-700' : 'text-slate-400'].join(' ')} style={isActive ? FILL : undefined}>
-                {SETTINGS_ITEM.icon}
-              </span>
-              <span>{SETTINGS_ITEM.label}</span>
-            </>
-          )}
-        </NavLink>
+        {showSettings && (
+          <NavLink to={SETTINGS_ITEM.path} className={({ isActive }) => itemCls(isActive)}>
+            {({ isActive }) => (
+              <>
+                <span className={['material-symbols-outlined text-xl leading-none shrink-0', isActive ? 'text-blue-700' : 'text-slate-400'].join(' ')} style={isActive ? FILL : undefined}>
+                  {SETTINGS_ITEM.icon}
+                </span>
+                <span>{SETTINGS_ITEM.label}</span>
+              </>
+            )}
+          </NavLink>
+        )}
       </nav>
 
       <div className="mx-5 h-px bg-surface-container-high" />
@@ -351,7 +380,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </div>
         <button
           onClick={onToggle}
-          title="Réduire le menu"
+          title="Reduire le menu"
           className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors shrink-0"
         >
           <span className="material-symbols-outlined text-lg leading-none">chevron_left</span>

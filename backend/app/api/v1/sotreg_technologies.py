@@ -50,7 +50,7 @@ router = APIRouter(prefix="/sotreg/technologies")
 @router.post("/range-correction", response_model=RangeCorrectionResponse)
 async def range_correction(
     body: RangeCorrectionRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
 ) -> RangeCorrectionResponse:
     """Compute corrected vehicle range with slope, season, and speed factors."""
     result = compute_corrected_range(
@@ -77,7 +77,7 @@ async def range_correction(
 @router.post("/tco-15year", response_model=TCO15YearResponse)
 async def tco_15year(
     body: TCO15YearRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
 ) -> TCO15YearResponse:
     """Compute 15-year TCO with financing, depreciation, and energy escalation."""
     result = compute_tco_15year(
@@ -111,7 +111,7 @@ async def tco_15year(
 @router.post("/breakeven", response_model=BreakevenResponse)
 async def breakeven(
     body: BreakevenRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
 ) -> BreakevenResponse:
     """Compute electrification breakeven km/year threshold."""
     result = compute_electrification_breakeven(
@@ -139,7 +139,7 @@ async def breakeven(
 @router.post("/charging-optimization", response_model=ChargingOptimizationResponse)
 async def charging_optimization(
     body: ChargingOptimizationRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
 ) -> ChargingOptimizationResponse:
     """Compute optimal charging schedule with Qin 2016 SOC=62% target."""
     result = compute_charging_schedule(
@@ -170,7 +170,7 @@ async def charging_optimization(
 @router.post("/irve-sizing", response_model=IRVESizingResponse)
 async def irve_sizing(
     body: IRVESizingRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
 ) -> IRVESizingResponse:
     """Compute IRVE infrastructure sizing for a given fleet."""
     result = compute_irve_sizing(
@@ -236,7 +236,7 @@ async def create_irve(
 
 @router.get("/irve", response_model=list[IRVEInfrastructureResponse])
 async def list_irve(
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> list[IRVEInfrastructure]:
     """List all IRVE infrastructure records for the tenant."""
@@ -252,7 +252,7 @@ async def list_irve(
 @router.get("/irve/{irve_id}", response_model=IRVEInfrastructureResponse)
 async def get_irve(
     irve_id: uuid.UUID,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "daf", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> IRVEInfrastructure:
     """Get a single IRVE infrastructure record."""

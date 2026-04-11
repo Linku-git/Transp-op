@@ -118,7 +118,7 @@ async def generate_stops(
 @router.post("/capacity", response_model=StopCapacityResponse)
 async def stop_capacity(
     body: StopCapacityRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
 ) -> StopCapacityResponse:
     """Compute stop capacity using HCM 2000 formula."""
     cap = compute_stop_capacity(
@@ -190,7 +190,7 @@ async def create_stop(
 
 @router.get("/", response_model=list[GeneratedStopResponse])
 async def list_stops(
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> list[GeneratedStop]:
     """List all generated stops for the tenant."""
@@ -206,7 +206,7 @@ async def list_stops(
 @router.get("/{stop_id}", response_model=GeneratedStopResponse)
 async def get_stop(
     stop_id: uuid.UUID,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> GeneratedStop:
     """Get a single generated stop."""

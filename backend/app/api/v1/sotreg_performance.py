@@ -190,7 +190,7 @@ async def list_kpis(
     period: str | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc", "responsable_exploitation")),
     db: AsyncSession = Depends(get_db),
 ) -> AVLMetricListResponse:
     """List AVL KPI metrics with optional filters and pagination."""
@@ -244,7 +244,7 @@ async def get_ligne_kpis(
     date_to: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc", "responsable_exploitation")),
     db: AsyncSession = Depends(get_db),
 ) -> AVLMetricListResponse:
     """Get KPIs for a specific transport line."""
@@ -353,7 +353,7 @@ async def lto_optimize(
 async def get_lto_schedule(
     ligne_id: uuid.UUID,
     schedule_date: date | None = Query(default=None),
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc", "responsable_exploitation")),
     db: AsyncSession = Depends(get_db),
 ) -> list[DepartureSchedule]:
     """Get optimized departure schedule for a ligne."""

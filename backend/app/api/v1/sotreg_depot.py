@@ -36,7 +36,7 @@ router = APIRouter(prefix="/sotreg/depot")
 @router.post("/cost-estimate", response_model=DepotCostEstimateResponse)
 async def cost_estimate(
     body: DepotCostEstimateRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
 ) -> DepotCostEstimateResponse:
     """Compute depot electrification cost with 7-component breakdown."""
     result = compute_depot_electrification_cost(
@@ -63,7 +63,7 @@ async def cost_estimate(
 @router.post("/layout-plan", response_model=DepotLayoutResponse)
 async def layout_plan(
     body: DepotLayoutRequest,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
 ) -> DepotLayoutResponse:
     """Plan depot layout for N chargers and M vehicles."""
     result = compute_depot_layout(
@@ -132,7 +132,7 @@ async def create_depot_plan(
 
 @router.get("/plans", response_model=list[DepotPlanResponse])
 async def list_depot_plans(
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> list[DepotPlan]:
     """List all depot plans for the tenant."""
@@ -148,7 +148,7 @@ async def list_depot_plans(
 @router.get("/plans/{plan_id}", response_model=DepotPlanResponse)
 async def get_depot_plan(
     plan_id: uuid.UUID,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc")),
     db: AsyncSession = Depends(get_db),
 ) -> DepotPlan:
     """Get a single depot plan."""

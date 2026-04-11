@@ -93,7 +93,7 @@ async def list_alerts(
     vehicle_id: uuid.UUID | None = Query(default=None),
     severity: str | None = Query(default=None),
     acknowledged: bool | None = Query(default=None),
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc", "responsable_exploitation")),
     db: AsyncSession = Depends(get_db),
 ) -> list[MaintenanceAlert]:
     """List maintenance alerts with optional filters."""
@@ -123,7 +123,7 @@ async def list_alerts(
 @router.get("/alerts/{vehicle_id}", response_model=list[MaintenanceAlertResponse])
 async def get_vehicle_alerts(
     vehicle_id: uuid.UUID,
-    current_user: User = Depends(require_role("admin", "drh", "daf")),
+    current_user: User = Depends(require_role("admin", "drh", "responsable_parc", "responsable_exploitation")),
     db: AsyncSession = Depends(get_db),
 ) -> list[MaintenanceAlert]:
     """Get maintenance alerts for a specific vehicle."""

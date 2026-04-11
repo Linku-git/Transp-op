@@ -270,6 +270,10 @@ const ContentAnalyticsPage = lazy(() =>
   }))
 );
 
+const RoleManagementPage = lazy(() =>
+  import('@/pages/admin/RoleManagementPage')
+);
+
 const SIRHConnectionsPage = lazy(() =>
   import('@/pages/admin/SIRHConnectionsPage').then((m) => ({
     default: m.SIRHConnectionsPage,
@@ -837,6 +841,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ReportIssuePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'admin/roles',
+        element: (
+          <SuspenseWrapper>
+            <RoleManagementPage />
           </SuspenseWrapper>
         ),
       },
