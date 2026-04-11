@@ -63,6 +63,7 @@ from app.api.v1.sotreg_telemetry import router as sotreg_telemetry_router
 from app.api.v1.sotreg_finance import router as sotreg_finance_router
 from app.api.v1.sotreg_roadmap import router as sotreg_roadmap_router
 from app.api.v1.sotreg_scoring import router as sotreg_scoring_router
+from app.api.v1.sotreg_ml import router as sotreg_ml_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -127,3 +128,4 @@ api_router.include_router(sotreg_telemetry_router, tags=["sotreg"])
 api_router.include_router(sotreg_finance_router, tags=["sotreg"])
 api_router.include_router(sotreg_roadmap_router, tags=["sotreg"])
 api_router.include_router(sotreg_scoring_router, tags=["sotreg"])
+api_router.include_router(sotreg_ml_router, tags=["sotreg"])

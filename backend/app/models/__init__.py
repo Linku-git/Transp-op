@@ -54,6 +54,8 @@ from app.models.telemetry_reading import TelemetryReading
 from app.models.maintenance_alert import MaintenanceAlert
 from app.models.transition_plan import TransitionPlan, TransitionPhase
 from app.models.mcda_scenario import MCDAScenario
+from app.models.ml_model import MLModel
+from app.models.feature_store import FeatureRecord
 
 __all__ = [
     "BaseModel",
@@ -119,4 +121,6 @@ __all__ = [
     "TransitionPlan",
     "TransitionPhase",
     "MCDAScenario",
+    "MLModel",
+    "FeatureRecord",
 ]
