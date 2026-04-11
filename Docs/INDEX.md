@@ -5,10 +5,10 @@
 ## Core Documentation
 - [[README]] — Project overview, tech stack, setup instructions
 - [[ARCHITECTURE]] — System architecture, component details, data flows
-- [[DATABASE_SCHEMA]] — All 40 tables across 15 groups
-- [[API_ENDPOINTS]] — ~125 REST endpoints + WebSocket
-- [[PROGRESS]] — Session progress tracker (0/92)
-- [[ROADMAP]] — 48-week development timeline
+- [[DATABASE_SCHEMA]] — All 43 tables across 16 groups
+- [[API_ENDPOINTS]] — ~137 REST endpoints + WebSocket
+- [[PROGRESS]] — Session progress tracker (112/127)
+- [[ROADMAP]] — Development timeline
 - [[CHANGELOG]] — Structured change log
 
 ## Interface Documentation
@@ -18,7 +18,7 @@
 
 ## Process Documentation
 - [[agents]] — Coding agent instructions and conventions
-- [[PRD]] — Full Product Requirements Document (v4.0 — updated 2026-04-08)
+- [[PRD]] — Full Product Requirements Document (v5.0 — updated 2026-04-09)
 
 ## Architecture Decisions
 - [[knowledge/ADR-template]] — ADR template
@@ -63,3 +63,23 @@
 
 ### Phase 7 — Stabilization & Scale (Sessions 87-92)
 - [[sessions/session-87]] | [[sessions/session-88]] | [[sessions/session-89]] | [[sessions/session-90]] | [[sessions/session-91]] | [[sessions/session-92]]
+
+### Phase 8 — SOTREG Modules M1-M8 (Sessions 93-127)
+
+#### Phase 8a — Diagnostic & Technologies (M1-M3)
+- [[sessions/session-93]] | [[sessions/session-94]] | [[sessions/session-95]] | [[sessions/session-96]] | [[sessions/session-97]]
+- [[sessions/session-98]] | [[sessions/session-99]] | [[sessions/session-100]] | [[sessions/session-101]]
+
+#### Phase 8b — Performance & Finance (M4-M5)
+- [[sessions/session-102]] | [[sessions/session-103]] | [[sessions/session-104]] | [[sessions/session-105]] | [[sessions/session-106]]
+- [[sessions/session-107]] | [[sessions/session-108]] | [[sessions/session-109]]
+
+#### Phase 8c — Roadmap, Scoring & MCDA (M6-M7)
+- [[sessions/session-110]] | [[sessions/session-111]] | [[sessions/session-112]] | [[sessions/session-113]] | [[sessions/session-114]] | [[sessions/session-115]]
+
+#### Phase 8d — ML Infrastructure & Real-Time (M8)
+- [[sessions/session-116]] | [[sessions/session-117]] | [[sessions/session-118]] | [[sessions/session-119]] | [[sessions/session-120]]
+- [[sessions/session-121]] | [[sessions/session-122]] | [[sessions/session-123]]
+
+#### Phase 8e — Portals, Chatbot & Integration
+- [[sessions/session-124]] | [[sessions/session-125]] | [[sessions/session-126]] | [[sessions/session-127]]

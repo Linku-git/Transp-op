@@ -6,6 +6,19 @@
 
 ---
 
+## [Session-114] — 2026-04-11
+### Added
+- ScoringDashboardPage with 3 tabs (MCDA, Modal Choice, Reports)
+- MCDAInputForm with dynamic alternatives and auto-redistributing weight sliders
+- MCDAResultsTable with sortable columns and horizontal score bars
+- RadarComparisonChart (Recharts 6-axis radar with toggleable overlapping polygons)
+- SensitivitySliders with real-time recomputation and ranking reversal warnings
+- ModalChoicePanel with McFadden logit probability bar display
+- PDF/Excel download buttons connected to report generation API
+- MCDA TypeScript types and API client functions in sotreg.ts
+- Route registration at /sotreg/scoring with lazy loading
+- 11 frontend tests for ScoringDashboardPage
+
 ## [Session-113] — 2026-04-11
 ### Added
 - MCDAReportService: PDF report with 6 sections (executive summary, comparison table, scoring bars, radar chart, sensitivity table, recommendation)

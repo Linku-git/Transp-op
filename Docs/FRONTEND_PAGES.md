@@ -69,6 +69,7 @@
 /sotreg/infrastructure      -> InfrastructureDashboardPage
 /sotreg/finance             -> AdvancedFinanceDashboardPage
 /sotreg/roadmap             -> RoadmapDashboardPage
+/sotreg/scoring             -> ScoringDashboardPage
 ```
 
 ---
@@ -550,6 +551,41 @@
 
 #### MilestoneTracker (Component) ✅ Session 111
 - Vertical timeline with year, description, target %, cumulative vehicles
+
+### SOTREG — Scoring & MCDA (Session 114)
+
+#### ScoringDashboardPage `/sotreg/scoring` ✅ Session 114
+- **3 tabs:** MCDA, Modal Choice, Reports
+- Tab 0: `<MCDAInputForm />` + `<MCDAResultsTable />` + `<RadarComparisonChart />` + `<SensitivitySliders />`
+- Tab 1: `<ModalChoicePanel />`
+- Tab 2: PDF/Excel download buttons connected to report generation API
+- API: POST `/api/v1/sotreg/scoring/mcda`, `/scoring/sensitivity`, `/scoring/modal-choice`, `/scoring/report/pdf/{id}`, `/scoring/report/excel/{id}`
+
+#### MCDAInputForm (Component) ✅ Session 114
+- Dynamic alternative management (add/remove rows)
+- 6 weight sliders constrained to sum to 1.0 with auto-redistribution on change
+- Criteria value inputs per alternative (CAPEX, OPEX, CO2, risk, comfort, maturity)
+- CDC default weights button
+
+#### MCDAResultsTable (Component) ✅ Session 114
+- Ranked alternatives with horizontal score bars (progress indicators)
+- Top-ranked alternative highlighted
+- Sortable columns by total score or individual criteria
+
+#### RadarComparisonChart (Component) ✅ Session 114
+- Recharts 6-axis radar chart (CAPEX, OPEX, CO2, Risk, Comfort, Maturity)
+- Overlapping polygons for selected alternatives with toggleable visibility
+- Color-coded legend per alternative
+
+#### SensitivitySliders (Component) ✅ Session 114
+- Real-time weight adjustment with instant ranking recomputation
+- Visual indicator when ranking reversal occurs (warning badges)
+- Reset to CDC default weights button
+
+#### ModalChoicePanel (Component) ✅ Session 114
+- Mode attribute inputs (cost, time, comfort per mode)
+- McFadden logit probability display as horizontal bars
+- Dynamic update on attribute change
 
 ---
 
