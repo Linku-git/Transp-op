@@ -61,6 +61,8 @@
 | [transition_phase](#transition_phase) | — | 14 | Individual phases within plans |
 | [maintenance_alert](#maintenance_alert) | — | 10 | Predictive maintenance alerts |
 | [mcda_scenario](#mcda_scenario) | — | 6 | MCDA scoring scenarios with JSONB |
+| [ml_model](#ml_model) | — | 10 | ML model registry (versioned, serialized) |
+| [feature_store](#feature_store) | — | 9 | Feature cache records (time-windowed) |
 
 ---
 
@@ -1208,6 +1210,44 @@ MCDA scoring scenario with JSONB storage. Created in Session 112.
 | updated_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_mcda_scenario_tenant_id
+
+### ml_model
+
+ML model registry for versioned, serialized models (joblib/h5). Created in Session 116.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | PK | |
+| tenant_id | uuid | NO | | FK -> tenant.id |
+| model_type | varchar(50) | NO | | isolation_forest / random_forest / lstm |
+| version | int | NO | | Auto-increment per model_type per tenant |
+| status | varchar(20) | NO | training | training / ready / promoted / retired |
+| metrics | jsonb | YES | | accuracy, precision, recall, MAE, etc. |
+| file_path | varchar(500) | NO | | Path to serialized model file |
+| trained_at | timestamptz | YES | | When model training completed |
+| feature_names | jsonb | YES | | List of feature names used for training |
+| created_at | timestamptz | NO | now() | |
+| updated_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_ml_model_tenant_type (tenant_id, model_type), ix_ml_model_tenant_status (tenant_id, status)
+
+### feature_store
+
+Feature cache records with time-windowed computation. Created in Session 116.
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NO | PK | |
+| tenant_id | uuid | NO | | FK -> tenant.id |
+| entity_type | varchar(30) | NO | | vehicle / driver / route / stop |
+| entity_id | uuid | NO | | Reference to entity |
+| feature_name | varchar(100) | NO | | Feature identifier |
+| feature_value | float | NO | | Computed feature value |
+| computed_at | timestamptz | NO | now() | When feature was computed |
+| window | varchar(10) | NO | | 1h / 24h / 7d / 30d |
+| created_at | timestamptz | NO | now() | |
+
+**Indexes:** ix_feature_store_entity (tenant_id, entity_type, entity_id), ix_feature_store_lookup (tenant_id, entity_type, entity_id, feature_name)
 
 ---
 

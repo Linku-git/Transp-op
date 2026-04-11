@@ -445,6 +445,16 @@
 
 ---
 
+## 26. SOTREG — ML Infrastructure (27.25)
+
+| Method | Endpoint | Description | Auth | Roles | Session |
+|--------|----------|-------------|------|-------|---------|
+| GET | `/sotreg/ml/models` | List ML models with versions and status | Yes | Admin, DRH | 116 |
+| POST | `/sotreg/ml/retrain/{model_type}` | Trigger model retraining (Celery task) | Yes | Admin | 116 |
+| GET | `/sotreg/ml/features/{entity_type}/{entity_id}` | Get computed features for entity | Yes | Admin, DRH | 116 |
+
+---
+
 ## WebSocket Endpoints
 
 | Endpoint | Description | Auth | Session |
@@ -454,4 +464,4 @@
 
 ---
 
-## Total Endpoint Count: ~137 endpoints across 25 groups
+## Total Endpoint Count: ~140 endpoints across 26 groups

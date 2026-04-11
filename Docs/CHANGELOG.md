@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-116] — 2026-04-11
+### Added
+- MLModel table for versioned ML model registry (joblib serialization)
+- FeatureRecord table for time-windowed feature caching (1h/24h/7d/30d)
+- ModelRegistryService (save/load/promote/retire/list)
+- FeatureStoreService (compute/get/bulk with pluggable computers)
+- ML retraining Celery task with auto-promotion on metric improvement
+- Beat schedule: IsolationForest & RandomForest weekly, LSTM monthly
+- 3 SOTREG ML API endpoints
+- Alembic migration for ml_model and feature_store tables
+- 35 tests (20 model registry + 15 feature store)
+
 ## [Session-115] — 2026-04-11
 ### Added
 - 4 new roles: responsable_parc, responsable_exploitation, prestataire, conducteur
