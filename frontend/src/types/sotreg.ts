@@ -655,3 +655,118 @@ export const WAVE_COLORS: Record<string, string> = {
   scale: '#22c55e',
   full: '#f59e0b',
 };
+
+/* ── MCDA Scoring (M7) ───────────────────────────────────────────────────── */
+
+export interface MCDAAlternative {
+  name: string;
+  capex: number;
+  opex: number;
+  co2: number;
+  risk: number;
+  comfort: number;
+  maturity: number;
+}
+
+export interface MCDAWeights {
+  capex: number;
+  opex: number;
+  co2: number;
+  risk: number;
+  comfort: number;
+  maturity: number;
+}
+
+export interface NormalizedAlternative {
+  name: string;
+  score: number;
+  rank: number;
+  normalized_values: Record<string, number>;
+}
+
+export interface MCDARequest {
+  alternatives: MCDAAlternative[];
+  weights?: Record<string, number>;
+  scenario_name?: string;
+}
+
+export interface MCDAResponse {
+  ranked_alternatives: NormalizedAlternative[];
+  weights_used: Record<string, number>;
+  criteria_ranges: Record<string, { min: number; max: number }>;
+  best_alternative: string;
+  worst_alternative: string;
+}
+
+export interface SensitivityCriterionResult {
+  criterion: string;
+  weight_original: number;
+  weight_plus: number;
+  weight_minus: number;
+  ranking_changed: boolean;
+  is_critical: boolean;
+}
+
+export interface SensitivityRequest {
+  alternatives: MCDAAlternative[];
+  weights?: Record<string, number>;
+  delta_pct?: number;
+}
+
+export interface SensitivityResponse {
+  base_ranking: string[];
+  sensitivity_results: SensitivityCriterionResult[];
+  critical_criteria: string[];
+  stability_score: number;
+}
+
+export interface ModalChoiceAlternative {
+  name: string;
+  cost: number;
+  time_minutes: number;
+  comfort: number;
+}
+
+export interface ModalChoiceRequest {
+  alternatives: ModalChoiceAlternative[];
+  beta_cost?: number;
+  beta_time?: number;
+  beta_comfort?: number;
+}
+
+export interface ModalChoiceProbability {
+  name: string;
+  utility: number;
+  probability: number;
+}
+
+export interface ModalChoiceResponse {
+  probabilities: ModalChoiceProbability[];
+  probabilities_sum: number;
+  dominant_mode: string;
+}
+
+export const MCDA_CRITERIA = ['capex', 'opex', 'co2', 'risk', 'comfort', 'maturity'] as const;
+
+export const MCDA_CRITERIA_LABELS: Record<string, string> = {
+  capex: 'CAPEX',
+  opex: 'OPEX',
+  co2: 'CO₂',
+  risk: 'Risque',
+  comfort: 'Confort',
+  maturity: 'Maturité',
+};
+
+export const MCDA_DEFAULT_WEIGHTS: MCDAWeights = {
+  capex: 0.20,
+  opex: 0.20,
+  co2: 0.25,
+  risk: 0.15,
+  comfort: 0.10,
+  maturity: 0.10,
+};
+
+export const MCDA_ALT_COLORS = [
+  '#0058be', '#e63946', '#2a9d8f', '#e9c46a', '#f4a261',
+  '#264653', '#6a4c93', '#1d3557', '#457b9d', '#a8dadc',
+];

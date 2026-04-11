@@ -43,6 +43,12 @@ import type {
   PaybackResponse,
   TransitionPlanRequest,
   TransitionPlanResponse,
+  MCDARequest,
+  MCDAResponse,
+  SensitivityRequest,
+  SensitivityResponse,
+  ModalChoiceRequest,
+  ModalChoiceResponse,
 } from '../types/sotreg';
 
 const LIGNES = '/api/v1/sotreg/lignes';
@@ -274,4 +280,47 @@ export const generateTransitionPlan = async (
 ): Promise<TransitionPlanResponse> => {
   const response = await api.post<TransitionPlanResponse>(`${ROADMAP}/plan`, data);
   return response.data;
+};
+
+/* ── MCDA Scoring (M7) ─────────────────────────────────────────────────── */
+
+const SCORING = '/api/v1/sotreg/scoring';
+
+export const computeMCDA = async (
+  data: MCDARequest,
+): Promise<MCDAResponse> => {
+  const response = await api.post<MCDAResponse>(`${SCORING}/mcda`, data);
+  return response.data;
+};
+
+export const computeSensitivity = async (
+  data: SensitivityRequest,
+): Promise<SensitivityResponse> => {
+  const response = await api.post<SensitivityResponse>(`${SCORING}/sensitivity`, data);
+  return response.data;
+};
+
+export const computeModalChoice = async (
+  data: ModalChoiceRequest,
+): Promise<ModalChoiceResponse> => {
+  const response = await api.post<ModalChoiceResponse>(`${SCORING}/modal-choice`, data);
+  return response.data;
+};
+
+export const downloadMCDAReportPdf = async (
+  scenarioId: string,
+): Promise<Blob> => {
+  const response = await api.post(`${SCORING}/report/pdf/${scenarioId}`, null, {
+    responseType: 'blob',
+  });
+  return response.data as Blob;
+};
+
+export const downloadMCDAReportExcel = async (
+  scenarioId: string,
+): Promise<Blob> => {
+  const response = await api.post(`${SCORING}/report/excel/${scenarioId}`, null, {
+    responseType: 'blob',
+  });
+  return response.data as Blob;
 };
