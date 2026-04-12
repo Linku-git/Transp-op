@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-119] — 2026-04-12
+### Added
+- LSTM demand forecast service (336 lookback, 48 horizon, 8 features)
+- RamadanCalendar helper with Hijri date lookup (2024-2030)
+- Feature engineering pipeline (demand, hour, day, weekend, holiday, ramadan, temp, precip)
+- Sliding window generator and min-max normalization
+- TensorFlow/Keras graceful degradation (mock when unavailable)
+- DemandForecastRequest/Response Pydantic schemas
+- 2 forecast API endpoints (POST trigger + GET results)
+- 31 tests (20 forecast + 11 Ramadan calendar)
+
 ## [Session-118] — 2026-04-12
 ### Added
 - Genetic Algorithm CVRP solver with configurable parameters

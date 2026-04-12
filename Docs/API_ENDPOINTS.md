@@ -452,6 +452,8 @@
 | GET | `/sotreg/ml/models` | List ML models with versions and status | Yes | Admin, DRH | 116 |
 | POST | `/sotreg/ml/retrain/{model_type}` | Trigger model retraining (Celery task) | Yes | Admin | 116 |
 | GET | `/sotreg/ml/features/{entity_type}/{entity_id}` | Get computed features for entity | Yes | Admin, DRH | 116 |
+| POST | `/sotreg/ml/forecast/demand` | Trigger demand forecast for a ligne | Yes | Admin, DRH | 119 |
+| GET | `/sotreg/ml/forecast/demand/{ligne_id}` | Get latest demand forecast for ligne | Yes | Admin, DRH | 119 |
 
 ---
 
@@ -464,4 +466,4 @@
 
 ---
 
-## Total Endpoint Count: ~140 endpoints across 26 groups
+## Total Endpoint Count: ~142 endpoints across 26 groups
