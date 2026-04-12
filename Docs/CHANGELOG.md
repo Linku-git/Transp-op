@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-121] — 2026-04-12
+### Added
+- SocketIO GPS server with /gps namespace and Redis pub/sub adapter
+- ConnectionManager supporting 1500+ connections with heartbeat (25s) and stale cleanup (60s)
+- Room-based broadcasting (vehicle:id, ligne:id rooms)
+- GeofenceDetector with circle (haversine) and polygon (ray-casting) support
+- Geofence enter/exit state tracking with alert events
+- RouteDeviation detection with perpendicular point-to-segment distance
+- Configurable deviation threshold (default 200m)
+- PositionInterpolator with linear interpolation and bearing calculation
+- Speed-based extrapolation for delayed GPS updates
+- Event dataclasses: VehiclePosition, VehicleStatus, RouteDeviation, GeofenceAlert
+- 45 tests (14 SocketIO, 8 geofence, 10 route deviation, 13 interpolation)
+
 ## [Session-120] — 2026-04-12
 ### Added
 - DriverProfile model with risk_score and risk_category columns
