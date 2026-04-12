@@ -454,6 +454,8 @@
 | GET | `/sotreg/ml/features/{entity_type}/{entity_id}` | Get computed features for entity | Yes | Admin, DRH | 116 |
 | POST | `/sotreg/ml/forecast/demand` | Trigger demand forecast for a ligne | Yes | Admin, DRH | 119 |
 | GET | `/sotreg/ml/forecast/demand/{ligne_id}` | Get latest demand forecast for ligne | Yes | Admin, DRH | 119 |
+| POST | `/sotreg/ml/driver-risk/score` | Trigger batch driver risk scoring | Yes | Admin, DRH | 120 |
+| GET | `/sotreg/ml/driver-risk/{driver_id}` | Get driver risk profile | Yes | Admin, DRH | 120 |
 
 ---
 
@@ -466,4 +468,4 @@
 
 ---
 
-## Total Endpoint Count: ~142 endpoints across 26 groups
+## Total Endpoint Count: ~144 endpoints across 26 groups

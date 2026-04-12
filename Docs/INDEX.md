@@ -5,9 +5,9 @@
 ## Core Documentation
 - [[README]] — Project overview, tech stack, setup instructions
 - [[ARCHITECTURE]] — System architecture, component details, data flows
-- [[DATABASE_SCHEMA]] — All 43 tables across 16 groups
-- [[API_ENDPOINTS]] — ~137 REST endpoints + WebSocket
-- [[PROGRESS]] — Session progress tracker (113/127)
+- [[DATABASE_SCHEMA]] — All 44 tables across 16 groups
+- [[API_ENDPOINTS]] — ~144 REST endpoints + WebSocket
+- [[PROGRESS]] — Session progress tracker (118/127)
 - [[ROADMAP]] — Development timeline
 - [[CHANGELOG]] — Structured change log
 

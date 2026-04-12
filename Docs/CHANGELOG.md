@@ -6,6 +6,18 @@
 
 ---
 
+## [Session-120] — 2026-04-12
+### Added
+- DriverProfile model with risk_score and risk_category columns
+- Penalty-based scoring formula: Score = 100 - Sum(penalty x infractions)
+- Risk categories: low (>=75), medium (50-74), high (25-49), critical (<25)
+- RandomForest classifier with class_weight='balanced' and 8 features
+- Feature importance extraction for model explainability
+- Batch scoring and synthetic training data generator
+- 2 driver risk API endpoints (batch score + get profile)
+- Alembic migration for driver_profile table
+- 25 tests covering scoring formula, classification, RF training, API
+
 ## [Session-119] — 2026-04-12
 ### Added
 - LSTM demand forecast service (336 lookback, 48 horizon, 8 features)

@@ -63,6 +63,7 @@
 | [mcda_scenario](#mcda_scenario) | — | 6 | MCDA scoring scenarios with JSONB |
 | [ml_model](#ml_model) | — | 10 | ML model registry (versioned, serialized) |
 | [feature_store](#feature_store) | — | 9 | Feature cache records (time-windowed) |
+| [driver_profile](#driver_profile) | — | 11 | Driver risk profiles with telematics scoring |
 
 ---
 
@@ -1248,6 +1249,28 @@ Feature cache records with time-windowed computation. Created in Session 116.
 | created_at | timestamptz | NO | now() | |
 
 **Indexes:** ix_feature_store_entity (tenant_id, entity_type, entity_id), ix_feature_store_lookup (tenant_id, entity_type, entity_id, feature_name)
+
+---
+
+### driver_profile
+
+Driver risk profiles with penalty-based scoring and RandomForest classification. Created in Session 120.
+
+| Column | Type | NN | Default | Notes |
+|---|---|---|---|---|
+| id | uuid | YES | PK | |
+| tenant_id | uuid | YES | | FK -> tenant.id |
+| driver_id | uuid | YES | | FK -> employee.id |
+| licence_type | varchar(20) | NO | | Driving licence category |
+| experience_years | integer | NO | | Years of driving experience |
+| total_km_driven | float | NO | | Cumulative km driven |
+| risk_score | float | NO | | 0-100, Score = 100 - Sum(penalty x infractions) |
+| risk_category | varchar(10) | YES | | low (>=75) / medium (50-74) / high (25-49) / critical (<25) |
+| last_scored_at | timestamptz | NO | | When risk score was last computed |
+| created_at | timestamptz | YES | now() | |
+| updated_at | timestamptz | YES | now() | |
+
+**Indexes:** ix_driver_profile_tenant (tenant_id), ix_driver_profile_driver (driver_id), ix_driver_profile_risk (risk_category)
 
 ---
 
