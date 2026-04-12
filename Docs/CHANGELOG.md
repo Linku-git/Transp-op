@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-118] — 2026-04-12
+### Added
+- Genetic Algorithm CVRP solver with configurable parameters
+- Order Crossover (OX) operator at rate 0.85
+- Swap, inversion, and insertion mutation operators at rate 0.05
+- Tournament selection (size 5) with elitism (top 5%)
+- Stagnation-based early stopping (50 generations)
+- GAConfig dataclass for parameter tuning
+- Chromosome encoding/decoding with capacity-respecting route splitting
+- 24 tests covering OX, mutations, selection, convergence, edge cases
+
 ## [Session-117] — 2026-04-11
 ### Added
 - Clarke & Wright (1964) savings algorithm for CVRP
