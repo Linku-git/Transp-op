@@ -332,6 +332,10 @@ const ScoringDashboardPage = lazy(() =>
   import('@/pages/sotreg/ScoringDashboardPage')
 );
 
+const OperationsDashboardPage = lazy(() =>
+  import('@/pages/sotreg/OperationsDashboardPage')
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -817,6 +821,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ScoringDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/operations',
+        element: (
+          <SuspenseWrapper>
+            <OperationsDashboardPage />
           </SuspenseWrapper>
         ),
       },
