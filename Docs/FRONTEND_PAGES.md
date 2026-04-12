@@ -70,6 +70,7 @@
 /sotreg/finance             -> AdvancedFinanceDashboardPage
 /sotreg/roadmap             -> RoadmapDashboardPage
 /sotreg/scoring             -> ScoringDashboardPage
+/sotreg/operations          -> OperationsDashboardPage
 /admin/roles                -> RoleManagementPage
 ```
 
@@ -587,6 +588,50 @@
 - Mode attribute inputs (cost, time, comfort per mode)
 - McFadden logit probability display as horizontal bars
 - Dynamic update on attribute change
+
+### SOTREG — Real-Time Operations (Session 122)
+
+#### OperationsDashboardPage `/sotreg/operations` ✅ Session 122
+- **60/40 grid layout:** LiveFleetMap (60%) + side panels (40%)
+- **Real-time data** via SocketIO connection with auto-reconnect
+- **Zustand store** (`operationsStore`) for real-time state management
+- **Sidebar entry:** "Temps Reel" nav item visible to admin, drh, responsable_exploitation roles
+- Components: `LiveFleetMap`, `DemandForecastChart`, `DriverRiskHeatmap`, `RouteOptimizationPanel`, `AlertFeed`
+- Hook: `useSocketIO` for connection lifecycle and room management
+
+#### LiveFleetMap (Component) ✅ Session 122
+- Google Maps with SocketIO-driven vehicle markers
+- Glassmorphism overlays for vehicle info popups (speed, heading, ETA, passengers)
+- Route polylines for active trips (color-coded by ligne)
+- Geofence polygons with enter/exit highlighting
+- Animated marker transitions for smooth position updates
+- Cluster markers when zoomed out (>50 vehicles in view)
+
+#### DemandForecastChart (Component) ✅ Session 122
+- Recharts AreaChart showing 48-hour demand forecast
+- Confidence band (upper/lower bounds) as shaded area
+- Actual demand overlay when historical data available
+- Ligne selector dropdown to switch forecast view
+- Ramadan indicator on timeline when applicable
+
+#### DriverRiskHeatmap (Component) ✅ Session 122
+- Color-coded driver list sorted by risk score
+- Risk category badges: green (low), yellow (medium), orange (high), red (critical)
+- Click-to-expand showing risk breakdown by infraction type
+- Filter by risk category and ligne assignment
+
+#### RouteOptimizationPanel (Component) ✅ Session 122
+- Solver strategy selector: OR-Tools CVRP / Clarke-Wright / Genetic Algorithm
+- Parameter inputs per strategy (e.g., GA population size, CW savings threshold)
+- Run optimization button with progress indicator
+- Before/after comparison metrics (distance, time, cost)
+
+#### AlertFeed (Component) ✅ Session 122
+- Scrolling list of real-time alerts from SocketIO
+- Alert types: geofence_alert, route_deviation, maintenance, speed
+- Severity color coding (info/warning/critical)
+- Click-to-locate: centers map on alert vehicle
+- Auto-scroll with pause on hover
 
 ---
 

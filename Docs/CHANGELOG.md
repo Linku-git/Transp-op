@@ -6,6 +6,20 @@
 
 ---
 
+## [Session-122] — 2026-04-12
+### Added
+- OperationsDashboardPage with 60/40 grid layout
+- LiveFleetMap component with glassmorphism overlays and vehicle markers
+- DemandForecastChart (Recharts AreaChart with 48h forecast and confidence band)
+- DriverRiskHeatmap with sorted drivers, category filters, expandable infractions
+- RouteOptimizationPanel with 3 solver strategies (OR-Tools, Clarke-Wright, GA)
+- AlertFeed with severity color coding and click-to-locate
+- useSocketIO hook with auto-reconnect and room management
+- operationsStore Zustand store for real-time state
+- Route at /sotreg/operations with lazy loading
+- Sidebar "Temps Reel" nav item for admin/drh/responsable_exploitation
+- 10 frontend tests
+
 ## [Session-121] — 2026-04-12
 ### Added
 - SocketIO GPS server with /gps namespace and Redis pub/sub adapter
