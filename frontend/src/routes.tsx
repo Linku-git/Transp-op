@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { useAuthStore } from '@/stores/authStore';
 
 const LoginPage = lazy(() =>
   import('@/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
@@ -358,6 +359,38 @@ const ReportIssuePage = lazy(() =>
   }))
 );
 
+/* ── Driver Portal ─────────────────────────────────────────────────────── */
+
+const DriverPortalLayout = lazy(() =>
+  import('@/layouts/DriverPortalLayout').then((m) => ({
+    default: m.DriverPortalLayout,
+  }))
+);
+
+const DriverTripsPage = lazy(() =>
+  import('@/pages/driver/DriverTripsPage').then((m) => ({
+    default: m.DriverTripsPage,
+  }))
+);
+
+const DriverVehiclePage = lazy(() =>
+  import('@/pages/driver/DriverVehiclePage').then((m) => ({
+    default: m.DriverVehiclePage,
+  }))
+);
+
+const DriverRiskPage = lazy(() =>
+  import('@/pages/driver/DriverRiskPage').then((m) => ({
+    default: m.DriverRiskPage,
+  }))
+);
+
+const DriverSchedulePage = lazy(() =>
+  import('@/pages/driver/DriverSchedulePage').then((m) => ({
+    default: m.DriverSchedulePage,
+  }))
+);
+
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -383,6 +416,14 @@ function NotFoundPage() {
   );
 }
 
+export function RoleRedirect() {
+  const user = useAuthStore((s) => s.user);
+  if (user?.role === 'conducteur') {
+    return <Navigate to="/driver" replace />;
+  }
+  return <Navigate to="/dashboard" replace />;
+}
+
 export const router = createBrowserRouter([
   {
     path: '/login',
@@ -393,12 +434,54 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/driver',
+    element: (
+      <SuspenseWrapper>
+        <DriverPortalLayout />
+      </SuspenseWrapper>
+    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <SuspenseWrapper>
+            <DriverTripsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'vehicle',
+        element: (
+          <SuspenseWrapper>
+            <DriverVehiclePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'risk',
+        element: (
+          <SuspenseWrapper>
+            <DriverRiskPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'schedule',
+        element: (
+          <SuspenseWrapper>
+            <DriverSchedulePage />
+          </SuspenseWrapper>
+        ),
+      },
+    ],
+  },
+  {
     path: '/',
     element: <AppLayout />,
     children: [
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />,
+        element: <RoleRedirect />,
       },
       {
         path: 'dashboard',
