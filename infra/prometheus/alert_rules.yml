@@ -1,0 +1,38 @@
+groups:
+  - name: transpop_alerts
+    rules:
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job="transpop-api"}[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API p99 latency > 2s"
+          description: "The 99th percentile latency has exceeded 2 seconds for 5 minutes."
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API error rate > 5%"
+          description: "More than 5% of API requests are returning 5xx errors."
+
+      - alert: HighCeleryQueueDepth
+        expr: celery_queue_length > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Celery queue depth > 100"
+          description: "The Celery task queue has more than 100 pending tasks."
+
+      - alert: LowOTP
+        expr: sotreg_otp_percentage < 90
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "OTP below 90%"
+          description: "On-time performance has dropped below 90% for 15 minutes."

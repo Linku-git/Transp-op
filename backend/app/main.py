@@ -51,6 +51,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Observability
+from app.middleware.metrics import setup_metrics
+from app.middleware.tracing import setup_tracing
+
+setup_metrics(app)
+setup_tracing()
+
 app.include_router(api_router)
 
 

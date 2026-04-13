@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  - job_name: "transpop-api"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          service: "api"
+
+  - job_name: "contractor-dashboard"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["contractor-dashboard:8050"]
+        labels:
+          service: "contractor"
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
