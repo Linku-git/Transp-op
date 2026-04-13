@@ -201,6 +201,9 @@ services:
   celery-beat: Celery scheduler
   osrm:        OSRM routing engine (port 5000)
   contractor-dashboard: Dash+Plotly app (port 8050) — separate micro-frontend for prestataire role
+  prometheus: Prometheus metrics server (port 9090) — 15s scrape interval, 4 alert rules
+  grafana:    Grafana dashboards (port 3000) — 4 provisioned dashboards (API, ML, Fleet, Telemetry)
+  loki:       Loki log aggregation (port 3100) — 7-day retention, TSDB store
 ```
 
 #### Production (Kubernetes)
@@ -210,7 +213,7 @@ services:
 - **Ingress:** NGINX with TLS termination
 - **HPA:** Auto-scale API pods on CPU >70%
 - **Secrets:** External secrets from Vault/AWS Secrets Manager
-- **Monitoring:** Grafana + Prometheus + Loki (logs)
+- **Monitoring:** Grafana + Prometheus + Loki (logs) + OpenTelemetry (distributed tracing via OTLP)
 
 ### 9. Security Architecture
 

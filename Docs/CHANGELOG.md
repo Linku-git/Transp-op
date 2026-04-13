@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-126] — 2026-04-13
+### Added
+- Prometheus metrics middleware with 6 custom application metrics (optimization, ML prediction, telemetry, SocketIO, Celery, DB queries)
+- OpenTelemetry distributed tracing with OTLP exporter and trace_span() context manager
+- Prometheus config: 15s scrape interval, 4 alert rules (HighAPILatency, HighErrorRate, HighCeleryQueueDepth, LowOTP)
+- 4 Grafana dashboards (JSON provisioned): API Performance, ML Health, Fleet Ops, Telemetry Pipeline
+- Loki log aggregation with 7-day retention, TSDB store, filesystem storage
+- Docker services: Prometheus (port 9090), Grafana (port 3000), Loki (port 3100) with health checks
+- Graceful degradation when prometheus_client or opentelemetry packages not installed
+- 15 tests passing
+
 ## [Session-125] — 2026-04-13
 ### Added
 - Contractor Dashboard -- standalone Dash+Plotly micro-frontend on port 8050
