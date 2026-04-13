@@ -71,6 +71,7 @@
 /sotreg/roadmap             -> RoadmapDashboardPage
 /sotreg/scoring             -> ScoringDashboardPage
 /sotreg/operations          -> OperationsDashboardPage
+/sotreg/ml                  -> MLDashboardPage
 /admin/roles                -> RoleManagementPage
 ```
 
@@ -632,6 +633,45 @@
 - Severity color coding (info/warning/critical)
 - Click-to-locate: centers map on alert vehicle
 - Auto-scroll with pause on hover
+
+### SOTREG — ML Operations (Session 123)
+
+#### MLDashboardPage `/sotreg/ml` ✅ Session 123
+- **3 tabs:** Models, Features, Retraining
+- Tab 0: `<ModelRegistryTable />` + `<ModelMetricsChart />`
+- Tab 1: `<FeatureImportanceChart />`
+- Tab 2: `<RetrainingPanel />` + `<PredictionMonitor />`
+- API: `GET /api/v1/sotreg/ml/models`, `POST /api/v1/sotreg/ml/models/{id}/promote`, `POST /api/v1/sotreg/ml/models/{id}/retire`, `POST /api/v1/sotreg/ml/retrain`, `GET /api/v1/sotreg/ml/retrain/{id}/status`, `GET /api/v1/sotreg/ml/features/{model}`, `GET /api/v1/sotreg/ml/predictions/{model}`
+
+#### ModelRegistryTable (Component) ✅ Session 123
+- List all registered ML models (LSTM demand, RandomForest driver risk, IsolationForest maintenance)
+- Columns: name, version, status, key metrics
+- Status badges: training (blue), ready (amber), promoted (green), retired (gray)
+- Promote and retire action buttons per model row
+
+#### ModelMetricsChart (Component) ✅ Session 123
+- Recharts LineChart showing metric evolution across model versions
+- Supports MAE, RMSE, accuracy, F1 metrics
+- Version selector to compare specific versions
+- Threshold reference line for acceptable metric range
+
+#### FeatureImportanceChart (Component) ✅ Session 123
+- Horizontal BarChart for RandomForest and IsolationForest feature importances
+- Sorted descending by importance value
+- Color gradient from primary blue (high) to gray (low)
+- Model selector to switch between RF and IF features
+
+#### RetrainingPanel (Component) ✅ Session 123
+- Trigger retraining button per model type
+- Progress indicator with Celery task status polling
+- Auto-promote toggle with improvement threshold input
+- Retraining history log with timestamps and outcomes
+
+#### PredictionMonitor (Component) ✅ Session 123
+- Recharts chart showing predicted vs actual values overlay
+- Rolling window selector (24h / 7d / 30d)
+- Drift detection indicator when accuracy drops below threshold
+- Model-specific views: demand forecast MAE, driver risk accuracy
 
 ---
 

@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-123] — 2026-04-13
+### Added
+- ML Operations Dashboard (`/sotreg/ml`) with 3-tab layout (Models, Features, Retraining)
+- ModelRegistryTable component with status badges (training/ready/promoted/retired), promote/retire actions
+- ModelMetricsChart component with Recharts LineChart showing metric evolution across versions
+- FeatureImportanceChart component with horizontal BarChart for RF/IF feature importances
+- RetrainingPanel component with trigger retraining, progress tracking, auto-promote toggle
+- PredictionMonitor component with predicted vs actual overlay, drift detection, rolling windows
+- 7 ML API client functions (fetchModelRegistry, triggerRetraining, getRetrainingStatus, fetchFeatureImportance, fetchPredictionAccuracy, promoteModel, retireModel)
+- 8 frontend tests passing
+
 ## [Session-122] — 2026-04-12
 ### Added
 - OperationsDashboardPage with 60/40 grid layout

@@ -2,7 +2,7 @@
 
 > See also: [[README]] | [[ROADMAP]] | [[agents]]
 
-> Last updated: 2026-04-12
+> Last updated: 2026-04-13
 
 ## Summary
 
@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 29/35 |
-| **Total (core sessions)** | **127** | | **120/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 30/35 |
+| **Total (core sessions)** | **127** | | **121/127** |
 
 ---
 
@@ -226,7 +226,7 @@
 | 120 | [[sessions/session-120\|RandomForest Driver Risk Scoring]] | COMPLETE | 2026-04-12 | M8/ML: 8 telematics features, penalty scoring, daily Celery, 25 tests |
 | 121 | [[sessions/session-121\|SocketIO Real-Time GPS Streaming]] | COMPLETE | 2026-04-12 | M8: <1s latency, 1500+ connections, Redis pub/sub, geofence, 45 tests |
 | 122 | [[sessions/session-122\|Real-Time Operations Frontend]] | COMPLETE | 2026-04-12 | M8: Live fleet map, demand forecast, driver risk, alerts, 10 tests |
-| 123 | [[sessions/session-123\|ML Dashboard & Retraining UI]] | NOT STARTED | | ML: Model registry, metrics, feature importance, retrain |
+| 123 | [[sessions/session-123\|ML Dashboard & Retraining UI]] | COMPLETE | 2026-04-13 | ML: model registry table, metrics chart, feature importance, retrain panel, prediction monitor, 8 tests |
 
 ### Phase 8e — Portals, Chatbot & Integration
 
