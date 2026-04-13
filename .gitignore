@@ -115,6 +115,10 @@ Desktop.ini
 .claude/settings.local.json
 .claude/todos/
 .claude/plans/
+.local/
+
+# Large binary files (SOTREG reference docs)
+Docs/Future Features/
 
 # =====================
 # Dev Documentation (local only)

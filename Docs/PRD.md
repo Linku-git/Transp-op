@@ -38,8 +38,12 @@ A DRH launches a new industrial site. In 10 minutes, Transpop:
 |-------|--------|---------|
 | Phases 0–2 (Sessions 1–44) | ✅ COMPLETE | Full web platform built and tested |
 | Replit Deployment (R01) | ✅ LIVE | Reserved VM, 1200 employees, 106 vehicles |
-| Phase 3 — Mobile (Sessions 45–56) | 🔜 NOT STARTED | Flutter app for employees |
-| Phases 4–7 (Sessions 57–92) | 🔜 NOT STARTED | RTI, Security, Integrations, Scale |
+| Phase 3 — Mobile (Sessions 45–56) | ✅ COMPLETE | Flutter app for employees |
+| Phase 4 — Security & RTI (Sessions 57–66) | ✅ COMPLETE | Stop risk scoring, RTI, emergency alerts |
+| Phase 5 — Journey Valorization (Sessions 67–76) | ✅ COMPLETE | Content, surveys, LMS, engagement |
+| Phase 6 — Enterprise Integrations (Sessions 77–86) | ✅ COMPLETE | SIRH, operators, ERP, payments |
+| Phase 7 — Stabilization & Scale (Sessions 87–92) | 🔄 IN PROGRESS | Performance, security, RGPD, a11y (5/6) |
+| Phase 8 — SOTREG Modules M1–M8 (Sessions 93–127) | 🔜 NOT STARTED | Advanced optimization, ML, real-time ops |
 
 ---
 
@@ -436,6 +440,20 @@ A DRH launches a new industrial site. In 10 minutes, Transpop:
 - Accessibility audit (WCAG 2.1 AA)
 - App Store preparation + final documentation
 
+### Phase 8 — SOTREG Modules M1–M8 (Sessions 93–127)
+- M1 Diagnostic & Contexte (transport lines, gravity model, ZFE detection)
+- M2 Technologies & Motorisations (range correction, 15-year TCO, IRVE sizing)
+- M3 Infrastructures & Depots (stop generation, HCM capacity model, depot layout)
+- M4 Performance & Maintenance (AVL KPIs, LTO anti-platooning, predictive maintenance)
+- M5 Financement avance (NPV, Markowitz portfolio, supernetwork equilibrium)
+- M6 Phasage & Roadmap (electrification transition planner, Gantt chart)
+- M7 Scoring Global & MCDA (6-criteria weighted sum, McFadden logit)
+- M8 Exploitation Temps Reel & ML (Clarke & Wright, GA, LSTM, RandomForest, SocketIO)
+- ML Infrastructure (model registry, feature store, retraining pipeline)
+- Portals (driver portal, contractor dashboard Dash+Plotly)
+- Observability (Prometheus + Grafana + Loki + OpenTelemetry)
+- Rasa chatbot & final integration
+
 ---
 
 ## 11. Critical Notes for Claude Code Resuming Development
@@ -499,3 +517,155 @@ import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps'
 | v2.0 | 2026-03-28 | Database schema (38 tables), API endpoints (~125), session plan (92 sessions) |
 | v3.0 | 2026-04-01 | Sessions 1–44 planned and documented |
 | v4.0 | 2026-04-08 | Sessions 1–44 complete + Replit deployment phase: Google Maps migration, real seed data (1200 employees/106 vehicles), Pydantic v2, optimization sections rebuilt, production on Replit Reserved VM, port/CORS/proxy config documented |
+| v5.0 | 2026-04-09 | SOTREG Modules M1–M8 integrated: 35 new sessions (93–127) covering transport line model, 15-year TCO, IRVE sizing, AVL KPIs, predictive maintenance (Isolation Forest), Markowitz portfolio optimization, MCDA scoring, Clarke & Wright + Genetic Algorithm routing, LSTM demand forecasting, RandomForest driver risk scoring, SocketIO real-time streaming, driver/contractor portals, observability stack, Rasa chatbot |
+
+---
+
+## 13. SOTREG Modules (M1–M8)
+
+> **Source:** CDC Technique SOTREG v5.0 Final — Avril 2026
+> **Client:** OCP Group — Transport Personnel
+> **Scope:** 1,500 vehicles | 80M km/year | 50,000 tCO2/year | Net Zero 2035
+
+### 13.1 Overview
+
+SOTREG (Systeme d'Optimisation du Transport REGulier) extends Transpop with 8 specialized modules covering the full lifecycle of corporate fleet management: diagnostic, technology selection, infrastructure sizing, performance monitoring, financial engineering, phased transition planning, multi-criteria scoring, and real-time operations with ML-powered intelligence.
+
+**Academic Foundations:** D1 WMATA/KFH (bus stop guidelines), D2 Wang et al. (M/G/S queuing), D3 MetroNow (OTP KPIs), D4 Liu (Genetic Algorithms for VRP), D5 Chennai (predictive maintenance), D6 Dhaka/OCP (TCO/electrification), D7 Adelaide (4-step transport model), D8 Project Report.
+
+### 13.2 Module M1 — Diagnostic & Contexte
+
+**Foundation:** Transportation Planning 4-step model (McNally 2007), Wilson gravity model (1967)
+
+| Feature | Specification |
+|---------|--------------|
+| **Ligne model** | Transport line entity: `km_an = D x R x J` (distance x rotations x operating_days). PostgreSQL `GENERATED ALWAYS AS STORED` computed column |
+| **Fleet Context** | 1,500 vehicles, total km/year, tCO2/year, motorization split, average age |
+| **Gravity model OD** | `T_ij = A_i x O_i x B_j x D_j x f(c_ij)` with exponential deterrence. Furness iterative proportional fitting for balancing |
+| **ZFE detection** | ADEME API integration for Zone a Faibles Emissions compliance check |
+| **Service types** | navette, liaison, vip, mixte |
+
+### 13.3 Module M2 — Technologies & Motorisations
+
+**Foundation:** ARCHIMEDES (Skarlis et al. 2018), D6 Dhaka/OCP, Qin et al. (2016)
+
+| Feature | Specification |
+|---------|--------------|
+| **Range correction** | `A_reelle = A_base / (k_pente x k_saison x k_vitesse)`. k_pente in {1.00, 1.15, 1.30, 1.60}, k_saison in {1.00, 1.25, 1.30} |
+| **15-year TCO** | `TCO = CAPEX_net + OPEX_total + C_financement`. With energy price escalation and MAD calibration |
+| **Electrification breakeven** | `km_seuil = Delta_CAPEX / delta_opex_km` ~ 48,500 km/an. If km_an > km_seuil, electrification is profitable |
+| **Demand charge** | Qin 2016: charge to SOC=62% to minimize peak demand. 500 kWh buffer storage at depot |
+| **IRVE sizing** | `nb_bornes_50kW = ceil(n_veh_elec / 2)`, `nb_bornes_150kW = ceil(n_veh_elec / 5)`. Grid reinforcement if P_available < P_simultaneous x 0.62 |
+| **Technologies** | diesel (250k, 2.28 EUR/km), electric (350k, 1.25 EUR/km), hybrid, GNV, hydrogen |
+
+### 13.4 Module M3 — Infrastructures & Depots
+
+**Foundation:** D1 WMATA/KFH, D2 Wang et al. (HCM 2000), Ren et al. (2019) DBSCAN
+
+| Feature | Specification |
+|---------|--------------|
+| **Stop generation** | DBSCAN with eps=500m, MinPts=5, haversine distance, Ball-tree indexing. O(n log n) for n=5000 employees |
+| **Stop capacity** | HCM 2000 model: `Bs = N_berths x 3600 x (g/C) / [t_c + t_d x (g/C) + Z x c_v x t_d]`. Log-normal service time (K-S validated). LOS grading A-F |
+| **IRVE cost** | Installation + transformer upgrade + grid connection + civil works per depot |
+| **Depot layout** | Charger positions, parking bays, maintenance area allocation (m2) |
+
+### 13.5 Module M4 — Performance & Maintenance
+
+**Foundation:** D3 MetroNow, Zimmer et al. (2018) LTO, D5 Chennai, Liu et al. (2012) Isolation Forest
+
+| Feature | Specification |
+|---------|--------------|
+| **OTP** | On-Time Performance > 95%. Window: +/- 2 min from schedule |
+| **Headway COV** | Coefficient of variation < 0.3. Beyond 0.3 triggers LTO correction |
+| **Load Factor** | nb_passengers / capacity. Alert if LF > 1.0 |
+| **Commercial speed** | V_com = D_route / T_service. Target >= 25 km/h urban |
+| **LTO** | `t_LTO = t_planned + delta_GPS`, delta in [-t_leeway, +t_break]. Triggered if COV > 0.3 AND \|t_real - t_planned\| > 3 min |
+| **Isolation Forest** | n_estimators=200, contamination=0.05. Features: vibration, temperature, pressure, CAN bus, km, age. Score > 0.7 = critical, > 0.4 = medium. Retrain quarterly |
+| **IoT telemetry** | Webhook ingestion, rolling feature extraction (1h/24h/7d windows) |
+
+### 13.6 Module M5 — Financement Avance
+
+**Foundation:** D6 Dhaka/OCP, Markowitz (1952), Dong, Zhang & Nagurney (2004)
+
+| Feature | Specification |
+|---------|--------------|
+| **NPV** | `VAN = -CAPEX + Sum[CF_t / (1+r)^t]`. IRR via Brentq root finding |
+| **CO2 externalities** | `G = C_CO2_avoided x carbon_price_MAD + C_health_public` |
+| **Markowitz portfolio** | `max_w (w x R - (1-w) x V)` s.t. Sum(w_i) = 1, w_i >= 0. Efficient frontier computation |
+| **Supernetwork** | Dong et al. variational inequality: `VI(F*, K*, lambda*)`. Solved by MSA (Method of Successive Averages) |
+
+### 13.7 Module M6 — Phasage & Roadmap
+
+| Feature | Specification |
+|---------|--------------|
+| **Transition planner** | Sequence fleet conversion across technology waves (pilot/scale/full) with budget constraints |
+| **Gantt chart** | Interactive timeline with dependencies, drag-to-reschedule, PNG/SVG/PDF export |
+| **Milestone tracking** | Actual vs planned budget and timeline, % completion per phase |
+| **Scenario types** | aggressive, moderate, conservative electrification paths |
+
+### 13.8 Module M7 — Scoring Global & MCDA
+
+**Foundation:** ELECTRE (Roy 1968), AHP (Saaty 1980), McFadden (1974) binary logit
+
+| Feature | Specification |
+|---------|--------------|
+| **Weighted sum** | `S(a) = Sum(w_k x n_k(a_k))` with Sum(w_k) = 1 |
+| **Criteria weights** | CAPEX: 0.20, OPEX: 0.20, CO2: 0.25, Risk: 0.15, Comfort: 0.10, Maturity: 0.10 |
+| **Normalization** | Inverse: `n_inv(v) = 5 - 4 x (v - v_min) / (v_max - v_min)` for cost criteria. Direct for benefit criteria |
+| **Modal choice** | `P(bus) = exp(V_bus) / [exp(V_bus) + exp(V_car)]` where `V = beta_TT x TT + beta_cost x cost + beta_comfort x comfort` |
+| **Sensitivity** | Vary each weight +/- 20%, check ranking stability |
+
+### 13.9 Module M8 — Exploitation Temps Reel & ML
+
+**Foundation:** Clarke & Wright (1964), Holland GA (1975), Hochreiter LSTM (1997), Breiman RF (2001)
+
+| Feature | Specification |
+|---------|--------------|
+| **Clarke & Wright** | `S_ij = d(depot,i) + d(depot,j) - d(i,j)`. Sort descending, greedy merge. O(n^2 log n) |
+| **Genetic Algorithm** | OX crossover (0.85), swap mutation (0.05), 500 gen max, stagnation 50 gen, 10% elitism. Population=100 |
+| **LSTM demand** | LSTM(64) -> Dropout(0.2) -> LSTM(32) -> Dense(1). Window=336 (7d x 48 x 30min). Features: timestamp sin/cos, day, is_ramadan, weather. MAE loss. Monthly retrain |
+| **RF driver risk** | 8 features: speed/accel/brake alerts, geofencing, driving time, speed avg/max, current score. Score=100 - Sum(penalty_k x infractions_k). Weekly retrain |
+| **SocketIO GPS** | < 1s latency, Redis pub/sub for scaling, 1500+ concurrent connections. Geofence + route deviation detection |
+
+### 13.10 New Roles (9 total)
+
+| Role | Access | Description |
+|------|--------|-------------|
+| `admin` | Full | Platform administrator |
+| `drh` | M1-M7 read/write | HR director |
+| `daf` | M5 read/write, others read | Finance director |
+| `salarie` | Mobile app, own data | Employee |
+| `operateur` | M8 limited read | Transport operator |
+| `responsable_parc` | M2, M3, M4 read/write | Fleet manager (NEW) |
+| `responsable_exploitation` | M4, M8 read/write | Operations manager (NEW) |
+| `prestataire` | M8 limited read | Contractor (NEW) |
+| `conducteur` | Driver portal only | Driver (NEW) |
+
+### 13.11 ML Infrastructure
+
+| Component | Technology |
+|-----------|-----------|
+| Model registry | joblib (sklearn) + h5 (Keras), versioned, promote/retire |
+| Feature store | PostgreSQL table + Redis cache, rolling windows |
+| Training pipeline | Celery tasks: daily scoring, weekly RF retrain, monthly LSTM retrain, quarterly IF retrain |
+| Serving | Pre-loaded in memory, < 500ms inference |
+
+### 13.12 Additional Services
+
+| Service | Technology | Port |
+|---------|-----------|------|
+| Contractor dashboard | Dash + Plotly (Python) | 8050 |
+| Driver portal | React (integrated in main frontend) | — |
+| Chatbot | Rasa 3 (domain.yml, actions.py) | 5005 |
+| Observability | Prometheus + Grafana + Loki + OpenTelemetry | 9090/3000/3100 |
+
+### 13.13 SOTREG Roadmap (12 weeks target)
+
+| Sprint | Duration | Modules | Sessions |
+|--------|----------|---------|----------|
+| S0 — Infrastructure | 1 week | Setup, CI/CD, Keycloak | — |
+| Phase 8a — Diagnostic & Technologies | 3 weeks | M1, M2, M3 | 93–101 |
+| Phase 8b — Performance & Finance | 3 weeks | M4, M5 | 102–109 |
+| Phase 8c — Scoring & Roadmap | 2 weeks | M6, M7, RBAC | 110–115 |
+| Phase 8d — ML & Real-Time | 3 weeks | M8, ML Infra | 116–123 |
+| Phase 8e — Portals & Integration | 2 weeks | Portals, Observability, Chatbot | 124–127 |

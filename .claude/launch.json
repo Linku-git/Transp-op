@@ -9,9 +9,10 @@
     },
     {
       "name": "frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--host", "0.0.0.0", "--port", "5173"],
+      "port": 5173,
+      "cwd": "frontend"
     },
     {
       "name": "mobile",
