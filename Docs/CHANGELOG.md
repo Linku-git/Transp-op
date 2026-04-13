@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-124] — 2026-04-13
+### Added
+- Driver Portal with simplified layout for conducteur role (`/driver`)
+- DriverTripsPage: today's trip assignments with stops, active trip progress bar, status badges
+- DriverVehiclePage: assigned vehicle details, fuel gauge, telemetry summary, maintenance alerts, report issue modal
+- DriverRiskPage: SVG semicircle risk gauge (0-100), 30-day score history chart, infraction breakdown, improvement tips
+- DriverSchedulePage: 7-day weekly grid, LTO-optimized departure badges, rest day indicators, swap request
+- RoleRedirect component: auto-redirects conducteur to /driver portal on login
+- Driver API client (6 functions) and driverStore Zustand store
+- 8 frontend tests passing
+
 ## [Session-123] — 2026-04-13
 ### Added
 - ML Operations Dashboard (`/sotreg/ml`) with 3-tab layout (Models, Features, Retraining)

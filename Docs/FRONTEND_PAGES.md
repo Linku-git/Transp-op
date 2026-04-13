@@ -73,6 +73,10 @@
 /sotreg/operations          -> OperationsDashboardPage
 /sotreg/ml                  -> MLDashboardPage
 /admin/roles                -> RoleManagementPage
+/driver                     -> DriverTripsPage (conducteur role)
+/driver/vehicle             -> DriverVehiclePage
+/driver/risk                -> DriverRiskPage
+/driver/schedule            -> DriverSchedulePage
 ```
 
 ---
@@ -672,6 +676,42 @@
 - Rolling window selector (24h / 7d / 30d)
 - Drift detection indicator when accuracy drops below threshold
 - Model-specific views: demand forecast MAE, driver risk accuracy
+
+### Driver Portal (Session 124)
+
+#### DriverPortalLayout ✅ Session 124
+- Simplified sidebar navigation with 5 items (Trips, Vehicle, Risk, Schedule, Logout)
+- Driver name, photo, and active vehicle badge in header
+- Notification bell with unread count
+- Responsive design for tablet use in vehicle
+- Conducteur role only -- RoleRedirect sends conducteur users to `/driver` on login
+
+#### DriverTripsPage `/driver` ✅ Session 124
+- Today's trip list with stops, scheduled times, passenger counts
+- Active trip highlighted with real-time progress bar
+- Trip status badges: upcoming, in_progress, completed, cancelled
+- Expandable stop list with passenger details
+- API: driver API client (6 functions) + driverStore Zustand store
+
+#### DriverVehiclePage `/driver/vehicle` ✅ Session 124
+- Assigned vehicle details (type, plate, capacity, fuel/battery level)
+- Fuel gauge visualization
+- Telemetry summary: speed avg, distance today, fuel consumed
+- Maintenance alerts with severity and due dates
+- Report issue button (opens modal form)
+
+#### DriverRiskPage `/driver/risk` ✅ Session 124
+- SVG semicircle gauge (0-100) displaying personal risk score
+- Risk category badge with color coding
+- 30-day score history LineChart (Recharts)
+- Infraction breakdown horizontal bars (speed, acceleration, braking, geofence, time)
+- Improvement tips based on top risk factors
+
+#### DriverSchedulePage `/driver/schedule` ✅ Session 124
+- 7-day weekly grid view with daily trip assignments
+- LTO-optimized departure time badges per trip
+- Rest day indicators (compliance with driving time rules)
+- Swap request button for shift changes
 
 ---
 
