@@ -6,6 +6,21 @@
 
 ---
 
+## [Session-127] — 2026-04-13
+### Added
+- Rasa 3.x chatbot project: domain.yml, config.yml, NLU training data (300+ examples), stories, rules
+- 6 chatbot intents: fleet_status, trip_info, kpi_query, maintenance_alert, schedule_query, help
+- 5 entities with slot mapping: ligne_id, vehicle_id, date, kpi_type, driver_name
+- 5 custom Rasa actions (ActionQueryFleetStatus, ActionQueryTripInfo, ActionQueryKPI, ActionQueryMaintenance, ActionQuerySchedule)
+- TranspopChatbotClient with API integration and graceful demo data fallback
+- React ChatWidget: floating FAB, chat panel, message persistence (localStorage), typing indicator, Azure Velocity design
+- ChatMessage component: user/bot styling, timestamps, smart_toy icon
+- Docker services: rasa (port 5005) + rasa-actions (port 5055) with health checks and model volume
+- E2E pipeline tests: ligne -> stops -> optimize -> track -> MCDA score -> report (12 tests)
+- 9-role RBAC permission matrix verification (7 tests)
+- Cross-module data flow tests: M1->M4, M2->M5, M3->M8, M4->M8 (4 tests)
+- 33 tests passing across 5 test files (backend + chatbot + frontend)
+
 ## [Session-126] — 2026-04-13
 ### Added
 - Prometheus metrics middleware with 6 custom application metrics (optimization, ML prediction, telemetry, SocketIO, Celery, DB queries)

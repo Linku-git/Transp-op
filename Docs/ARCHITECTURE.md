@@ -204,6 +204,8 @@ services:
   prometheus: Prometheus metrics server (port 9090) — 15s scrape interval, 4 alert rules
   grafana:    Grafana dashboards (port 3000) — 4 provisioned dashboards (API, ML, Fleet, Telemetry)
   loki:       Loki log aggregation (port 3100) — 7-day retention, TSDB store
+  rasa:       Rasa chatbot server (port 5005) — 6 intents, French NLU, 300+ training examples
+  rasa-actions: Rasa action server (port 5055) — custom actions calling Transpop API
 ```
 
 #### Production (Kubernetes)
