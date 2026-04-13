@@ -336,6 +336,10 @@ const OperationsDashboardPage = lazy(() =>
   import('@/pages/sotreg/OperationsDashboardPage')
 );
 
+const MLDashboardPage = lazy(() =>
+  import('@/pages/sotreg/MLDashboardPage')
+);
+
 const OperatorDashboardPage = lazy(() =>
   import('@/pages/operator/OperatorDashboardPage').then((m) => ({
     default: m.OperatorDashboardPage,
@@ -829,6 +833,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <OperationsDashboardPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sotreg/ml',
+        element: (
+          <SuspenseWrapper>
+            <MLDashboardPage />
           </SuspenseWrapper>
         ),
       },

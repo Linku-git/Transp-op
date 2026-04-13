@@ -324,3 +324,96 @@ export const downloadMCDAReportExcel = async (
   });
   return response.data as Blob;
 };
+
+/* ── ML Model Registry (M8 — Session 123) ─────────────────────────────── */
+
+const ML = '/api/v1/sotreg/ml';
+
+export interface MLModelResponse {
+  id: string;
+  tenant_id: string;
+  model_type: string;
+  version: number;
+  status: string;
+  metrics: Record<string, number> | null;
+  file_path: string | null;
+  trained_at: string | null;
+  feature_names: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MLModelListResponse {
+  data: MLModelResponse[];
+  total: number;
+}
+
+export interface RetrainResponse {
+  model_type: string;
+  status: string;
+  message: string;
+  task_id: string | null;
+}
+
+export interface FeatureResponse {
+  entity_type: string;
+  entity_id: string;
+  features: Record<string, number>;
+  window: string;
+  computed_at: string | null;
+}
+
+export const fetchModelRegistry = async (
+  modelType?: string,
+): Promise<MLModelListResponse> => {
+  const params = modelType ? { model_type: modelType } : {};
+  const response = await api.get<MLModelListResponse>(`${ML}/models`, { params });
+  return response.data;
+};
+
+export const triggerRetraining = async (
+  modelType: string,
+  force = false,
+): Promise<RetrainResponse> => {
+  const response = await api.post<RetrainResponse>(`${ML}/retrain/${modelType}`, { force });
+  return response.data;
+};
+
+export const getRetrainingStatus = async (
+  taskId: string,
+): Promise<{ state: string; progress: number }> => {
+  const response = await api.get(`/api/v1/tasks/${taskId}/status`);
+  return response.data;
+};
+
+export const fetchFeatureImportance = async (
+  entityType: string,
+  entityId: string,
+  window = '24h',
+): Promise<FeatureResponse> => {
+  const response = await api.get<FeatureResponse>(
+    `${ML}/features/${entityType}/${entityId}`,
+    { params: { window } },
+  );
+  return response.data;
+};
+
+export const fetchPredictionAccuracy = async (
+  ligneId: string,
+): Promise<{
+  ligne_id: string;
+  forecast: number[];
+  timestamps: string[];
+  metrics: Record<string, number>;
+}> => {
+  const response = await api.get(`${ML}/forecast/demand/${ligneId}`);
+  return response.data;
+};
+
+export const promoteModel = async (modelId: string): Promise<void> => {
+  await api.post(`${ML}/models/${modelId}/promote`);
+};
+
+export const retireModel = async (modelId: string): Promise<void> => {
+  await api.post(`${ML}/models/${modelId}/retire`);
+};

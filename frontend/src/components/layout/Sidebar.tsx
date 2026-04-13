@@ -52,6 +52,7 @@ const SOTREG_GROUP: NavGroup = {
     { key: 'sotreg-roadmap',       path: '/sotreg/roadmap',         label: 'Feuille Route',   icon: 'timeline', roles: ['admin', 'drh', 'daf'] },
     { key: 'sotreg-scoring',       path: '/sotreg/scoring',         label: 'Scoring MCDA',    icon: 'score', roles: ['admin', 'drh', 'daf'] },
     { key: 'sotreg-operations',    path: '/sotreg/operations',      label: 'Temps Reel',      icon: 'streaming', roles: ['admin', 'drh', 'responsable_exploitation'] },
+    { key: 'sotreg-ml',            path: '/sotreg/ml',              label: 'ML Operations',   icon: 'model_training', roles: ['admin', 'drh', 'responsable_exploitation'] },
   ],
 };
 
