@@ -1,0 +1,12 @@
+FROM rasa/rasa-sdk:3.6.2
+
+COPY actions /app/actions
+COPY requirements.txt /app/
+
+USER root
+RUN pip install --no-cache-dir httpx python-dotenv
+USER 1001
+
+EXPOSE 5055
+
+HEALTHCHECK --interval=30s --timeout=10s CMD curl -f http://localhost:5055/health || exit 1

@@ -1,0 +1,361 @@
+version: "3.1"
+
+nlu:
+
+# ---------- greet ----------
+- intent: greet
+  examples: |
+    - bonjour
+    - salut
+    - bonsoir
+    - coucou
+    - hey
+    - hello
+    - bonne journee
+    - salut a toi
+    - bonjour a tous
+    - re bonjour
+
+# ---------- goodbye ----------
+- intent: goodbye
+  examples: |
+    - au revoir
+    - a bientot
+    - bye
+    - bonne nuit
+    - a demain
+    - salut bye
+    - a plus
+    - ciao
+    - bonne soiree
+    - merci au revoir
+
+# ---------- fleet_status (50+ examples) ----------
+- intent: fleet_status
+  examples: |
+    - Combien de vehicules sont actifs ?
+    - Quel est le statut de la flotte ?
+    - Combien de bus en service aujourd'hui ?
+    - Donne-moi le resume de la flotte
+    - Statut des vehicules
+    - Nombre de vehicules disponibles
+    - Y a-t-il des vehicules en panne ?
+    - Etat du parc automobile
+    - Vehicules operationnels en ce moment
+    - Montre-moi la flotte active
+    - Combien de vehicules au total ?
+    - Etat general de la flotte
+    - Quels vehicules sont en circulation ?
+    - Flotte en temps reel
+    - Donne-moi un apercu de la flotte
+    - Quel est le nombre de bus disponibles ?
+    - Vehicules hors service
+    - Combien de bus fonctionnent ?
+    - Quel pourcentage de la flotte est actif ?
+    - Resume du parc vehicules
+    - Flotte disponible pour aujourd'hui
+    - Combien de camions sont operationnels ?
+    - Vehicules en service ce matin
+    - Bilan de la flotte de transport
+    - Nombre de vehicules en maintenance
+    - Vehicules actifs par site
+    - Y a-t-il des vehicules disponibles ?
+    - Status de la flotte de bus
+    - Combien de minibus sont actifs ?
+    - Quels vehicules ne sont pas en service ?
+    - Etat actuel du parc
+    - Rapport sur la flotte
+    - Vehicules en panne aujourd'hui
+    - Taux de disponibilite de la flotte
+    - Nombre total de bus actifs
+    - Quels vehicules sont au depot ?
+    - Flotte operationnelle ce soir
+    - Combien de vehicules PMR disponibles ?
+    - Situation de la flotte maintenant
+    - Donne le statut des bus
+    - Apercu du parc de vehicules
+    - Quel est l'etat de nos vehicules ?
+    - Combien de vehicules en ZFE ?
+    - Vehicules electriques actifs
+    - Statistiques de la flotte
+    - Combien de vehicules diesel en service ?
+    - Point sur la flotte transport
+    - Affiche la flotte
+    - Recap vehicules du jour
+    - Nombre de vehicules en bon etat
+    - Quels bus roulent en ce moment ?
+
+# ---------- trip_info (50+ examples with entity annotations) ----------
+- intent: trip_info
+  examples: |
+    - Quel est le prochain depart de la [ligne 5](ligne_id) ?
+    - Quand part la [ligne A1](ligne_id) ?
+    - Horaire du prochain bus [ligne B2](ligne_id)
+    - Informations sur le trajet [12](ligne_id)
+    - Prochain depart [ligne 3](ligne_id)
+    - A quelle heure passe la [ligne 7](ligne_id) ?
+    - Depart suivant de la [ligne 10](ligne_id)
+    - Quand est le prochain bus de la [ligne C4](ligne_id) ?
+    - Horaires de la [ligne 1](ligne_id)
+    - Infos sur la [ligne 15](ligne_id)
+    - Prochaine navette [ligne D1](ligne_id)
+    - Quel est le trajet de la [ligne 2](ligne_id) ?
+    - ETA de la [ligne 8](ligne_id) ?
+    - Quand passe le bus [ligne 6](ligne_id) ?
+    - Combien de temps avant le prochain [ligne 4](ligne_id) ?
+    - Passage du prochain bus [ligne A3](ligne_id)
+    - La [ligne 9](ligne_id) passe a quelle heure ?
+    - Statut de la [ligne 11](ligne_id)
+    - Heure du prochain depart [ligne B1](ligne_id)
+    - Quand arrive la [ligne 14](ligne_id) ?
+    - Prochain passage du bus [ligne 20](ligne_id)
+    - Info trajet [ligne 13](ligne_id)
+    - Horaire prevu de la [ligne E2](ligne_id)
+    - Le bus de la [ligne 16](ligne_id) est en retard ?
+    - Prochain bus de ma ligne
+    - Quand part le prochain bus ?
+    - A quelle heure est le prochain depart ?
+    - Horaire du prochain trajet
+    - Prochaine navette disponible
+    - Quand passe mon bus ?
+    - Infos sur mon trajet
+    - Prochain depart depuis mon arret
+    - Est-ce que le bus est en route ?
+    - Quelle est l'heure du prochain bus ?
+    - Depart imminent pour quelle ligne ?
+    - Temps d'attente pour le prochain bus
+    - Prochains departs du site
+    - Horaires de depart du matin
+    - Horaires de depart du soir
+    - Quel bus part bientot ?
+    - Y a-t-il un bus dans les 10 minutes ?
+    - Departs prevus dans l'heure
+    - Liste des prochains departs
+    - Quand est la prochaine rotation ?
+    - Prochain bus pour Ain Sebaa
+    - Prochain bus pour le site industriel
+    - Departs du matin pour demain
+    - Quel trajet pour aller au bureau ?
+    - Bus disponible pour rentrer ?
+    - Quels sont les departs de la soiree ?
+    - Programme des departs
+
+# ---------- kpi_query (50+ examples with entity annotations) ----------
+- intent: kpi_query
+  examples: |
+    - Quel est le taux de ponctualite ?
+    - Montre-moi les KPIs
+    - Performance du reseau
+    - Taux de remplissage moyen
+    - Indicateur [OTP](kpi_type)
+    - KPIs de performance
+    - Quel est le [taux de ponctualite](kpi_type) ?
+    - Indicateurs cles du reseau
+    - Montre le tableau de bord
+    - Performance globale du transport
+    - Quel est le score [OTP](kpi_type) actuel ?
+    - KPI de [remplissage](kpi_type)
+    - Taux de [regularite](kpi_type) des bus
+    - Performance operationnelle
+    - Indicateurs de qualite de service
+    - Quel est le taux de [couverture](kpi_type) ?
+    - Metriques de la flotte
+    - Analyse de performance
+    - Dashboard des indicateurs
+    - Quel est le taux de [satisfaction](kpi_type) ?
+    - Indicateur [headway](kpi_type)
+    - Performance par ligne
+    - Taux de [retard](kpi_type) moyen
+    - KPI [CO2](kpi_type) du mois
+    - Indicateur [vitesse commerciale](kpi_type)
+    - Metriques operationnelles
+    - Bilan de performance
+    - Quel est le niveau de service ?
+    - Indicateurs de cette semaine
+    - Rapport de KPIs
+    - Quel est notre [NPS](kpi_type) ?
+    - Performance du mois dernier
+    - Indicateur [absenteisme](kpi_type)
+    - Taux [d'occupation](kpi_type) des vehicules
+    - Comment performe le reseau ?
+    - Qualite du service transport
+    - Score de performance global
+    - Indicateur de fiabilite
+    - KPIs du jour
+    - Performance des lignes principales
+    - Taux de [respect des horaires](kpi_type)
+    - Metriques d'exploitation
+    - Indicateurs RSE
+    - Performance environnementale
+    - Quel est le taux [d'efficacite](kpi_type) ?
+    - Bilan operationnel
+    - Metriques de transport
+    - Indicateurs financiers
+    - KPI [cout par trajet](kpi_type)
+    - Tableau de bord des performances
+    - Analyse des indicateurs transport
+
+# ---------- maintenance_alert (50+ examples) ----------
+- intent: maintenance_alert
+  examples: |
+    - Y a-t-il des alertes maintenance ?
+    - Vehicules en maintenance
+    - Alertes techniques en cours
+    - Problemes mecaniques signales
+    - Quels vehicules ont besoin de maintenance ?
+    - Alertes du parc
+    - Y a-t-il des pannes ?
+    - Vehicules a reparer
+    - Etat de la maintenance
+    - Alertes mecaniques du jour
+    - Bus en reparation
+    - Vehicules immobilises
+    - Problemes techniques actuels
+    - Combien de vehicules en panne ?
+    - Maintenance prevue cette semaine
+    - Alertes de maintenance urgentes
+    - Vehicules hors service pour reparation
+    - Y a-t-il des incidents techniques ?
+    - Signalements de panne
+    - Maintenance programmee
+    - Quels vehicules sont au garage ?
+    - Alertes predictives de maintenance
+    - Historique des pannes
+    - Problemes detectes sur les vehicules
+    - Etat des reparations en cours
+    - Vehicules necessitant une intervention
+    - Alertes IoT sur les vehicules
+    - Defaillances signalees aujourd'hui
+    - Planning de maintenance
+    - Vehicules en revision
+    - Alertes de telemetrie
+    - Problemes sur la flotte
+    - Interventions techniques prevues
+    - Quels vehicules sont en atelier ?
+    - Maintenance preventive a planifier
+    - Alertes de l'equipe technique
+    - Vehicules avec anomalies
+    - Controle technique a faire
+    - Reparations urgentes
+    - Etat du garage
+    - Vehicules en panne ce matin
+    - Alertes de diagnostic
+    - Defauts detectes par capteurs
+    - Combien de bus a l'atelier ?
+    - Incidents mecaniques recents
+    - Alertes de maintenance du mois
+    - Vehicules avec kilometrage eleve
+    - Maintenance corrective en cours
+    - Points de maintenance critiques
+    - Rapport de maintenance
+    - Quels bus sont immobilises ?
+
+# ---------- schedule_query (50+ examples with entity annotations) ----------
+- intent: schedule_query
+  examples: |
+    - Mon planning de demain
+    - Quel est mon horaire cette semaine ?
+    - Programme de [lundi](date)
+    - A quelle heure je commence [demain](date) ?
+    - Planning du [mardi](date)
+    - Mon emploi du temps de la semaine
+    - Horaires de [mercredi](date)
+    - A quelle heure je finis [vendredi](date) ?
+    - Mon planning de [jeudi](date)
+    - Programme de travail du [samedi](date)
+    - Quel est mon horaire [aujourd'hui](date) ?
+    - Planning de la semaine prochaine
+    - Mon programme du [dimanche](date)
+    - Horaire du [15 avril](date)
+    - A quelle heure est ma prochaine mission ?
+    - Mon emploi du temps pour [demain matin](date)
+    - Planning du chauffeur
+    - Missions prevues cette semaine
+    - Quand est-ce que je travaille ?
+    - Horaire de [cette semaine](date)
+    - Mon programme de [la semaine prochaine](date)
+    - A quelle heure je commence le matin ?
+    - Mon planning conducteur
+    - Quel est le programme de mes rotations ?
+    - Horaires de mes trajets
+    - Planning de mes lignes
+    - Quand sont mes prochains departs ?
+    - Mon emploi du temps du [mois](date)
+    - Planning pour le [20 avril](date)
+    - Mes missions de [demain apres-midi](date)
+    - Horaire du prochain service
+    - Quand est mon prochain trajet ?
+    - Programme de mes rotations
+    - Mon planning de conduite
+    - Heures de service [lundi prochain](date)
+    - Mon agenda pour la semaine
+    - Rotation prevue pour [mardi](date)
+    - Quand suis-je de service ?
+    - Planning des departs de [mercredi](date)
+    - Quel est mon programme pour [jeudi matin](date) ?
+    - Mes heures de travail [vendredi](date)
+    - Mon horaire habituel
+    - Planning du conducteur pour [samedi](date)
+    - A quelle heure est mon premier depart ?
+    - Mon dernier trajet de la journee
+    - Horaires de repos
+    - Quand est ma pause ?
+    - Planning de nuit
+    - Horaires du poste du matin
+    - Horaires du poste de soir
+    - Mon emploi du temps complet
+
+# ---------- help (50+ examples) ----------
+- intent: help
+  examples: |
+    - Comment utiliser la plateforme ?
+    - Aide
+    - Que peux-tu faire ?
+    - Quelles sont tes fonctionnalites ?
+    - Aide moi
+    - J'ai besoin d'aide
+    - Comment ca marche ?
+    - Qu'est-ce que tu sais faire ?
+    - Montre-moi les options
+    - Que sais-tu faire ?
+    - Tes capacites
+    - Je suis perdu
+    - Comment puis-je t'utiliser ?
+    - Explique-moi comment ca fonctionne
+    - Guide d'utilisation
+    - Quelles questions puis-je poser ?
+    - Fonctionnalites disponibles
+    - Comment naviguer ?
+    - Menu d'aide
+    - Je ne sais pas quoi demander
+    - Qu'est-ce que tu peux m'aider ?
+    - Donne-moi des exemples de questions
+    - Fonctionnement du chatbot
+    - Comment interagir avec toi ?
+    - Aide sur les commandes
+    - Mode d'emploi
+    - Tutoriel
+    - Comment obtenir des informations ?
+    - A quoi sers-tu ?
+    - Quels services proposes-tu ?
+    - Qu'est-ce que Transpop ?
+    - Aide sur la flotte
+    - Aide sur les KPIs
+    - Comment voir mon planning ?
+    - Comment verifier la maintenance ?
+    - Comment consulter les horaires ?
+    - Aide sur les trajets
+    - Aide pour comprendre les indicateurs
+    - Comment fonctionne l'assistant ?
+    - C'est quoi ce chatbot ?
+    - Presentation de l'assistant
+    - De quoi peux-tu parler ?
+    - Donne-moi le menu
+    - Options disponibles
+    - Comment consulter la flotte ?
+    - Aide sur le planning
+    - Comment poser une question ?
+    - Sujets disponibles
+    - Que puis-je te demander ?
+    - Bonjour aide
+    - Instructions d'utilisation

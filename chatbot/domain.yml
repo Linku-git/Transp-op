@@ -1,0 +1,77 @@
+# Transpop Chatbot — Domain Definition
+# Session 127: Rasa Chatbot & Final Integration
+
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - fleet_status
+  - trip_info
+  - kpi_query
+  - maintenance_alert
+  - schedule_query
+  - help
+  - nlu_fallback
+
+entities:
+  - ligne_id
+  - vehicle_id
+  - date
+  - kpi_type
+  - driver_name
+
+slots:
+  ligne_id:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: ligne_id
+  vehicle_id:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: vehicle_id
+  date:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: date
+  kpi_type:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: kpi_type
+  driver_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: driver_name
+
+actions:
+  - action_query_fleet_status
+  - action_query_trip_info
+  - action_query_kpi
+  - action_query_maintenance
+  - action_query_schedule
+
+responses:
+  utter_greet:
+    - text: "Bonjour ! Je suis l'assistant Transpop. Comment puis-je vous aider ?"
+  utter_goodbye:
+    - text: "Au revoir ! N'hesitez pas a revenir."
+  utter_help:
+    - text: "Je peux vous aider avec: statut de la flotte, informations de trajet, indicateurs KPI, alertes maintenance, et planning. Que souhaitez-vous savoir ?"
+  utter_default:
+    - text: "Desole, je n'ai pas compris. Pouvez-vous reformuler ?"
+  utter_ask_rephrase:
+    - text: "Je ne suis pas sur de comprendre. Pouvez-vous reformuler votre question ?"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

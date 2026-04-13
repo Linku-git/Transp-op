@@ -1,0 +1,148 @@
+version: "3.1"
+
+stories:
+
+# --- Fleet status flow ---
+- story: fleet_status_query
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: fleet_status
+    - action: action_query_fleet_status
+    - intent: goodbye
+    - action: utter_goodbye
+
+- story: fleet_status_direct
+  steps:
+    - intent: fleet_status
+    - action: action_query_fleet_status
+
+- story: fleet_then_kpi
+  steps:
+    - intent: fleet_status
+    - action: action_query_fleet_status
+    - intent: kpi_query
+    - action: action_query_kpi
+
+# --- Trip info flow ---
+- story: trip_lookup
+  steps:
+    - intent: trip_info
+    - action: action_query_trip_info
+
+- story: greet_then_trip
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: trip_info
+    - action: action_query_trip_info
+    - intent: goodbye
+    - action: utter_goodbye
+
+- story: trip_then_schedule
+  steps:
+    - intent: trip_info
+    - action: action_query_trip_info
+    - intent: schedule_query
+    - action: action_query_schedule
+
+# --- KPI check flow ---
+- story: kpi_check
+  steps:
+    - intent: kpi_query
+    - action: action_query_kpi
+
+- story: greet_kpi_goodbye
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: kpi_query
+    - action: action_query_kpi
+    - intent: goodbye
+    - action: utter_goodbye
+
+- story: kpi_then_maintenance
+  steps:
+    - intent: kpi_query
+    - action: action_query_kpi
+    - intent: maintenance_alert
+    - action: action_query_maintenance
+
+# --- Maintenance check flow ---
+- story: maintenance_check
+  steps:
+    - intent: maintenance_alert
+    - action: action_query_maintenance
+
+- story: greet_maintenance
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: maintenance_alert
+    - action: action_query_maintenance
+
+- story: maintenance_then_fleet
+  steps:
+    - intent: maintenance_alert
+    - action: action_query_maintenance
+    - intent: fleet_status
+    - action: action_query_fleet_status
+
+# --- Schedule check flow ---
+- story: schedule_check
+  steps:
+    - intent: schedule_query
+    - action: action_query_schedule
+
+- story: greet_schedule_goodbye
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: schedule_query
+    - action: action_query_schedule
+    - intent: goodbye
+    - action: utter_goodbye
+
+# --- Help flow ---
+- story: help_flow
+  steps:
+    - intent: help
+    - action: utter_help
+
+- story: greet_help_fleet
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: help
+    - action: utter_help
+    - intent: fleet_status
+    - action: action_query_fleet_status
+
+- story: help_then_kpi
+  steps:
+    - intent: help
+    - action: utter_help
+    - intent: kpi_query
+    - action: action_query_kpi
+
+# --- Fallback and retry ---
+- story: fallback_and_retry_fleet
+  steps:
+    - intent: nlu_fallback
+    - action: utter_ask_rephrase
+    - intent: fleet_status
+    - action: action_query_fleet_status
+
+- story: fallback_and_retry_trip
+  steps:
+    - intent: nlu_fallback
+    - action: utter_ask_rephrase
+    - intent: trip_info
+    - action: action_query_trip_info
+
+- story: fallback_and_retry_kpi
+  steps:
+    - intent: nlu_fallback
+    - action: utter_ask_rephrase
+    - intent: kpi_query
+    - action: action_query_kpi

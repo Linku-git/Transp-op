@@ -152,6 +152,45 @@ services:
       timeout: 5s
       retries: 3
 
+  rasa:
+    build:
+      context: ./chatbot
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    environment:
+      - TRANSPOP_API_URL=http://backend:8000/api/v1
+    depends_on:
+      rasa-actions:
+        condition: service_healthy
+    volumes:
+      - rasa_models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  rasa-actions:
+    build:
+      context: ./chatbot
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5055:5055"
+    environment:
+      - TRANSPOP_API_URL=http://backend:8000/api/v1
+      - TRANSPOP_JWT_TOKEN=${TRANSPOP_JWT_TOKEN:-}
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5055/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
 volumes:
   pgdata:
   redisdata:
@@ -159,3 +198,4 @@ volumes:
   prometheus_data:
   grafana_data:
   loki_data:
+  rasa_models:
