@@ -6,6 +6,17 @@
 
 ---
 
+## [Session-125] — 2026-04-13
+### Added
+- Contractor Dashboard -- standalone Dash+Plotly micro-frontend on port 8050
+- KPI page: trips completed, OTP %, satisfaction, utilization with Plotly gauges and sparklines
+- SLA Compliance page: OTP vs target line chart, penalty calculation (500 MAD/%), trend OLS, CSV export
+- Financial Reconciliation page: invoiced vs actual DataTable with conditional formatting, monthly revenue bar chart, MAD currency
+- Fleet Status page: Plotly scattermapbox (Casablanca), vehicle status table, maintenance schedule, availability doughnut
+- JWT authentication against Transpop API with httpx client and fallback demo data
+- Docker service in docker-compose.yml with health check on port 8050
+- 26 tests passing across 4 test files
+
 ## [Session-124] — 2026-04-13
 ### Added
 - Driver Portal with simplified layout for conducteur role (`/driver`)

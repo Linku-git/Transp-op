@@ -200,6 +200,7 @@ services:
   celery:      Celery worker
   celery-beat: Celery scheduler
   osrm:        OSRM routing engine (port 5000)
+  contractor-dashboard: Dash+Plotly app (port 8050) — separate micro-frontend for prestataire role
 ```
 
 #### Production (Kubernetes)

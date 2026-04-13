@@ -17,8 +17,8 @@
 | Phase 5 — Journey Valorization | 67-76 | **COMPLETE** | **10/10** |
 | Phase 6 — Enterprise Integrations | 77-86 | **COMPLETE** | **10/10** |
 | Phase 7 — Stabilization & Scale | 87-92 | IN PROGRESS | 5/6 |
-| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 31/35 |
-| **Total (core sessions)** | **127** | | **122/127** |
+| Phase 8 — SOTREG Modules (M1-M8) | 93-127 | IN PROGRESS | 32/35 |
+| **Total (core sessions)** | **127** | | **123/127** |
 
 ---
 
@@ -233,7 +233,7 @@
 | Session | Title | Status | Date | Notes |
 |---------|-------|--------|------|-------|
 | 124 | [[sessions/session-124\|Driver Portal (React)]] | COMPLETE | 2026-04-13 | M8: Driver portal, trips/vehicle/risk/schedule pages, conducteur role redirect, 8 tests |
-| 125 | [[sessions/session-125\|Contractor Dashboard (Dash+Plotly)]] | NOT STARTED | | M8: SLA compliance, financial reconciliation, fleet status |
+| 125 | [[sessions/session-125\|Contractor Dashboard (Dash+Plotly)]] | COMPLETE | 2026-04-13 | M8: Dash+Plotly contractor dashboard, SLA/finance/fleet/KPIs, MAD currency, Docker service, 26 tests |
 | 126 | [[sessions/session-126\|Observability Stack]] | NOT STARTED | | Infra: Prometheus, Grafana, Loki, OpenTelemetry |
 | 127 | [[sessions/session-127\|Rasa Chatbot & Final Integration]] | NOT STARTED | | Cross: Chatbot, E2E integration test, 9-role verification |
 
