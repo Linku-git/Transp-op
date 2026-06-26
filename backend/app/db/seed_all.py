@@ -228,6 +228,11 @@ async def run():
             role_daf = _role("daf",    ["financial:read", "financial:write", "reports:read"])
             role_sal = _role("salarie",["profile:read"])
             role_ops = _role("operateur", ["optimization:read", "optimization:write", "sites:read"])
+            # SOTREG roles (session 115 — Keycloak 9-role extension)
+            role_rparc = _role("responsable_parc", ["vehicles:read", "vehicles:write", "optimization:read", "sites:read"])
+            role_rexpl = _role("responsable_exploitation", ["optimization:read", "optimization:write", "sites:read", "reports:read"])
+            role_prest = _role("prestataire", ["optimization:read", "sites:read"])
+            role_cond  = _role("conducteur", ["profile:read", "optimization:read"])
             await db.flush()
 
             # ------------------------------------------------------------------
@@ -242,6 +247,11 @@ async def run():
                 ("drh@transpop.dev",      "Aicha",    "El Mansouri",   role_drh.id),
                 ("daf@transpop.dev",      "Youssef",  "Bennani",       role_daf.id),
                 ("operateur@transpop.dev","Rachid",   "Tazi",          role_ops.id),
+                ("salarie@transpop.dev",  "Fatima",   "Zahra",         role_sal.id),
+                ("conducteur@transpop.dev","Hassan",  "Ouali",         role_cond.id),
+                ("prestataire@transpop.dev","Karim",  "Idrissi",       role_prest.id),
+                ("responsable.parc@transpop.dev","Nadia","Berrada",    role_rparc.id),
+                ("responsable.exploitation@transpop.dev","Omar","Saadi",role_rexpl.id),
             ]
             for email, fn, ln, rid in extra_users:
                 if email not in existing_emails:
