@@ -220,7 +220,7 @@ async def get_stop(
     return gs
 
 
-@router.delete("/{stop_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{stop_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_stop(
     stop_id: uuid.UUID,
     current_user: User = Depends(require_role("admin", "drh")),

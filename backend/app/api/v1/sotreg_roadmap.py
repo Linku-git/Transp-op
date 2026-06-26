@@ -109,7 +109,7 @@ async def get_plan_phases(
     return list((await db.execute(stmt)).scalars().all())
 
 
-@router.delete("/plan/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/plan/{plan_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_plan(
     plan_id: uuid.UUID,
     current_user: User = Depends(require_role("admin", "drh")),

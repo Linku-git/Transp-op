@@ -162,7 +162,7 @@ async def get_depot_plan(
     return plan
 
 
-@router.delete("/plans/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/plans/{plan_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_depot_plan(
     plan_id: uuid.UUID,
     current_user: User = Depends(require_role("admin", "drh")),

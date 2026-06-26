@@ -269,7 +269,7 @@ async def get_irve(
     return irve
 
 
-@router.delete("/irve/{irve_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/irve/{irve_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_irve(
     irve_id: uuid.UUID,
     current_user: User = Depends(require_role("admin", "drh")),
