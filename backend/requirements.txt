@@ -46,6 +46,7 @@ anyio[trio]==4.8.0
 # Observability
 prometheus-client==0.21.0
 prometheus-fastapi-instrumentator==7.0.0
-opentelemetry-api==1.27.0
-opentelemetry-sdk==1.27.0
-opentelemetry-exporter-otlp-proto-grpc==1.27.0
+# bumped 1.27.0 -> 1.31.1: 1.27 pinned protobuf<5.0 which conflicts with ortools 9.11 (protobuf>=5.26.1)
+opentelemetry-api==1.31.1
+opentelemetry-sdk==1.31.1
+opentelemetry-exporter-otlp-proto-grpc==1.31.1
